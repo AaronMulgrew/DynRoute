@@ -1,0 +1,62 @@
+{
+	"junctions_edge": [{
+		"52.279596//-1.590878": {
+			"routes": [{
+				"lat": 52.280666,
+				"lon": -1.588808
+			}],
+			"junction_name": "high street-west street"
+		},
+		"52.279793//-1.579699": {
+			"routes": [{
+				"lat": 52.28137,
+				"lon": -1.582598
+			}],
+			"junction_name": "A425 Banbury Road"
+		}
+	}],
+	"junctions": {
+		"52.280666//-1.588808": {
+			"routes": [{
+				"lat": 52.280029,
+				"lon": -1.588006
+			}, {
+				"lat": 52.280775,
+				"lon": -1.588553
+			}],
+			"junction_name": "high street - back lane",
+			"speed": 20
+		},
+		"52.280029//-1.588006": {
+			"routes": [{
+				"lat": 52.27955,
+				"lon": -1.589773
+			}],
+			"junction_name": "back lane - castle lane"
+		},
+		"52.280775//-1.588553": {
+			"routes": [{
+				"lat": 52.28146,
+				"lon": -1.589494
+			}, {
+				"lat": 52.281237,
+				"lon": -1.58752
+			}],
+			"junction_name": "high street - swan street"
+		},
+		"52.281237//-1.58752": {
+			"routes": [{
+				"lat": 52.282059,
+				"lon": -1.588391
+			}, {
+				"lat": 52.280845,
+				"lon": -1.587104
+			},
+			{
+				"lat": 52.282184,
+				"lon": -1.585248
+			}],
+			"junction_name": "high street - church street - castle street"
+		}
+	}
+}
