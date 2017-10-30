@@ -84,6 +84,10 @@ def coords(coordinates):
 def send_homepage():
     return current_app.send_static_file('index.html')
 
+@app.route('/MovingMarker.js')
+def send_javascript():
+    return current_app.send_static_file('MovingMarker.js')
+
 @app.route('/')
 def generate_edge_coords():
     gen = GenerateData()

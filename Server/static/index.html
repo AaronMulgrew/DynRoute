@@ -26,7 +26,7 @@
 <body>
     <div id="map"></div>
     <div id="slidecontainer">
-        <input type="range" min="10" max="1000" value="500" class="slider" id="myRange">
+        <input type="range" min="200" max="3000" value="500" class="slider" id="myRange">
         <p>Value: <span id="demo"></span></p>
     </div>
 
@@ -92,7 +92,8 @@
 			var obj = JSON.parse(data);
 
 			var d = CalcDistance(obj.lat, obj.lon, obj.route.lat, obj.route.lon);
-
+			
+			//this is the distance in miles converted from metres
 			distanceM = d * 1609.34;
 
 			//alert(d * 1609.34);
@@ -116,8 +117,8 @@
 
 	function CalcDistance(lat1, lon1, lat2, lon2) {
 		var R = 6371; // Radius of the earth in km
-		var dLat = (lat2 - lat1) * Math.PI / 180;  // deg2rad below
-		var dLon = (lon2 - lon1) * Math.PI / 180;
+		var dLat = (lat2 - lat1) * Math.PI / 180;  // calculate the degrees in latitude
+		var dLon = (lon2 - lon1) * Math.PI / 180;  // calculate the degrees in longitude
 		var a =
 		 0.5 - Math.cos(dLat)/2 +
 		 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *

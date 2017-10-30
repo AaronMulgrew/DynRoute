@@ -24,6 +24,7 @@
   <ItemGroup>
     <Content Include="FrontEnd\index.html" />
     <Content Include="static\index.html" />
+    <Content Include="static\MovingMarker.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="static\" />
