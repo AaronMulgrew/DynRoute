@@ -23,9 +23,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="FrontEnd\index.html" />
+    <Content Include="static\index.html" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="FrontEnd\" />
+    <Folder Include="static\" />
+    <Folder Include="static\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

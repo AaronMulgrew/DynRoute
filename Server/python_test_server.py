@@ -1,7 +1,7 @@
-from flask import Flask, send_from_directory
+from flask import Flask, current_app
 import numpy
 import json
-app = Flask(__name__, static_url_path='/FrontEnd')
+app = Flask(__name__)
 from flask_cors import CORS
 CORS(app)
 
@@ -82,7 +82,7 @@ def coords(coordinates):
 
 @app.route('/index.html')
 def send_homepage():
-    return app.send_static_file('index.html')
+    return current_app.send_static_file('index.html')
 
 @app.route('/')
 def generate_edge_coords():
