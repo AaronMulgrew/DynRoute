@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8aec2035-2a81-4646-ae4a-864ce6abe187}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>python_test_server.py</StartupFile>
+    <StartupFile>server.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -19,14 +19,19 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="python_test_server.py" />
+    <Compile Include="server.py" />
+    <Compile Include="scripts\xml_parse.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FrontEnd\index.html" />
+    <Content Include="scripts\output.xml" />
     <Content Include="static\index.html" />
     <Content Include="static\MovingMarker.js" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="tests\" />
+    <Folder Include="scripts\" />
     <Folder Include="static\" />
     <Folder Include="static\" />
   </ItemGroup>
