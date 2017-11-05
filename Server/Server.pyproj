@@ -19,6 +19,9 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="scripts\encrypt_decrypt_RSA.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="server.py" />
     <Compile Include="scripts\xml_parse.py">
       <SubType>Code</SubType>
@@ -26,6 +29,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\output.xml" />
+    <Content Include="scripts\private.pem" />
+    <Content Include="scripts\public.pem" />
     <Content Include="static\index.html" />
     <Content Include="static\MovingMarker.js" />
   </ItemGroup>
