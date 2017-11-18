@@ -11,6 +11,7 @@ class GenerateData(object):
         # load the routes file
         routes = open("routes.json", "r").read()
         print routes
+        # this checks to see that the JSON file is valid.
         try:
             self.routes = json.loads(routes)
         except ValueError:
@@ -56,17 +57,6 @@ class GenerateData(object):
         route_data = self.return_data(selected_route, coords)
         return route_data
 
-def gen_coord_lat():
-    #print numpy.random.randint(-10, 10)
-    #coord = float(numpy.random.randint(-180000000, 180000000) / 1000000.0)
-    coord = float(numpy.random.randint(4068427, 4068744)) / 100000
-    return str(coord)
-
-def gen_coord_lon():
-    #print numpy.random.randint(-10, 10)
-    #coord = float(numpy.random.randint(-180000000, 180000000) / 1000000.0)
-    coord = float(numpy.random.randint(-7394272, -7393918)) / 100000
-    return str(coord)
 
 @app.route('/coordinates/<coordinates>', methods = ['GET'])
 def coords(coordinates):
