@@ -1,5 +1,5 @@
 import unittest
-from scripts import haversine
+from Server.scripts import haversine
 
 class test_haversine(unittest.TestCase):
     def test_haversine(self):
