@@ -6,4 +6,4 @@ install:
   - pip install Flask
   - pip install flask_cors
 script:
-  - Server/tests/unit_tests.py
+  - python Server/tests/unit_tests.py
