@@ -1,5 +1,9 @@
 import unittest
-from Server.scripts import haversine
+
+import sys
+sys.path.append('../Server/scripts')
+
+import haversine
 
 class test_haversine(unittest.TestCase):
     def test_haversine(self):
