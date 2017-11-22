@@ -16,9 +16,12 @@ def get_distance_haversine(distance1, distance2):
     lat2 = 52.632912
     lon2 = -1.157873'''
 
-    ## calculate the distance in latitude and longtiude in radians
-    distanceLat = radians(lat2 - lat1)
-    distanceLon = radians(lon2 - lon1)
+    try:
+        ## calculate the distance in latitude and longtiude in radians
+        distanceLat = radians(lat2 - lat1)
+        distanceLon = radians(lon2 - lon1)
+    except TypeError:
+        raise Exception("Could not convert as variables are not floats")
 
     a = sin(distanceLat/2) * sin(distanceLat/2) \
         + cos(radians(lat1)) \
