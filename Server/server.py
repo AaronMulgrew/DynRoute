@@ -6,7 +6,7 @@ from flask_cors import CORS
 from scripts import haversine
 CORS(app)
 
-
+_ALL_ROUTES = None
 
 class JunctionHandler(object):
     """This class handles the data of the current junction """
@@ -14,24 +14,31 @@ class JunctionHandler(object):
     def __init__(self, current_route=None):
         """Default speed is 30 as this is the most common"""
         if current_route == None:
-            # load the routes file
-            routes = open("routes.json", "r").read()
-            # this checks to see that the JSON file is valid.
-            try:
-                self._all_routes = json.loads(routes)
-            except ValueError:
-                return "\"Routes.json\" is not a valid JSON file."
+            self._all_routes = _ALL_ROUTES
+            # this is a method call inside the constructure, not ideal but 
+            # current route variable needs to be filled.
             self.current_route = self.pick_random_edge_route()
-            print type(self.current_route[0])
+            # current coords is a seperate variable as this is the 'title' for the 
+            # object rather than a variable
             self.current_coords = self.process_latlon(self.current_route[0])
             self.current_junc = self.current_route[1]
-            self.junction_name = self.current_junc["junction_name"]
-            self.speed = self.current_junc["speed"]
-            self.lat = self.current_coords[0]
-            self.lon = self.current_coords[1]
-            self.route = self.current_junc["routes"]
         else:
-            self.route = current_route
+            if len(current_route) == 2:
+                print _ALL_ROUTES
+                self._all_routes = _ALL_ROUTES['junctions']
+                self.current_coords = current_route
+                coords = str(current_route[0]) + '//' + str(current_route[1])
+                try:
+                    self.current_junc = self._all_routes[coords]
+                except KeyError as e:
+                    return False
+                self.current_route = 222
+                self.route = current_route
+        self.junction_name = self.current_junc["junction_name"]
+        self.speed = self.current_junc["speed"]
+        self.lat = self.current_coords[0]
+        self.lon = self.current_coords[1]
+        self.route = self.current_junc["routes"]
 
     def process_latlon(self, latlon):
         coords = latlon.replace("//", " ").split()
@@ -67,11 +74,6 @@ class JunctionHandler(object):
         time = self.calculate_junction_distance_time(newroute)
         route = {"lat": self.lat, "lon": self.lon, "time": time, "route": {"lat":newroute["lat"], "lon":newroute["lon"]}}
         return route
-
-    def generate_time(self):
-        """ This generates the time needed to reach coordinates """
-        haversine.get_distance_haversine([self.lat, self.lon], [self.route.lat, self.route.lon])
-
 
 
 class GenerateData(object):
@@ -137,12 +139,8 @@ def coords(coordinates):
     lat = str(lat_lon[0])
     lon = str(lat_lon[1])
     Junction = JunctionHandler([lat,lon])
-    #l = GenerateData()
-    #coords = l.get_rand_junct_data(lat, lon)
-    if isinstance(coords, bool):
-        return json.dumps(False)
-    else:
-        return json.dumps({"lat":coords[0], "lon":coords[1], "route":{"lat":coords[2]["lat"], "lon":coords[2]["lon"]}})
+    route = Junction.generate_route()
+    return json.dumps(route)
 
 @app.route('/index.html')
 def send_homepage():
@@ -163,4 +161,12 @@ def generate_edge_coords():
 if __name__ == "__main__":
     #gen = GenerateData()
     #r = gen.gen_rand_data()
+    # load the routes file
+    _ALL_ROUTES = open("routes.json", "r").read()
+    # this checks to see that the JSON file is valid.
+    try:
+        _ALL_ROUTES = json.loads(_ALL_ROUTES)
+    except ValueError:
+        print "\"Routes.json\" is not a valid JSON file."
+        exit(1)
     app.run()

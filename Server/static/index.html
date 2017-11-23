@@ -91,19 +91,9 @@
 			}
 			var obj = JSON.parse(data);
 
-			var d = CalcDistance(obj.lat, obj.lon, obj.route.lat, obj.route.lon);
+			// convert the time in miliseconds to seconds
+			timeSecs = obj.time * 1000;
 			
-			//this is the distance in miles converted from metres
-			distanceM = d * 1609.34;
-
-			//alert(d * 1609.34);
-
-			speed = 30;
-
-			//calculate time until end of marker based on speed and distance of object
-			timeMilis = distanceM/speed;
-			timeSecs = timeMilis * 1000;
-			//alert(time);
 			console.log(obj);
 			var myMovingMarker = L.Marker.movingMarker([[obj.lat, obj.lon],[obj.route.lat, obj.route.lon]],
 				[timeSecs]).addTo(map);
@@ -115,17 +105,6 @@
 		//setTimeout(removeMarker, 10000, myMovingMarker);
 	}
 
-	function CalcDistance(lat1, lon1, lat2, lon2) {
-		var R = 6371; // Radius of the earth in km
-		var dLat = (lat2 - lat1) * Math.PI / 180;  // calculate the degrees in latitude
-		var dLon = (lon2 - lon1) * Math.PI / 180;  // calculate the degrees in longitude
-		var a =
-		 0.5 - Math.cos(dLat)/2 +
-		 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-		 (1 - Math.cos(dLon))/2;
-
-		return R * 2 * Math.asin(Math.sqrt(a));
-	}
 
 	function NewCoords(latlon, marker)
 	{
