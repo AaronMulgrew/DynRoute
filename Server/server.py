@@ -31,7 +31,7 @@ class JunctionHandler(object):
                 try:
                     self.current_junc = self._all_routes[coords]
                 except KeyError as e:
-                    return False
+                    self.current_junc = False
                 self.current_route = 222
                 self.route = current_route
         self.junction_name = self.current_junc["junction_name"]
