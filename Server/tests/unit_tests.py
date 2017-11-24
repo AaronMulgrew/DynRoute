@@ -1,9 +1,8 @@
 import unittest
 import sys, os
-sys.path.insert(0,'..')
-print sys.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'scripts'))
 from scripts import haversine
-import server as s
+from .. import server
 
 
 class test_haversine(unittest.TestCase):
