@@ -35,6 +35,9 @@
     <Compile Include="tests\unit_tests.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\output.xml" />
