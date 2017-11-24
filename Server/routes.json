@@ -2,8 +2,8 @@
 	"junctions_edge": [{
 		"52.632930//-1.161572": {
 			"routes": [{
-				"lat": 52.632912,
-				"lon": -1.157873
+				"lat": "52.632912",
+				"lon": "-1.157873"
 			}],
 			"junction_name": "A47 - Wyngate Drive",
 			"speed": 60
@@ -12,26 +12,42 @@
 	"junctions": {
 		"52.632912//-1.157873": {
 			"routes": [{
-				"lat": 52.633818,
-				"lon": -1.154483
+				"lat": "52.633818",
+				"lon": "-1.154483"
 			}],
 			"junction_name": "A47 - Westcotes Road",
 			"speed": 60
 		},
 		"52.633818//-1.154483": {
 			"routes": [{
-				"lat": 52.634169,
-				"lon": -1.149998
+				"lat": "52.634169",
+				"lon": "-1.149998"
 			}],
 			"junction_name": "A47",
 			"speed": 60
 		},
 		"52.634169//-1.149998": {
 			"routes": [{
-				"lat": 52.633923,
-				"lon": -1.146260
+				"lat": "52.633923",
+				"lon": "-1.146260"
 			}],
 			"junction_name": "A47 - Glenfield Road East",
+			"speed": 30
+		},
+		"52.633923//-1.146260": {
+			"routes": [{
+				"lat": "52.634053",
+				"lon": "-1.144829"
+			}],
+			"junction_name": "A47 - A5460 junction",
+			"speed": 30
+		},
+		"52.634053//-1.144829": {
+			"routes": [{
+				"lat": "52.633747",
+				"lon": "-1.143091"
+			}],
+			"junction_name": "St Augustine Road - Car Park turnoff",
 			"speed": 30
 		}
 	}

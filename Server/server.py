@@ -24,7 +24,6 @@ class JunctionHandler(object):
             self.current_junc = self.current_route[1]
         else:
             if len(current_route) == 2:
-                print _ALL_ROUTES
                 self._all_routes = _ALL_ROUTES['junctions']
                 self.current_coords = current_route
                 coords = str(current_route[0]) + '//' + str(current_route[1])
@@ -34,11 +33,18 @@ class JunctionHandler(object):
                     self.current_junc = False
                 self.current_route = 222
                 self.route = current_route
-        self.junction_name = self.current_junc["junction_name"]
-        self.speed = self.current_junc["speed"]
-        self.lat = self.current_coords[0]
-        self.lon = self.current_coords[1]
-        self.route = self.current_junc["routes"]
+        if self.current_junc != False:
+            self.junction_name = self.current_junc["junction_name"]
+            self.speed = self.current_junc["speed"]
+            self.lat = self.current_coords[0]
+            self.lon = self.current_coords[1]
+            self.route = self.current_junc["routes"]
+
+    def CheckIfRouteExists(self):
+        if self.current_junc != False:
+            return True
+        else:
+            return False
 
     def process_latlon(self, latlon):
         coords = latlon.replace("//", " ").split()
@@ -72,7 +78,7 @@ class JunctionHandler(object):
         newroute = potential_routes[selection_number]
         # this will be the time to reach destination
         time = self.calculate_junction_distance_time(newroute)
-        route = {"lat": self.lat, "lon": self.lon, "time": time, "route": {"lat":newroute["lat"], "lon":newroute["lon"]}}
+        route = {"lat": str(self.lat), "lon": str(self.lon), "time": time, "route": {"lat":str(newroute["lat"]), "lon":str(newroute["lon"])}}
         return route
 
 
@@ -81,7 +87,6 @@ class GenerateData(object):
     def __init__(self, *args, **kwargs):
         # load the routes file
         routes = open("routes.json", "r").read()
-        print routes
         # this checks to see that the JSON file is valid.
         try:
             self.routes = json.loads(routes)
@@ -139,8 +144,12 @@ def coords(coordinates):
     lat = str(lat_lon[0])
     lon = str(lat_lon[1])
     Junction = JunctionHandler([lat,lon])
-    route = Junction.generate_route()
-    return json.dumps(route)
+    routeExists = Junction.CheckIfRouteExists()
+    if routeExists != False:
+        route = Junction.generate_route()
+        return json.dumps(route)
+    else:
+        return json.dumps(False)
 
 @app.route('/index.html')
 def send_homepage():
