@@ -1,10 +1,10 @@
 import unittest
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'scripts'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'scripts', 'server'))
 #print sys.path
 #test = open("../routes.json", "r").read()#
-import server
-import haversine
+from server import server
+from scripts import haversine
 
 
 class test_haversine(unittest.TestCase):
