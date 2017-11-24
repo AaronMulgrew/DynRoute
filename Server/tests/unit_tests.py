@@ -1,9 +1,10 @@
 import unittest
 import sys, os
 sys.path.insert(0,'..')
+print sys.path
 from scripts import haversine
 import server as s
-print sys.path
+
 
 class test_haversine(unittest.TestCase):
     def test_haversine(self):
