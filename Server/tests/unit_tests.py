@@ -3,6 +3,7 @@ import sys, os
 sys.path.insert(0,'..')
 from scripts import haversine
 import server as s
+print sys.path
 
 class test_haversine(unittest.TestCase):
     def test_haversine(self):
