@@ -11,11 +11,19 @@ class test_haversine(unittest.TestCase):
         self.assertEqual(haversine.get_distance_haversine([52.632930, -1.161572], [52.632912, -1.157873]), distance)
 
 class test_server(unittest.TestCase):
-    def test_server(self):
+    def test_server_junction_handler(self):
         newserver = s
         newserver.GetRoutes()
         junc = newserver.JunctionHandler()
         self.assertIsInstance(junc, newserver.JunctionHandler)
+
+    def test_server_process_latlon(self):
+        # check that the latlon function actually splits the latitude and longitude.
+        newserver = s
+        junc = newserver.JunctionHandler()
+        latlon = junc.process_latlon('120//-1')
+        self.assertEqual(latlon, ('120', '-1'))
+
 
 if __name__ == '__main__':
     unittest.main()
