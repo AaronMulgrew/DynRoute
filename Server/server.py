@@ -167,10 +167,9 @@ def generate_edge_coords():
     #lon = gen_coord_lon()
     return json.dumps(route)
 
-if __name__ == "__main__":
-    #gen = GenerateData()
-    #r = gen.gen_rand_data()
-    # load the routes file
+def GetRoutes():
+    # load the global variable
+    global _ALL_ROUTES
     _ALL_ROUTES = open("routes.json", "r").read()
     # this checks to see that the JSON file is valid.
     try:
@@ -178,4 +177,10 @@ if __name__ == "__main__":
     except ValueError:
         print "\"Routes.json\" is not a valid JSON file."
         exit(1)
+
+if __name__ == "__main__":
+    #gen = GenerateData()
+    #r = gen.gen_rand_data()
+    # load the routes file
+    GetRoutes()
     app.run()
