@@ -2,9 +2,10 @@ import unittest
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'scripts'))
 #print sys.path
-#test = open("../routes.json", "r").read()
-import haversine
+#test = open("../routes.json", "r").read()#
 import server
+import haversine
+
 
 class test_haversine(unittest.TestCase):
     def test_haversine(self):
@@ -15,7 +16,11 @@ class test_haversine(unittest.TestCase):
 class test_JunctionHandler(unittest.TestCase):
     def test_handler(self):
         newserver = server
-        newserver.loadRoutes("../routes.json")
+        try:
+            newserver.loadRoutes("routes.json")
+        except IOError as e:
+            os.chdir('..')
+            newserver.loadRoutes("routes.json")
         junc = newserver.JunctionHandler()
         # make sure our junction created is really an instance of the server.junctionhandler
         self.assertTrue(isinstance(junc, server.JunctionHandler))
