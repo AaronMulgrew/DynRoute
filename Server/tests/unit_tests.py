@@ -1,8 +1,8 @@
 import unittest
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'scripts'))
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
 print sys.path
+test = open("routes.json", "r").read()
 import haversine
 import server
 
