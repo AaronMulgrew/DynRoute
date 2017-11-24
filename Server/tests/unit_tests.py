@@ -1,8 +1,8 @@
 import unittest
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'scripts'))
-print sys.path
-test = open("routes.json", "r").read()
+#print sys.path
+#test = open("../routes.json", "r").read()
 import haversine
 import server
 
@@ -15,7 +15,7 @@ class test_haversine(unittest.TestCase):
 class test_JunctionHandler(unittest.TestCase):
     def test_handler(self):
         newserver = server
-        newserver.loadRoutes("routes.json")
+        newserver.loadRoutes("../routes.json")
         junc = newserver.JunctionHandler()
         # make sure our junction created is really an instance of the server.junctionhandler
         self.assertTrue(isinstance(junc, server.JunctionHandler))
