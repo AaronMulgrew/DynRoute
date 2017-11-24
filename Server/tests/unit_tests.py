@@ -15,7 +15,7 @@ class test_haversine(unittest.TestCase):
 class test_JunctionHandler(unittest.TestCase):
     def test_handler(self):
         newserver = server
-        newserver.loadRoutes("../routes.json")
+        newserver.loadRoutes("routes.json")
         junc = newserver.JunctionHandler()
         # make sure our junction created is really an instance of the server.junctionhandler
         self.assertTrue(isinstance(junc, server.JunctionHandler))
