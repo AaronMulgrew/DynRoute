@@ -20,7 +20,7 @@ class JunctionHandler(object):
             self.current_route = self.pick_random_edge_route()
             # current coords is a seperate variable as this is the 'title' for the 
             # object rather than a variable
-            self.current_coords = self.process_latlon(self.current_route[0])
+            self.current_coords = self.process_lat_lon(self.current_route[0])
             self.current_junc = self.current_route[1]
         else:
             if len(current_route) == 2:
@@ -31,7 +31,6 @@ class JunctionHandler(object):
                     self.current_junc = self._all_routes[coords]
                 except KeyError as e:
                     self.current_junc = False
-                self.current_route = 222
                 self.route = current_route
         if self.current_junc != False:
             self.junction_name = self.current_junc["junction_name"]
@@ -40,13 +39,13 @@ class JunctionHandler(object):
             self.lon = self.current_coords[1]
             self.route = self.current_junc["routes"]
 
-    def CheckIfRouteExists(self):
+    def check_if_route_exists(self):
         if self.current_junc != False:
             return True
         else:
             return False
 
-    def process_latlon(self, latlon):
+    def process_lat_lon(self, latlon):
         coords = latlon.replace("//", " ").split()
         lat = coords[0]
         lon = coords[1]
@@ -82,60 +81,6 @@ class JunctionHandler(object):
         return route
 
 
-class GenerateData(object):
-
-    def __init__(self, *args, **kwargs):
-        # load the routes file
-        routes = open("routes.json", "r").read()
-        # this checks to see that the JSON file is valid.
-        try:
-            self.routes = json.loads(routes)
-        except ValueError:
-            print "\"Routes.json\" is not a valid JSON file."
-            exit(1)
-        return super(GenerateData, self).__init__(*args, **kwargs)
-
-    def gen_rand_data(self):
-        routes = self.routes
-        routeslist = routes["junctions_edge"][0]
-        # select a random 'route' according to the number
-        selection_number = numpy.random.randint(0, len(routeslist))
-        # select a junction at random to generate traffic
-        selected_route_key = routeslist.keys()
-        selected_route_key = selected_route_key[selection_number]
-        #for key in selected_route_key:
-        #    if '//' in key:
-        #selected_route_key = key
-        #routeslist = routeslist[selection_number]
-        route_data = self.process_routes(routeslist, selected_route_key)
-        return route_data
-
-    def process_routes(self, routeslist, selected_route_key):
-        try:
-            selected_route = routeslist[selected_route_key]
-        except KeyError:
-            return False
-
-        selection_number = numpy.random.randint(0, len(potential_routes))
-        speed = selected_route['speed']
-        selected_route = potential_routes[selection_number]
-        print len(selected_route)
-        coords = selected_route_key.replace("//", " ").split()
-        latitude = coords[0]
-        longtitude = coords[1]
-        return latitude, longtitude, selected_route
-
-    def get_rand_junct_data(self, lat, lon):
-        routes = self.routes
-        routeslist = routes["junctions"]
-        coords = str(lat) + '//' + str(lon)
-        # select a random 'route' according to the number
-        #selection_number = numpy.random.randint(0, len(routeslist))
-        selected_route = routeslist
-        self.junction([lat, lon])
-        print self.junction
-        route_data = self.process_routes(selected_route, coords)
-        return route_data
 
 
 @app.route('/coordinates/<coordinates>', methods = ['GET'])
@@ -144,7 +89,7 @@ def coords(coordinates):
     lat = str(lat_lon[0])
     lon = str(lat_lon[1])
     Junction = JunctionHandler([lat,lon])
-    routeExists = Junction.CheckIfRouteExists()
+    routeExists = Junction.check_if_route_exists()
     if routeExists != False:
         route = Junction.generate_route()
         return json.dumps(route)
