@@ -10,6 +10,35 @@ class test_haversine(unittest.TestCase):
         distance = 249.6400152128023
         self.assertEqual(haversine.get_distance_haversine([52.632930, -1.161572], [52.632912, -1.157873]), distance)
 
+    def test_haversine_min(self):
+        ## this is the distance from the two sets of coordinates in metres.
+        distance = 1.1119492664455877
+        lat1 = 0.00000
+        lon1 = 0.00000
+        lat2 = 0.00000
+        lon2 = 0.00001
+        self.assertEqual(haversine.get_distance_haversine([lat1, lon1], [lat2, lon2]), distance)
+
+    def test_haversine_max(self):
+        ## this is the distance from the two sets of coordinates in metres.
+        distance = 10007543.398010286
+        lat1 = 0.00000
+        lon1 = 0.00000
+        lat2 = 90
+        lon2 = -180
+        x = haversine.get_distance_haversine([lat1, lon1], [lat2, lon2])
+        self.assertEqual(haversine.get_distance_haversine([lat1, lon1], [lat2, lon2]), distance)
+
+    def test_haversine_invalid(self):
+        lat1 = "zzzzz"
+        lon1 = "xxxxx"
+        lat2 = 90
+        lon2 = -180
+        # this test checks that the Exception that is raised
+        # also matches with the error message.
+        self.assertRaisesRegexp(TypeError, "Could not convert as variables are not floats", haversine.get_distance_haversine, [lat1, lon1], [lat2, lon2])
+
+
 class test_server(unittest.TestCase):
     def test_server_junction_handler(self):
         newserver = s
@@ -21,7 +50,7 @@ class test_server(unittest.TestCase):
         # check that the latlon function actually splits the latitude and longitude.
         newserver = s
         junc = newserver.JunctionHandler()
-        latlon = junc.process_latlon('120//-1')
+        latlon = junc.process_lat_lon('120//-1')
         self.assertEqual(latlon, ('120', '-1'))
 
 

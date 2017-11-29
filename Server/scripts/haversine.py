@@ -21,7 +21,7 @@ def get_distance_haversine(distance1, distance2):
         distanceLat = radians(lat2 - lat1)
         distanceLon = radians(lon2 - lon1)
     except TypeError:
-        raise Exception("Could not convert as variables are not floats")
+        raise TypeError("Could not convert as variables are not floats")
 
     a = sin(distanceLat/2) * sin(distanceLat/2) \
         + cos(radians(lat1)) \
