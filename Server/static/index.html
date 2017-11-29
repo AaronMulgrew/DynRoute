@@ -53,9 +53,6 @@
 		httpGetAsync("http://localhost:5000", process_coord);
 	}, 500);
 
-	//var myMovingMarker;
-
-	//httpGetAsync("http://localhost:5000", process_coord);
 	function httpGetAsync(theUrl, callback, marker = null)
 	{
 		var xmlHttp = new XMLHttpRequest();
@@ -75,7 +72,6 @@
 		}
 		xmlHttp.open("GET", theUrl, true); // true for asynchronous
 		xmlHttp.send(null);
-		//alert(theUrl);
 	}
 	function process_coord(data, myMovingMarker = null)
 	{
@@ -100,9 +96,6 @@
 			myMovingMarker.start();
 			setTimeout(NewCoords, timeSecs, [obj.route.lat, obj.route.lon], myMovingMarker);
 		}
-		//marker = new L.marker([obj.lat, obj.lon]).addTo(map);
-
-		//setTimeout(removeMarker, 10000, myMovingMarker);
 	}
 
 
@@ -124,19 +117,9 @@
 	  clearInterval(interval);
 	  interval = 0;
 	  interval = window.setInterval(function(){
-		/// call your function here
 		httpGetAsync("http://localhost:5000", process_coord);
       }, getNewCarsInterval);
-	  //alert(this.value);
 	}
-
-
-
-	//map.addLayer(marker);
-	//marker.setLatLng([lat, lng]).update();
-
-    //var animatedMarker = L.animatedMarker(line.getLatLngs());
-	//map.addLayer(animatedMarker);
 
     </script>
 
