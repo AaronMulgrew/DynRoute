@@ -21,14 +21,13 @@ class GlobalRouteHandler(object):
         return super(GlobalRouteHandler, self).__init__(*args, **kwargs)
 
     def search_route(self, lat, lon):
-        self.current_coords = current_route
-        coords = str(lat) + '//' + str(lat)
+        coords = str(lat) + '//' + str(lon)
         try:
-            self.current_junc = self._all_routes["junctions"][coords]
+            current_junc = self._all_routes["junctions"][coords]
         except KeyError as e:
-            self.current_junc = False
-        self.route = current_route
-        return current_route
+            current_junc = False
+        #self.route = current_route
+        return current_junc
 
 class JunctionHandler(object):
     """This class handles the data of the current junction """
@@ -136,8 +135,8 @@ def generate_edge_coords():
 
 def GetRoutes():
 
-    globalRoutes = GlobalRouteHandler()
-    globalRoutes.search_route(52.632930, -1.161572)
+    #globalRoutes = GlobalRouteHandler()
+    #print globalRoutes.search_route(52.634169, -1.149998)
 
     # load the global variable
     global _ALL_ROUTES
