@@ -8,6 +8,28 @@ CORS(app)
 
 _ALL_ROUTES = None
 
+
+class GlobalRouteHandler(object):
+    def __init__(self, *args, **kwargs):
+        self._all_routes = open("routes.json", "r").read()
+        # this checks to see that the JSON file is valid.
+        try:
+            self._all_routes = json.loads(self._all_routes)
+        except ValueError:
+            print "\"Routes.json\" is not a valid JSON file."
+            exit(1)
+        return super(GlobalRouteHandler, self).__init__(*args, **kwargs)
+
+    def search_route(self, lat, lon):
+        self.current_coords = current_route
+        coords = str(lat) + '//' + str(lat)
+        try:
+            self.current_junc = self._all_routes["junctions"][coords]
+        except KeyError as e:
+            self.current_junc = False
+        self.route = current_route
+        return current_route
+
 class JunctionHandler(object):
     """This class handles the data of the current junction """
 
@@ -113,6 +135,10 @@ def generate_edge_coords():
     return json.dumps(route)
 
 def GetRoutes():
+
+    globalRoutes = GlobalRouteHandler()
+    globalRoutes.search_route(52.632930, -1.161572)
+
     # load the global variable
     global _ALL_ROUTES
     _ALL_ROUTES = open("routes.json", "r").read()
