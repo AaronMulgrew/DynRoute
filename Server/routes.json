@@ -14,6 +14,9 @@
 			"routes": [{
 				"lat": "52.633818",
 				"lon": "-1.154483"
+			},{
+				"lat": "52.631886",
+				"lon": "-1.152602"
 			}],
 			"junction_name": "A47 - Westcotes Road",
 			"speed": 60

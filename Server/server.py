@@ -45,14 +45,11 @@ class JunctionHandler(object):
             self.current_junc = self.current_route[1]
         else:
             if len(current_route) == 2:
-                self._all_routes = _ALL_ROUTES['junctions']
-                self.current_coords = current_route
-                coords = str(current_route[0]) + '//' + str(current_route[1])
-                try:
-                    self.current_junc = self._all_routes[coords]
-                except KeyError as e:
-                    self.current_junc = False
-                self.route = current_route
+
+                globalRoute = GlobalRouteHandler()
+                self.current_junc = globalRoute.search_route(current_route[0], current_route[1])
+                self.current_coords = current_route[0], current_route[1]
+
         if self.current_junc != False:
             self.junction_name = self.current_junc["junction_name"]
             self.speed = self.current_junc["speed"]
