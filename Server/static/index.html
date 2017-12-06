@@ -29,6 +29,9 @@
         <input type="range" min="200" max="3000" value="3000" class="slider" id="myRange">
         <p>Value: <span id="demo"></span></p>
     </div>
+    <div id="junctionToggle">
+        <button onclick="ShowJunction()">Show Junctions</button>
+    </div>
 
     <script type="text/javascript">
 
@@ -50,8 +53,8 @@
 
 	var interval = window.setInterval(function(){
 		/// call your function here
-		httpGetAsync("http://localhost:5000", process_coord);
-	}, 500);
+		httpGetAsync("/", process_coord);
+	}, 1000);
 
 	function httpGetAsync(theUrl, callback, marker = null)
 	{
@@ -103,7 +106,7 @@
 	{
 		latitude = latlon[0];
 		longitude = latlon[1];
-		httpGetAsync("http://localhost:5000/coordinates/" + latitude + ":" + longitude, process_coord, marker);
+		httpGetAsync("/coordinates/" + latitude + ":" + longitude, process_coord, marker);
 		console.log(latlon);
 	}
 
@@ -117,7 +120,7 @@
 	  clearInterval(interval);
 	  interval = 0;
 	  interval = window.setInterval(function(){
-		httpGetAsync("http://localhost:5000", process_coord);
+		httpGetAsync("/", process_coord);
       }, getNewCarsInterval);
 	}
 

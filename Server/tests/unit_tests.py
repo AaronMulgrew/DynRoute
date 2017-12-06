@@ -1,8 +1,7 @@
 import unittest
 import sys, os
 from scripts import haversine
-import server as s
-
+import server as server
 
 class test_haversine(unittest.TestCase):
     def test_haversine(self):
@@ -41,17 +40,33 @@ class test_haversine(unittest.TestCase):
 
 class test_server(unittest.TestCase):
     def test_server_junction_handler(self):
-        newserver = s
+        newserver = server
         newserver.GetRoutes()
         junc = newserver.JunctionHandler()
         self.assertIsInstance(junc, newserver.JunctionHandler)
 
     def test_server_process_latlon(self):
         # check that the latlon function actually splits the latitude and longitude.
-        newserver = s
+        newserver = server
+        newserver.GetRoutes()
         junc = newserver.JunctionHandler()
         latlon = junc.process_lat_lon('120//-1')
         self.assertEqual(latlon, ('120', '-1'))
+
+    def test_weighted_choice(self):
+        newserver = server
+        newserver.GetRoutes()
+        junc = server.JunctionHandler()
+        choice = junc.weighted_choice([[0, 50], [1, 15]])
+        self.assertTrue(0 <= choice <= 1)
+
+    def test_pick_random_edge_route(self):
+        newserver = server
+        newserver.GetRoutes()
+        junc = server.JunctionHandler()
+        choice = junc.pick_random_edge_route()
+        # make sure we are producing something which is a valid python list.
+        self.assertIsInstance(choice, list)
 
 
 if __name__ == '__main__':

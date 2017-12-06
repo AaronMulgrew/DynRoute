@@ -3,7 +3,8 @@
 		"52.632930//-1.161572": {
 			"routes": [{
 				"lat": "52.632912",
-				"lon": "-1.157873"
+				"lon": "-1.157873",
+				"road_type":1
 			}],
 			"junction_name": "A47 - Wyngate Drive",
 			"speed": 60
@@ -13,10 +14,12 @@
 		"52.632912//-1.157873": {
 			"routes": [{
 				"lat": "52.633818",
-				"lon": "-1.154483"
+				"lon": "-1.154483",
+				"road_type":1
 			},{
 				"lat": "52.631886",
-				"lon": "-1.152602"
+				"lon": "-1.152602",
+				"road_type":3
 			}],
 			"junction_name": "A47 - Westcotes Road",
 			"speed": 60

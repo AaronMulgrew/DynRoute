@@ -1,12 +1,13 @@
 from flask import Flask, current_app
 import numpy
 import json
+from random import random
+from bisect import bisect
 app = Flask(__name__)
 from flask_cors import CORS
 from scripts import haversine
 CORS(app)
 
-_ALL_ROUTES = None
 
 
 class GlobalRouteHandler(object):
@@ -35,7 +36,7 @@ class JunctionHandler(object):
     def __init__(self, current_route=None):
         """Default speed is 30 as this is the most common"""
         if current_route == None:
-            self._all_routes = _ALL_ROUTES
+            self._all_routes = globalRoute._all_routes
             # this is a method call inside the constructure, not ideal but 
             # current route variable needs to be filled.
             self.current_route = self.pick_random_edge_route()
@@ -45,8 +46,6 @@ class JunctionHandler(object):
             self.current_junc = self.current_route[1]
         else:
             if len(current_route) == 2:
-
-                globalRoute = GlobalRouteHandler()
                 self.current_junc = globalRoute.search_route(current_route[0], current_route[1])
                 self.current_coords = current_route[0], current_route[1]
 
@@ -62,6 +61,43 @@ class JunctionHandler(object):
             return True
         else:
             return False
+
+    def weighted_junc_search(self):
+        potential_routes = self.route
+        road_type_list = []
+        i = 0
+        if len(potential_routes) != 1:
+            for route in potential_routes:
+                road_type = route["road_type"]
+                if road_type == 1:
+                    road_type = 50
+                elif road_type == 2:
+                    road_type = 30
+                elif road_type == 3:
+                    road_type = 15
+                else:
+                    road_type = 5
+                route_with_weighting = [i, road_type]
+                road_type_list.append(route_with_weighting)
+                i += 1
+                print road_type
+            number = self.weighted_choice(road_type_list)
+        else:
+            number = 0
+        print "junc"
+        return number
+
+    def weighted_choice(self, choices):
+        print choices
+        total = 0
+        cum_weights = []
+        for choice in choices:
+            total += choice[1]
+            cum_weights.append(total)
+        x = random() * total
+        i = bisect(cum_weights, x)
+        return i
+
 
     def process_lat_lon(self, latlon):
         coords = latlon.replace("//", " ").split()
@@ -91,7 +127,7 @@ class JunctionHandler(object):
         """This generates a random route, calling the time function"""
         potential_routes = self.route
         #select a random 'route' according to the number
-        selection_number = numpy.random.randint(0, len(potential_routes))
+        selection_number = self.weighted_junc_search()
         newroute = potential_routes[selection_number]
         # this will be the time to reach destination
         time = self.calculate_junction_distance_time(newroute)
@@ -145,9 +181,9 @@ def GetRoutes():
         print "\"Routes.json\" is not a valid JSON file."
         exit(1)
 
+globalRoute = GlobalRouteHandler()
 if __name__ == "__main__":
     #gen = GenerateData()
     #r = gen.gen_rand_data()
     # load the routes file
-    GetRoutes()
-    app.run()
+    app.run(host='0.0.0.0')
