@@ -25,10 +25,23 @@ class GlobalRouteHandler(object):
         coords = str(lat) + '//' + str(lon)
         try:
             current_junc = self._all_routes["junctions"][coords]
+            self._all_routes["junctions"][coords]["traffic_load"] += 1
         except KeyError as e:
             current_junc = False
         #self.route = current_route
         return current_junc
+
+    def return_all_junctions(self):
+        _all_routes = self._all_routes["junctions"]
+        junc_list = []
+        for junc in _all_routes:
+            print junc
+            j = JunctionHandler()
+            lat, lon = j.process_lat_lon(junc)
+            junction = {"junction":_all_routes[junc],"lat":lat,"lon":lon}
+            junc_list.append(junction)
+        print junc_list
+        return junc_list
 
 class JunctionHandler(object):
     """This class handles the data of the current junction """
@@ -153,6 +166,12 @@ def coords(coordinates):
 @app.route('/index.html')
 def send_homepage():
     return current_app.send_static_file('index.html')
+
+
+@app.route('/all_juncts')
+def return_all_junctions():
+    all_junctions = globalRoute.return_all_junctions()
+    return json.dumps(all_junctions)
 
 @app.route('/MovingMarker.js')
 def send_javascript():
