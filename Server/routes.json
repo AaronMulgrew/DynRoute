@@ -61,6 +61,20 @@
 			"junction_name": "St Augustine Road - Car Park turnoff",
 			"speed": 30,
 			"traffic_load": 0
+		},
+		"52.633747//-1.143091": {
+			"routes": [{
+			}],
+			"junction_name": "St Augustine Road - River crossing",
+			"speed": 30,
+			"traffic_load": 0
+		},
+		"52.631886//-1.152602": {
+			"routes": [{
+			}],
+			"junction_name": "Hinckley road/fosse road central",
+			"speed": 30,
+			"traffic_load": 0
 		}
 	}
 }

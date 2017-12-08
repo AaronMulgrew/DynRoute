@@ -31,139 +31,169 @@
     </div>
     <div id="junctionToggle">
         <button onclick="PrepShowJunction()">Show Junctions</button>
+        <button onclick="HideJunctions()">Hide Junctions</button>
     </div>
 
     <script type="text/javascript">
 
-	var map = L.map('map').setView([52.634204, -1.132845], 15);
-    var markers = []
-    var showJunctions = false
-	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: 'OSM'})
-	.addTo(map);
+	    var map = L.map('map').setView([52.634204, -1.132845], 15);
+        var markers = []
+        var showJunctions = false
+        var JuncInterval = 1000
+	    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: 'OSM'})
+	    .addTo(map);
 
-	var line = L.polyline([[40.68510, -73.94136], [40.68576, -73.94149], [40.68649, -73.94165]]);
-	map.addLayer(line);
+	    //var line = L.polyline([[40.68510, -73.94136], [40.68576, -73.94149], [40.68649, -73.94165]]);
+	    //map.addLayer(line);
 
-	var marker = L.marker([40.68510, -73.94136]).addTo(map);
+	    //var marker = L.marker([40.68510, -73.94136]).addTo(map);
 
-	function removeMarker(selectedMarker) {
-		if (selectedMarker) {
-		map.removeLayer(selectedMarker);
-		}
-	}
-
-	var interval = window.setInterval(function(){
-		/// call your function here
-		httpGetAsync("/", process_coord);
-	}, 1000);
-
-    function PrepShowJunction()
-    {
-        interval = window.setInterval(function () {
-            ShowJunction();
-        }, 1000);
-    }
-
-    function ShowJunction()
-    {
-        for (var i = 0; i < markers.length; i++)
-        {
-            map.removeLayer(markers[i]);
+	    function removeMarker(selectedMarker) {
+		    if (selectedMarker) {
+		    map.removeLayer(selectedMarker);
+		    }
         }
-        showJunctions = true
-        httpGetAsync("/all_juncts", ProcessJunctions)
-    }
 
-    function ProcessJunctions(JunctionData)
-    {
-        JunctionData = JSON.parse(JunctionData);
-        var i;
-        for (i in JunctionData)
+        function HideJunctions()
         {
-            console.log(JunctionData[i]);
-            console.log(JunctionData[i].lat);
-            var lat = Number(JunctionData[i].lat);
-            var lon = Number(JunctionData[i].lon);
-            console.log(map);
-            //var marker = L.marker([40.68510, -73.94136]).addTo(map);
-            marker = L.marker([lat, lon]).addTo(map);
-            marker.bindPopup("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.traffic_load).openPopup();
-            markers.push(marker);
-        }
-        //console.log(JunctionData);
-    }
-
-	function httpGetAsync(theUrl, callback, marker = null)
-	{
-		var xmlHttp = new XMLHttpRequest();
-		xmlHttp.onreadystatechange = function() {
-			if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-			{
-				//console.log(xmlHttp.responseText);
-				if (marker)
-				{
-					callback(xmlHttp.responseText, marker);
-				}
-				else
-				{
-					callback(xmlHttp.responseText);
-				}
-			}
-		}
-		xmlHttp.open("GET", theUrl, true); // true for asynchronous
-		xmlHttp.send(null);
-	}
-	function process_coord(data, myMovingMarker = null)
-	{
-		if(data === "false" || !data)
-		{
-			removeMarker(myMovingMarker);
-		}
-		else
-		{
-			if (myMovingMarker)
-			{
-				removeMarker(myMovingMarker);
-			}
-			var obj = JSON.parse(data);
-
-			// convert the time in miliseconds to seconds
-			timeSecs = obj.time * 1000;
-			
-			//console.log(obj);
-            if (showJunctions != true)
+            for (var i = 0; i < markers.length; i++)
             {
-                var myMovingMarker = L.Marker.movingMarker([[obj.lat, obj.lon], [obj.route.lat, obj.route.lon]],
-                    [timeSecs]).addTo(map);
-                markers.push(myMovingMarker);
-                myMovingMarker.start();
+                map.removeLayer(markers[i]);
             }
-			setTimeout(NewCoords, timeSecs, [obj.route.lat, obj.route.lon], myMovingMarker);
-		}
-	}
+            showJunctions = false;
+            markers = []
+            clearInterval(JuncInterval);
+        }
+
+	    var interval = window.setInterval(function(){
+		    /// call your function here
+		    httpGetAsync("/", process_coord);
+	    }, 1000);
+
+        function PrepShowJunction()
+        {
+            JuncInterval = window.setInterval(function () {
+                ShowJunction();
+            }, 1000);
+        }
+
+        function ShowJunction()
+        {
+            if (showJunctions == false)
+            {
+                for (var i = 0; i < markers.length; i++)
+                {
+                    map.removeLayer(markers[i]);
+                }
+                // make sure we clear the markers array
+                markers = []
+            }
+            showJunctions = true
+            httpGetAsync("/all_juncts", ProcessJunctions)
+        }
+
+        function ProcessJunctions(JunctionData)
+        {
+            JunctionData = JSON.parse(JunctionData);
+            var i;
+            for (i in JunctionData)
+            {
+                var lat = Number(JunctionData[i].lat);
+                var lon = Number(JunctionData[i].lon);
+                var pos = markers.indexOf(lat + ":" + lon);
+                if (pos == -1)
+                {
+                    console.log(JunctionData[i]);
+                    console.log(JunctionData[i].lat);
+
+                    console.log(map);
+                    //var marker = L.marker([40.68510, -73.94136]).addTo(map);
+                    marker = L.marker([lat, lon]).addTo(map);
+                    marker.bindPopup("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.traffic_load);
+                    markers.push(marker, lat + ":" + lon);
+                }
+                else
+                {
+                    // this is minus one because we have added both the marker and the latitude/longitude values
+                    marker = markers[pos - 1]
+                    marker._popup.setContent("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.traffic_load);
+                }
+
+            }
+            //console.log(JunctionData);
+        }
+
+	    function httpGetAsync(theUrl, callback, marker = null)
+	    {
+		    var xmlHttp = new XMLHttpRequest();
+		    xmlHttp.onreadystatechange = function() {
+			    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+			    {
+				    //console.log(xmlHttp.responseText);
+				    if (marker)
+				    {
+					    callback(xmlHttp.responseText, marker);
+				    }
+				    else
+				    {
+					    callback(xmlHttp.responseText);
+				    }
+			    }
+		    }
+		    xmlHttp.open("GET", theUrl, true); // true for asynchronous
+		    xmlHttp.send(null);
+	    }
+	    function process_coord(data, myMovingMarker = null)
+	    {
+		    if(data === "false" || !data)
+		    {
+			    removeMarker(myMovingMarker);
+		    }
+		    else
+		    {
+			    if (myMovingMarker)
+			    {
+				    removeMarker(myMovingMarker);
+			    }
+			    var obj = JSON.parse(data);
+
+			    // convert the time in miliseconds to seconds
+			    timeSecs = obj.time * 1000;
+			
+			    //console.log(obj);
+                if (showJunctions != true)
+                {
+                    var myMovingMarker = L.Marker.movingMarker([[obj.lat, obj.lon], [obj.route.lat, obj.route.lon]],
+                        [timeSecs]).addTo(map);
+                    markers.push(myMovingMarker);
+                    myMovingMarker.start();
+                }
+			    setTimeout(NewCoords, timeSecs, [obj.route.lat, obj.route.lon], myMovingMarker);
+		    }
+	    }
 
 
-	function NewCoords(latlon, marker)
-	{
-		latitude = latlon[0];
-		longitude = latlon[1];
-		httpGetAsync("/coordinates/" + latitude + ":" + longitude, process_coord, marker);
-		//console.log(latlon);
-	}
+	    function NewCoords(latlon, marker)
+	    {
+		    latitude = latlon[0];
+		    longitude = latlon[1];
+		    httpGetAsync("/coordinates/" + latitude + ":" + longitude, process_coord, marker);
+		    //console.log(latlon);
+	    }
 
-	var slider = document.getElementById("myRange");
-	var output = document.getElementById("demo");
-	output.innerHTML = slider.value;
+	    var slider = document.getElementById("myRange");
+	    var output = document.getElementById("demo");
+	    output.innerHTML = slider.value;
 
-	slider.oninput = function() {
-	  getNewCarsInterval = this.value;
-  	  output.innerHTML = getNewCarsInterval;
-	  clearInterval(interval);
-	  interval = 0;
-	  interval = window.setInterval(function(){
-		httpGetAsync("/", process_coord);
-      }, getNewCarsInterval);
-    }
+	    slider.oninput = function() {
+	      getNewCarsInterval = this.value;
+  	      output.innerHTML = getNewCarsInterval;
+	      clearInterval(interval);
+	      interval = 0;
+	      interval = window.setInterval(function(){
+		    httpGetAsync("/", process_coord);
+          }, getNewCarsInterval);
+        }
 
     </script>
 

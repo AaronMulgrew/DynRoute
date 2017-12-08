@@ -6,6 +6,7 @@ from bisect import bisect
 app = Flask(__name__)
 from flask_cors import CORS
 from scripts import haversine
+import datetime
 CORS(app)
 
 
@@ -13,6 +14,7 @@ CORS(app)
 class GlobalRouteHandler(object):
     def __init__(self, *args, **kwargs):
         self._all_routes = open("routes.json", "r").read()
+        self._junction_data = dict()
         # this checks to see that the JSON file is valid.
         try:
             self._all_routes = json.loads(self._all_routes)
@@ -21,26 +23,40 @@ class GlobalRouteHandler(object):
             exit(1)
         return super(GlobalRouteHandler, self).__init__(*args, **kwargs)
 
+    def get_current_load(self, coords):
+        traffic_load = 0
+        for current_datetime in self._junction_data:
+            if self._junction_data.get(current_datetime) == coords:
+                junc_time = self._junction_data[current_datetime]
+                if current_datetime > datetime.datetime.now()-datetime.timedelta(seconds=8):
+                    traffic_load += 6
+        return traffic_load
+
     def search_route(self, lat, lon):
         coords = str(lat) + '//' + str(lon)
         try:
             current_junc = self._all_routes["junctions"][coords]
-            self._all_routes["junctions"][coords]["traffic_load"] += 1
         except KeyError as e:
             current_junc = False
+        if current_junc != False:
+            current_datetime = datetime.datetime.now()
+            self._junction_data[current_datetime] = coords
+            traffic_load = self.get_current_load(coords)
+            self._all_routes["junctions"][coords]["traffic_load"] = traffic_load
+
         #self.route = current_route
         return current_junc
 
     def return_all_junctions(self):
         _all_routes = self._all_routes["junctions"]
         junc_list = []
+        #print self._junction_data
         for junc in _all_routes:
-            print junc
+            #print junc
             j = JunctionHandler()
             lat, lon = j.process_lat_lon(junc)
             junction = {"junction":_all_routes[junc],"lat":lat,"lon":lon}
             junc_list.append(junction)
-        print junc_list
         return junc_list
 
 class JunctionHandler(object):
@@ -70,7 +86,8 @@ class JunctionHandler(object):
             self.route = self.current_junc["routes"]
 
     def check_if_route_exists(self):
-        if self.current_junc != False:
+        #print self.route[0]
+        if self.current_junc != False and self.route[0] != {}:
             return True
         else:
             return False
@@ -93,11 +110,10 @@ class JunctionHandler(object):
                 route_with_weighting = [i, road_type]
                 road_type_list.append(route_with_weighting)
                 i += 1
-                print road_type
+                #print road_type
             number = self.weighted_choice(road_type_list)
         else:
             number = 0
-        print "junc"
         return number
 
     def weighted_choice(self, choices):
