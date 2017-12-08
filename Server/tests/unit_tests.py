@@ -60,6 +60,21 @@ class test_server(unittest.TestCase):
         choice = junc.weighted_choice([[0, 50], [1, 15]])
         self.assertTrue(0 <= choice <= 1)
 
+    def test_server_route_handler(self):
+        newserver = server
+        newserver.GetRoutes()
+        junc = newserver.GlobalRouteHandler()
+        self.assertIsInstance(junc, newserver.GlobalRouteHandler)
+
+    def test_server_calc_distance_time(self):
+        object = {u'lat': u'52.632912', u'lon': u'-1.157873', u'road_type': 1}
+        estimatedTime = 4.160666920213371
+        newserver = server
+        newserver.GetRoutes()
+        junc = server.JunctionHandler()
+        choice = junc.calculate_junction_distance_time(object)
+        self.assertTrue(choice, 4.160666920213371)
+
     def test_pick_random_edge_route(self):
         newserver = server
         newserver.GetRoutes()
