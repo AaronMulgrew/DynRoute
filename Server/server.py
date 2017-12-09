@@ -26,10 +26,13 @@ class GlobalRouteHandler(object):
     def get_current_load(self, coords):
         traffic_load = 0
         for current_datetime in self._junction_data:
+            # extract out the current coordinates by accessing the object in the dict
             if self._junction_data.get(current_datetime) == coords:
                 junc_time = self._junction_data[current_datetime]
                 if current_datetime > datetime.datetime.now()-datetime.timedelta(seconds=8):
                     traffic_load += 6
+                else:
+                    self._junction_data.pop(current_datetime)
         return traffic_load
 
     def search_route(self, lat, lon):
@@ -183,6 +186,9 @@ def coords(coordinates):
 def send_homepage():
     return current_app.send_static_file('index.html')
 
+@app.route('/junc_icon.png')
+def send_junc_icon():
+    return current_app.send_static_file('junc_icon.png')
 
 @app.route('/all_juncts')
 def return_all_junctions():

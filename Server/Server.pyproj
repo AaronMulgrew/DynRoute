@@ -43,6 +43,7 @@
     <Content Include="scripts\private.pem" />
     <Content Include="scripts\public.pem" />
     <Content Include="static\index.html" />
+    <Content Include="static\junc_icon.png" />
     <Content Include="static\MovingMarker.js" />
   </ItemGroup>
   <ItemGroup>

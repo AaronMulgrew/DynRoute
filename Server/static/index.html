@@ -36,7 +36,7 @@
 
     <script type="text/javascript">
 
-	    var map = L.map('map').setView([52.634204, -1.132845], 15);
+        var map = L.map('map').setView([52.635897, -1.132896], 15);
         var markers = []
         var showJunctions = false
         var JuncInterval = 1000
@@ -92,6 +92,12 @@
             httpGetAsync("/all_juncts", ProcessJunctions)
         }
 
+        var juncIcon = L.icon({
+            iconUrl: 'junc_icon.png',
+            iconSize: [32, 32],
+            shadowSize: [0, 0]
+        });
+
         function ProcessJunctions(JunctionData)
         {
             JunctionData = JSON.parse(JunctionData);
@@ -103,12 +109,8 @@
                 var pos = markers.indexOf(lat + ":" + lon);
                 if (pos == -1)
                 {
-                    console.log(JunctionData[i]);
-                    console.log(JunctionData[i].lat);
-
-                    console.log(map);
                     //var marker = L.marker([40.68510, -73.94136]).addTo(map);
-                    marker = L.marker([lat, lon]).addTo(map);
+                    marker = L.marker([lat, lon], { icon: juncIcon }).addTo(map);
                     marker.bindPopup("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.traffic_load);
                     markers.push(marker, lat + ":" + lon);
                 }
