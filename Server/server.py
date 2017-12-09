@@ -25,7 +25,7 @@ class GlobalRouteHandler(object):
 
     def get_current_load(self, coords):
         traffic_load = 0
-        for current_datetime in self._junction_data:
+        for current_datetime in self._junction_data.keys():
             # extract out the current coordinates by accessing the object in the dict
             if self._junction_data.get(current_datetime) == coords:
                 junc_time = self._junction_data[current_datetime]
