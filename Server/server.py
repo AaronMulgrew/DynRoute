@@ -1,5 +1,6 @@
 from flask import Flask, current_app
 import numpy
+import math
 import json
 from random import random
 from bisect import bisect
@@ -12,7 +13,7 @@ CORS(app)
 
 
 class GlobalRouteHandler(object):
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         self._all_routes = open("routes.json", "r").read()
         self._junction_data = dict()
         # this checks to see that the JSON file is valid.
@@ -21,7 +22,10 @@ class GlobalRouteHandler(object):
         except ValueError:
             print "\"Routes.json\" is not a valid JSON file."
             exit(1)
-        return super(GlobalRouteHandler, self).__init__(*args, **kwargs)
+        super(GlobalRouteHandler, self).__init__()
+
+    def call_all_routes(self):
+        return self._all_routes
 
     def get_current_load(self, coords):
         traffic_load = 0
@@ -33,6 +37,8 @@ class GlobalRouteHandler(object):
                     traffic_load += 6
                 else:
                     self._junction_data.pop(current_datetime)
+        if traffic_load > 100:
+            traffic_load = 99
         return traffic_load
 
     def search_route(self, lat, lon):
@@ -65,8 +71,11 @@ class GlobalRouteHandler(object):
 class JunctionHandler(object):
     """This class handles the data of the current junction """
 
+
     def __init__(self, current_route=None):
         """Default speed is 30 as this is the most common"""
+        ## automatically inherit all variables from GlobalRouteHandler class
+        super(JunctionHandler, self).__init__()
         if current_route == None:
             self._all_routes = globalRoute._all_routes
             # this is a method call inside the constructure, not ideal but 
@@ -88,6 +97,7 @@ class JunctionHandler(object):
             self.lon = self.current_coords[1]
             self.route = self.current_junc["routes"]
 
+    
     def check_if_route_exists(self):
         #print self.route[0]
         if self.current_junc != False and self.route[0] != {}:
@@ -148,11 +158,21 @@ class JunctionHandler(object):
         selected_junction = routeslist[selected_route_key]
         return [selected_route_key, selected_junction]
 
-    def calculate_junction_distance_time(self, newroute):
+    def calculate_junction_distance_time(self, newroute, traffic_load):
         distanceM = haversine.get_distance_haversine([float(self.lat), float(self.lon)], [float(newroute['lat']), float(newroute['lon'])])
         # calculate the time needed to get to the junction 
         # by Distance over speed
         time = distanceM / self.speed
+        if traffic_load >= 90:
+            time = time * 7
+        elif traffic_load > 75:
+            new_exp = traffic_load - 75
+            #traffic_load = traffic_load * time
+            new_time = math.exp(new_exp) / 2
+            print time
+            time = new_time
+        else:
+            time = time * 1.25
         return time
 
     def generate_route(self):
@@ -161,8 +181,9 @@ class JunctionHandler(object):
         #select a random 'route' according to the number
         selection_number = self.weighted_junc_search()
         newroute = potential_routes[selection_number]
+        traffic_load = globalRoute.get_current_load(self.lat + "//" + self.lon)
         # this will be the time to reach destination
-        time = self.calculate_junction_distance_time(newroute)
+        time = self.calculate_junction_distance_time(newroute, traffic_load)
         route = {"lat": str(self.lat), "lon": str(self.lon), "time": time, "route": {"lat":str(newroute["lat"]), "lon":str(newroute["lon"])}}
         return route
 

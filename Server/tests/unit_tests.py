@@ -72,8 +72,9 @@ class test_server(unittest.TestCase):
         newserver = server
         newserver.GetRoutes()
         junc = server.JunctionHandler()
-        choice = junc.calculate_junction_distance_time(object)
-        self.assertTrue(choice, 4.160666920213371)
+        choice = junc.calculate_junction_distance_time(object, traffic_load=40)
+        print choice
+        self.assertTrue(choice, 5.2008336502667145)
 
     def test_pick_random_edge_route(self):
         newserver = server
