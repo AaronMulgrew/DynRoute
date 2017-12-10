@@ -48,7 +48,8 @@
 
 	    //var marker = L.marker([40.68510, -73.94136]).addTo(map);
 
-	    function removeMarker(selectedMarker) {
+        function removeMarker(selectedMarker)
+        {
 		    if (selectedMarker) {
 		    map.removeLayer(selectedMarker);
 		    }
@@ -56,13 +57,13 @@
 
         function HideJunctions()
         {
+            clearInterval(JuncInterval);
             for (var i = 0; i < markers.length; i++)
             {
                 map.removeLayer(markers[i]);
             }
             showJunctions = false;
             markers = []
-            clearInterval(JuncInterval);
         }
 
 	    var interval = window.setInterval(function(){

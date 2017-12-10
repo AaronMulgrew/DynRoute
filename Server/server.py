@@ -10,33 +10,32 @@ from scripts import haversine
 import datetime
 CORS(app)
 
-
+class AllRoutes:
+    all_routes = json.loads(open("routes.json", "r").read())
+    junction_data = dict()
 
 class GlobalRouteHandler(object):
-    def __init__(self):
-        self._all_routes = open("routes.json", "r").read()
-        self._junction_data = dict()
-        # this checks to see that the JSON file is valid.
-        try:
-            self._all_routes = json.loads(self._all_routes)
-        except ValueError:
-            print "\"Routes.json\" is not a valid JSON file."
-            exit(1)
-        super(GlobalRouteHandler, self).__init__()
-
-    def call_all_routes(self):
-        return self._all_routes
+    #def __init__(self):
+    #    self._all_routes = open("routes.json", "r").read()
+    #    self._junction_data = dict()
+    #    # this checks to see that the JSON file is valid.
+    #    try:
+    #        self._all_routes = json.loads(self._all_routes)
+    #    except ValueError:
+    #        print "\"Routes.json\" is not a valid JSON file."
+    #        exit(1)
+    #    super(GlobalRouteHandler, self).__init__()
 
     def get_current_load(self, coords):
         traffic_load = 0
-        for current_datetime in self._junction_data.keys():
+        for current_datetime in AllRoutes.junction_data.keys():
             # extract out the current coordinates by accessing the object in the dict
-            if self._junction_data.get(current_datetime) == coords:
-                junc_time = self._junction_data[current_datetime]
+            if AllRoutes.junction_data.get(current_datetime) == coords:
+                junc_time = AllRoutes.junction_data[current_datetime]
                 if current_datetime > datetime.datetime.now()-datetime.timedelta(seconds=8):
                     traffic_load += 6
                 else:
-                    self._junction_data.pop(current_datetime)
+                    AllRoutes.junction_data.pop(current_datetime)
         if traffic_load > 100:
             traffic_load = 99
         return traffic_load
@@ -44,20 +43,20 @@ class GlobalRouteHandler(object):
     def search_route(self, lat, lon):
         coords = str(lat) + '//' + str(lon)
         try:
-            current_junc = self._all_routes["junctions"][coords]
+            current_junc = AllRoutes.all_routes["junctions"][coords]
         except KeyError as e:
             current_junc = False
         if current_junc != False:
             current_datetime = datetime.datetime.now()
-            self._junction_data[current_datetime] = coords
+            AllRoutes.junction_data[current_datetime] = coords
             traffic_load = self.get_current_load(coords)
-            self._all_routes["junctions"][coords]["traffic_load"] = traffic_load
+            AllRoutes.all_routes["junctions"][coords]["traffic_load"] = traffic_load
 
         #self.route = current_route
         return current_junc
 
     def return_all_junctions(self):
-        _all_routes = self._all_routes["junctions"]
+        _all_routes = AllRoutes.all_routes["junctions"]
         junc_list = []
         #print self._junction_data
         for junc in _all_routes:
@@ -77,7 +76,7 @@ class JunctionHandler(object):
         ## automatically inherit all variables from GlobalRouteHandler class
         super(JunctionHandler, self).__init__()
         if current_route == None:
-            self._all_routes = globalRoute._all_routes
+            self._all_routes = AllRoutes.all_routes
             # this is a method call inside the constructure, not ideal but 
             # current route variable needs to be filled.
             self.current_route = self.pick_random_edge_route()
@@ -148,7 +147,7 @@ class JunctionHandler(object):
         return lat, lon
 
     def pick_random_edge_route(self):
-        routeslist = self._all_routes["junctions_edge"][0]
+        routeslist = AllRoutes.all_routes["junctions_edge"][0]
         # select a random 'route' according to the number
         selection_number = numpy.random.randint(0, len(routeslist))
         # select a junction at random to generate traffic
