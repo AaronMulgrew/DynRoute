@@ -15,16 +15,6 @@ class AllRoutes:
     junction_data = dict()
 
 class GlobalRouteHandler(object):
-    #def __init__(self):
-    #    self._all_routes = open("routes.json", "r").read()
-    #    self._junction_data = dict()
-    #    # this checks to see that the JSON file is valid.
-    #    try:
-    #        self._all_routes = json.loads(self._all_routes)
-    #    except ValueError:
-    #        print "\"Routes.json\" is not a valid JSON file."
-    #        exit(1)
-    #    super(GlobalRouteHandler, self).__init__()
 
     def get_current_load(self, coords):
         traffic_load = 0
