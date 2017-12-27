@@ -13,7 +13,11 @@ class Dijkstra():
         print self.nodes
 
     def compute_shortest(self):
-        print "xxx"
+        route = set()
+        route.add(0)
+        return route
 
 c = Dijkstra()
 c.add_node("1212.121", "1212.11")
+x = c.compute_shortest()
+print x

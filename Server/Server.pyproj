@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8aec2035-2a81-4646-ae4a-864ce6abe187}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>scripts\dijksta_algorithm.py</StartupFile>
+    <StartupFile>tests\unit_tests.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -19,7 +19,7 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="scripts\dijksta_algorithm.py">
+    <Compile Include="scripts\dijkstra_algorithm.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="scripts\encrypt_decrypt_RSA.py">

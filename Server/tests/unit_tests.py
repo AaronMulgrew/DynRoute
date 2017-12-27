@@ -1,6 +1,7 @@
 import unittest
 import sys, os
 from scripts import haversine
+from scripts import dijkstra_algorithm
 import server as server
 
 class test_haversine(unittest.TestCase):
@@ -37,6 +38,13 @@ class test_haversine(unittest.TestCase):
         # also matches with the error message.
         self.assertRaisesRegexp(TypeError, "Could not convert as variables are not floats", haversine.get_distance_haversine, [lat1, lon1], [lat2, lon2])
 
+class test_dijkstra(unittest.TestCase):
+    def dijkstra_test_set(self):
+        dijkstra = test_dijkstra
+        c = Dijkstra()
+        c.add_node("1212.121", "1212.11")
+        x = c.compute_shortest()
+        self.assertIsInstance(x, set)
 
 class test_server(unittest.TestCase):
     def test_server_junction_handler(self):
