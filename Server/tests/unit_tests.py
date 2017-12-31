@@ -39,12 +39,25 @@ class test_haversine(unittest.TestCase):
         self.assertRaisesRegexp(TypeError, "Could not convert as variables are not floats", haversine.get_distance_haversine, [lat1, lon1], [lat2, lon2])
 
 class test_dijkstra(unittest.TestCase):
-    def dijkstra_test_set(self):
-        dijkstra = test_dijkstra
-        c = Dijkstra()
-        c.add_node("1212.121", "1212.11")
-        x = c.compute_shortest()
-        self.assertIsInstance(x, set)
+
+    def test_dijkstra_general(self):
+        c = dijkstra_algorithm.Dijkstra()
+        edges = [
+            ("A", "B", 7),
+            ("A", "D", 5),
+            ("B", "C", 8),
+            ("B", "D", 9),
+            ("B", "E", 7),
+            ("C", "E", 5),
+            ("D", "E", 15),
+            ("D", "F", 6),
+            ("E", "F", 8),
+            ("E", "G", 9),
+            ("F", "G", 11)
+        ]
+        print c.compute_shortest(edges, "A", "E")
+
+
 
 class test_server(unittest.TestCase):
     def test_server_junction_handler(self):
