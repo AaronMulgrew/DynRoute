@@ -37,19 +37,23 @@ class Dijkstra():
         # populate the heap with init values
         queue, seen = [(0,source,set())], set()
         while queue:
-            #(cost,v1, path) = heapq.heappop(queue)
+            # pop the smallest item from the queue
             item = heapq.heappop(queue)
+            # cost of retrieving the item
             cost = item[0]
-            v1 = item[1]
+            # this is the node of the value
+            # if node is the same as the starting node
+            # cost will be 0
+            node = item[1]
             path = item[2]
-            if v1 not in seen:
-                seen.add(v1)
+            if node not in seen:
+                seen.add(node)
                 #path = [v1, path]
-                path.add(v1)
+                path.add(node)
                 #path2 = path2.append(v1)
-                if v1 == destination:
+                if node == destination:
                     return cost, path
-                for item in nodelist[v1]:
+                for item in nodelist[node]:
                     if item.destination not in seen:
                         heapq.heappush(queue, (cost+item.distance, item.destination, path))
 
@@ -57,5 +61,5 @@ class Dijkstra():
                 #    if v2 not in seen:
                 #        heapq.heappush(queue, (cost+c, v2, path))
 
-        return float("inf")
+        return "no path found"
 
