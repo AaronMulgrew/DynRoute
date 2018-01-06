@@ -41,7 +41,7 @@ class test_haversine(unittest.TestCase):
 class test_dijkstra(unittest.TestCase):
 
     def test_dijkstra_general(self):
-        c = dijkstra_algorithm.Dijkstra()
+        dijkstra = dijkstra_algorithm.Dijkstra()
         edges = [
             ("A", "B", 7),
             ("A", "D", 5),
@@ -55,10 +55,34 @@ class test_dijkstra(unittest.TestCase):
             ("E", "G", 9),
             ("F", "G", 11)
         ]
-        c.add_edges(edges)
-        print c.compute_shortest("A", "E")
+        dijkstra.add_edges(edges)
+        print dijkstra.compute_shortest("A", "E")
 
+    def test_dijkstra_add_edges_invalid(self):
+        dijkstra = dijkstra_algorithm.Dijkstra()
+        edges = {}
+        # this test checks that the Exception that is raised
+        # also matches with the error message.
+        self.assertRaisesRegexp(TypeError, "edges variable is not a list.", dijkstra.add_edges, edges)
 
+    def test_dijkstra_add_edges_valid(self):
+        dijkstra = dijkstra_algorithm.Dijkstra()
+        edges = [
+            ("A", "B", 7),
+            ("A", "D", 5),
+            ("B", "C", 8),
+            ("B", "D", 9),
+            ("B", "E", 7),
+            ("C", "E", 5),
+            ("D", "E", 15),
+            ("D", "F", 6),
+            ("E", "F", 8),
+            ("E", "G", 9),
+            ("F", "G", 11)
+        ]
+        # this test checks that the Exception that is raised
+        # also matches with the error message.
+        self.assertTrue(dijkstra.add_edges(edges))
 
 class test_server(unittest.TestCase):
     def test_server_junction_handler(self):

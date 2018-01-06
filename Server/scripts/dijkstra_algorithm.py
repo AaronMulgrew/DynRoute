@@ -18,6 +18,7 @@ class Dijkstra():
             raise TypeError("edges variable is not a list.")
         else:
             self.edges = edges
+            return True
 
     def add_node(self, lat, lon):
         self.nodes.add(lat + "//" + lon)
