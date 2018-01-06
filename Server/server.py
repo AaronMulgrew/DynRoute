@@ -57,6 +57,14 @@ class GlobalRouteHandler(object):
             junc_list.append(junction)
         return junc_list
 
+class EmergencyHandler(object):
+
+    def __init__(self, *args, **kwargs):
+        return super(EmergencyHandler, self).__init__(*args, **kwargs)
+
+    def generate_emergency(self):
+        print "not implemented yet."
+
 class JunctionHandler(object):
     """This class handles the data of the current junction """
 
@@ -119,6 +127,9 @@ class JunctionHandler(object):
         return number
 
     def weighted_choice(self, choices):
+        ''' This function ensures that each route 
+        has a weighted choice so traffic keeps to 
+        trunk roads '''
         print choices
         total = 0
         cum_weights = []
@@ -208,6 +219,12 @@ def return_all_junctions():
 @app.route('/MovingMarker.js')
 def send_javascript():
     return current_app.send_static_file('MovingMarker.js')
+
+
+@app.route('/generate_emergency')
+def generate_emergency_route():
+    return json.dumps({"hello":"world"})
+
 
 @app.route('/')
 def generate_edge_coords():

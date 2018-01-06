@@ -32,6 +32,7 @@
     <div id="junctionToggle">
         <button onclick="PrepShowJunction()">Show Junctions</button>
         <button onclick="HideJunctions()">Hide Junctions</button>
+        <button onclick="GenerateEmergency()">Dispatch Emergency Vehicle</button>
     </div>
 
     <script type="text/javascript">
@@ -127,7 +128,8 @@
         }
 
 	    function httpGetAsync(theUrl, callback, marker = null)
-	    {
+        {
+            /// this is handler for getting HTTP requests with a callback function
 		    var xmlHttp = new XMLHttpRequest();
 		    xmlHttp.onreadystatechange = function() {
 			    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
@@ -143,7 +145,7 @@
 				    }
 			    }
 		    }
-		    xmlHttp.open("GET", theUrl, true); // true for asynchronous
+		    xmlHttp.open("GET", theUrl, true);
 		    xmlHttp.send(null);
 	    }
 	    function process_coord(data, myMovingMarker = null)
@@ -183,6 +185,16 @@
 		    httpGetAsync("/coordinates/" + latitude + ":" + longitude, process_coord, marker);
 		    //console.log(latlon);
 	    }
+
+        function GenerateEmergency()
+        {
+            httpGetAsync("/generate_emergency", ProcessEmergency);
+        }
+
+        function ProcessEmergency(message)
+        {
+            console.log(message);
+        }
 
 	    var slider = document.getElementById("myRange");
 	    var output = document.getElementById("demo");

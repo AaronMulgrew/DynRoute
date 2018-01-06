@@ -20,10 +20,6 @@ class Dijkstra():
             self.edges = edges
             return True
 
-    def add_node(self, lat, lon):
-        self.nodes.add(lat + "//" + lon)
-        print self.nodes
-
     def compute_shortest(self, source, destination):
         nodelist = dict()
         edges = self.edges
@@ -61,10 +57,6 @@ class Dijkstra():
                 for item in nodelist[node]:
                     if item.destination not in seen:
                         heapq.heappush(queue, (cost+item.distance, item.destination, path))
-
-                #for c, v2 in nodelist.get(v1, ()):
-                #    if v2 not in seen:
-                #        heapq.heappush(queue, (cost+c, v2, path))
 
         return "no path found"
 
