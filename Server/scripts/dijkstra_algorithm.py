@@ -13,15 +13,19 @@ class Dijkstra():
         self.weighting = dict()
         print "not Implemented yet"
 
-    def add_edge(self):
-        print "#####"
+    def add_edges(self, edges):
+        if type(edges) != list:
+            raise TypeError("edges variable is not a list.")
+        else:
+            self.edges = edges
 
     def add_node(self, lat, lon):
         self.nodes.add(lat + "//" + lon)
         print self.nodes
 
-    def compute_shortest(self, edges, source, destination):
+    def compute_shortest(self, source, destination):
         nodelist = dict()
+        edges = self.edges
         # create our own dict with each entry
         for source, destination, distance in edges:
             # create new instance of edgeitem class

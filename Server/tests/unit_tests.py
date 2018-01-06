@@ -55,7 +55,8 @@ class test_dijkstra(unittest.TestCase):
             ("E", "G", 9),
             ("F", "G", 11)
         ]
-        print c.compute_shortest(edges, "A", "E")
+        c.add_edges(edges)
+        print c.compute_shortest("A", "E")
 
 
 
