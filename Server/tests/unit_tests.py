@@ -56,7 +56,10 @@ class test_dijkstra(unittest.TestCase):
             ("F", "G", 11)
         ]
         dijkstra.add_edges(edges)
-        print dijkstra.compute_shortest("A", "E")
+
+        route = dijkstra.compute_shortest("A", "E")
+        route2 = dijkstra_algorithm.compute_shortest2(edges, "A", "E")
+        print route
 
     def test_dijkstra_add_edges_invalid(self):
         dijkstra = dijkstra_algorithm.Dijkstra()
@@ -80,8 +83,7 @@ class test_dijkstra(unittest.TestCase):
             ("E", "G", 9),
             ("F", "G", 11)
         ]
-        # this test checks that the Exception that is raised
-        # also matches with the error message.
+        # this test checks that the add edges function is ok.
         self.assertTrue(dijkstra.add_edges(edges))
 
 class test_server(unittest.TestCase):
