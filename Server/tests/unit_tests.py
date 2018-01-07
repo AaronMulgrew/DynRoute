@@ -58,8 +58,27 @@ class test_dijkstra(unittest.TestCase):
         dijkstra.add_edges(edges)
 
         route = dijkstra.compute_shortest("A", "E")
-        route2 = dijkstra_algorithm.compute_shortest2(edges, "A", "E")
         print route
+
+    def test_dijsktra_output_format(self):
+        dijkstra = dijkstra_algorithm.Dijkstra()
+        edges = [
+            ("A", "B", 7),
+            ("A", "D", 5),
+            ("B", "C", 8),
+            ("B", "D", 9),
+            ("B", "E", 7),
+            ("C", "E", 5),
+            ("D", "E", 15),
+            ("D", "F", 6),
+            ("E", "F", 8),
+            ("E", "G", 9),
+            ("F", "G", 11)
+        ]
+        dijkstra.add_edges(edges)
+
+        route = dijkstra.compute_shortest("A", "E")
+        self.assertEqual([14, ['A', 'B', 'E', 'A', 'B', 'E']], route)
 
     def test_dijkstra_add_edges_invalid(self):
         dijkstra = dijkstra_algorithm.Dijkstra()
