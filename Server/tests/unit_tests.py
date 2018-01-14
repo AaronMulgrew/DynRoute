@@ -4,6 +4,12 @@ from scripts import haversine
 from scripts import dijkstra_algorithm
 import server as server
 
+
+class test_emergency_handler(unittest.TestCase):
+    def test_emergency(self):
+        emergency = server.EmergencyHandler()
+        emergency.generate_emergency()
+
 class test_haversine(unittest.TestCase):
     def test_haversine(self):
         ## this is the distance from the two sets of coordinates in metres.

@@ -64,8 +64,17 @@
 		},
 		"52.633747//-1.143091": {
 			"routes": [{
+				"lat": "52.633939",
+				"lon": "-1.141648"
 			}],
 			"junction_name": "St Augustine Road - River crossing",
+			"speed": 30,
+			"traffic_load": 0
+		},
+		"52.633939//-1.141648": {
+			"routes": [{
+			}],
+			"junction_name": "St Augustine Road - A47",
 			"speed": 30,
 			"traffic_load": 0
 		},

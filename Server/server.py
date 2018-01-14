@@ -57,14 +57,6 @@ class GlobalRouteHandler(object):
             junc_list.append(junction)
         return junc_list
 
-class EmergencyHandler(object):
-
-    def __init__(self, *args, **kwargs):
-        return super(EmergencyHandler, self).__init__(*args, **kwargs)
-
-    def generate_emergency(self):
-        print "not implemented yet."
-
 class JunctionHandler(object):
     """This class handles the data of the current junction """
 
@@ -187,6 +179,15 @@ class JunctionHandler(object):
         route = {"lat": str(self.lat), "lon": str(self.lon), "time": time, "route": {"lat":str(newroute["lat"]), "lon":str(newroute["lon"])}}
         return route
 
+
+class EmergencyHandler(JunctionHandler):
+
+    def __init__(self, *args, **kwargs):
+        return super(EmergencyHandler, self).__init__(*args, **kwargs)
+
+    def generate_emergency(self):
+        route = self.generate_route()
+        print "not implemented yet."
 
 
 
