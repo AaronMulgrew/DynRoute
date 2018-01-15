@@ -138,7 +138,6 @@ class JunctionHandler(object):
         coords = latlon.replace("//", " ").split()
         lat = coords[0]
         lon = coords[1]
-        result = re.match("^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$", lat)
         return lat, lon
 
     def pick_random_edge_route(self):
