@@ -18,10 +18,13 @@ def add_junction():
         dictionary['lon'] = raw_input("Please type longitude of route: ")
         dictionary['road_type'] = raw_input("Please type road type of route: ")
         routes.append(dictionary)
+    if routes_amount == 0:
+        routes = [{}]
     parsed['junctions'][lat+'//'+lon] = {}
-    parsed['junctions'][lat+'//'+lon]['junc_name'] = junc_name
+    parsed['junctions'][lat+'//'+lon]['junction_name'] = junc_name
     parsed['junctions'][lat+'//'+lon]['speed'] = speed
     parsed['junctions'][lat+'//'+lon]['routes'] = routes
+    parsed['junctions'][lat+'//'+lon]['traffic_load'] = 0
 
 
 
@@ -46,7 +49,24 @@ def edit_junction(lat, lon):
         print "Current Routes: "
         current_element = parsed['junctions'][lat+'//'+lon]['routes']
         for element in current_element:
-            print element
+            if element:
+                print "Latitude: " + str(element['lat'])
+                print "Longitude: " + str(element['lon'])
+            else:
+                print "No current routes found."
+        element = raw_input("Would you like to add a new route? [Y/N]")
+        if element.upper() == 'Y':
+            latitude = raw_input("Please enter latitude for new route: ")
+            longitude = raw_input("Please enter longitude for new route: ")
+            road_type = raw_input("Please enter road type for new route: [1 - Trunk road/ 5 - Side street")
+            # this is if the current routes is empty.
+            if current_element == [{}]:
+                # current_element is not needed as a variable if it's empty.
+                parsed['junctions'][lat+'//'+lon]['routes'] = [{"lat":latitude, "lon":longitude}]
+            else:
+                current_element.append({"lat":latitude, "lon":longitude})
+        else:
+            return
 
 def del_junction(lat, lon):
     print "not implemented"

@@ -29,7 +29,8 @@
 		"52.633818//-1.154483": {
 			"routes": [{
 				"lat": "52.634169",
-				"lon": "-1.149998"
+				"lon": "-1.149998",
+				"road_type":1
 			}],
 			"junction_name": "A47",
 			"speed": 60,
@@ -38,7 +39,8 @@
 		"52.634169//-1.149998": {
 			"routes": [{
 				"lat": "52.633923",
-				"lon": "-1.146260"
+				"lon": "-1.146260",
+				"road_type":1
 			}],
 			"junction_name": "A47 - Glenfield Road East",
 			"speed": 30,
@@ -47,7 +49,8 @@
 		"52.633923//-1.146260": {
 			"routes": [{
 				"lat": "52.634053",
-				"lon": "-1.144829"
+				"lon": "-1.144829",
+				"road_type":1
 			}],
 			"junction_name": "A47 - A5460 junction",
 			"speed": 30,
@@ -56,7 +59,8 @@
 		"52.634053//-1.144829": {
 			"routes": [{
 				"lat": "52.633747",
-				"lon": "-1.143091"
+				"lon": "-1.143091",
+				"road_type":1
 			}],
 			"junction_name": "St Augustine Road - Car Park turnoff",
 			"speed": 30,
@@ -65,7 +69,8 @@
 		"52.633747//-1.143091": {
 			"routes": [{
 				"lat": "52.633939",
-				"lon": "-1.141648"
+				"lon": "-1.141648",
+				"road_type":1
 			}],
 			"junction_name": "St Augustine Road - River crossing",
 			"speed": 30,
