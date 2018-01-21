@@ -2,7 +2,8 @@
 <head>
     <title>Leaflet.js Demo</title>
     <meta charset="utf-8">
-
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/skeleton.css">
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="MovingMarker.js"></script>
@@ -24,6 +25,28 @@
 
 </head>
 <body>
+    {% block content %}
+    {% if name %}
+        <h1>Hello {{ name }}!</h1>
+    {% endif %}
+    {% if error %}
+        <h1>Error! {{ error }}!</h1>
+    {% endif %}
+    {% if session['logged_in'] %}
+
+    {% if data %}
+        <h3>Hello {{data}}</h3>
+    {% endif %}
+
+    <a class="button" href="/logout">Logout</a> <br> <br>
+
+    {% else %}
+    <p>Not Logged in!</p>
+    <a class="button" href="/login">Login</a>
+    {% endif %}
+    {% endblock %}
+
+
     <div id="map"></div>
     <div id="slidecontainer">
         <input type="range" min="200" max="3000" value="3000" class="slider" id="myRange">
@@ -41,50 +64,43 @@
         var markers = []
         var showJunctions = false
         var JuncInterval = 1000
-	    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: 'OSM'})
-	    .addTo(map);
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' })
+            .addTo(map);
 
-	    //var line = L.polyline([[40.68510, -73.94136], [40.68576, -73.94149], [40.68649, -73.94165]]);
-	    //map.addLayer(line);
+        //var line = L.polyline([[40.68510, -73.94136], [40.68576, -73.94149], [40.68649, -73.94165]]);
+        //map.addLayer(line);
 
-	    //var marker = L.marker([40.68510, -73.94136]).addTo(map);
+        //var marker = L.marker([40.68510, -73.94136]).addTo(map);
 
-        function removeMarker(selectedMarker)
-        {
-		    if (selectedMarker) {
-		    map.removeLayer(selectedMarker);
-		    }
+        function removeMarker(selectedMarker) {
+            if (selectedMarker) {
+                map.removeLayer(selectedMarker);
+            }
         }
 
-        function HideJunctions()
-        {
+        function HideJunctions() {
             clearInterval(JuncInterval);
-            for (var i = 0; i < markers.length; i++)
-            {
+            for (var i = 0; i < markers.length; i++) {
                 map.removeLayer(markers[i]);
             }
             showJunctions = false;
             markers = []
         }
 
-	    var interval = window.setInterval(function(){
-		    /// call your function here
-		    httpGetAsync("/", process_coord);
-	    }, 1000);
+        var interval = window.setInterval(function () {
+            /// call your function here
+            httpGetAsync("/", process_coord);
+        }, 1000);
 
-        function PrepShowJunction()
-        {
+        function PrepShowJunction() {
             JuncInterval = window.setInterval(function () {
                 ShowJunction();
             }, 1000);
         }
 
-        function ShowJunction()
-        {
-            if (showJunctions == false)
-            {
-                for (var i = 0; i < markers.length; i++)
-                {
+        function ShowJunction() {
+            if (showJunctions == false) {
+                for (var i = 0; i < markers.length; i++) {
                     map.removeLayer(markers[i]);
                 }
                 // make sure we clear the markers array
@@ -100,24 +116,20 @@
             shadowSize: [0, 0]
         });
 
-        function ProcessJunctions(JunctionData)
-        {
+        function ProcessJunctions(JunctionData) {
             JunctionData = JSON.parse(JunctionData);
             var i;
-            for (i in JunctionData)
-            {
+            for (i in JunctionData) {
                 var lat = Number(JunctionData[i].lat);
                 var lon = Number(JunctionData[i].lon);
                 var pos = markers.indexOf(lat + ":" + lon);
-                if (pos == -1)
-                {
+                if (pos == -1) {
                     //var marker = L.marker([40.68510, -73.94136]).addTo(map);
                     marker = L.marker([lat, lon], { icon: juncIcon }).addTo(map);
                     marker.bindPopup("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.traffic_load);
                     markers.push(marker, lat + ":" + lon);
                 }
-                else
-                {
+                else {
                     // this is minus one because we have added both the marker and the latitude/longitude values
                     marker = markers[pos - 1]
                     marker._popup.setContent("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.traffic_load);
@@ -127,72 +139,60 @@
             //console.log(JunctionData);
         }
 
-	    function httpGetAsync(theUrl, callback, marker = null)
-        {
+        function httpGetAsync(theUrl, callback, marker = null) {
             /// this is handler for getting HTTP requests with a callback function
-		    var xmlHttp = new XMLHttpRequest();
-		    xmlHttp.onreadystatechange = function() {
-			    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-			    {
-				    //console.log(xmlHttp.responseText);
-				    if (marker)
-				    {
-					    callback(xmlHttp.responseText, marker);
-				    }
-				    else
-				    {
-					    callback(xmlHttp.responseText);
-				    }
-			    }
-		    }
-		    xmlHttp.open("GET", theUrl, true);
-		    xmlHttp.send(null);
-	    }
-	    function process_coord(data, myMovingMarker = null)
-	    {
-		    if(data === "false" || !data)
-		    {
-			    removeMarker(myMovingMarker);
-		    }
-		    else
-		    {
-			    if (myMovingMarker)
-			    {
-				    removeMarker(myMovingMarker);
-			    }
-			    var obj = JSON.parse(data);
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function () {
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                    //console.log(xmlHttp.responseText);
+                    if (marker) {
+                        callback(xmlHttp.responseText, marker);
+                    }
+                    else {
+                        callback(xmlHttp.responseText);
+                    }
+                }
+            }
+            xmlHttp.open("GET", theUrl, true);
+            xmlHttp.send(null);
+        }
+        function process_coord(data, myMovingMarker = null) {
+            if (data === "false" || !data) {
+                removeMarker(myMovingMarker);
+            }
+            else {
+                if (myMovingMarker) {
+                    removeMarker(myMovingMarker);
+                }
+                var obj = JSON.parse(data);
 
-			    // convert the time in miliseconds to seconds
-			    timeSecs = obj.time * 1000;
-			
-			    //console.log(obj);
-                if (showJunctions != true)
-                {
+                // convert the time in miliseconds to seconds
+                timeSecs = obj.time * 1000;
+
+                //console.log(obj);
+                if (showJunctions != true) {
                     var myMovingMarker = L.Marker.movingMarker([[obj.lat, obj.lon], [obj.route.lat, obj.route.lon]],
                         [timeSecs]).addTo(map);
                     markers.push(myMovingMarker);
                     myMovingMarker.start();
                 }
-			    setTimeout(NewCoords, timeSecs, [obj.route.lat, obj.route.lon], myMovingMarker);
-		    }
-	    }
+                setTimeout(NewCoords, timeSecs, [obj.route.lat, obj.route.lon], myMovingMarker);
+            }
+        }
 
 
-	    function NewCoords(latlon, marker)
-	    {
-		    latitude = latlon[0];
-		    longitude = latlon[1];
-		    httpGetAsync("/coordinates/" + latitude + ":" + longitude, process_coord, marker);
-		    //console.log(latlon);
-	    }
+        function NewCoords(latlon, marker) {
+            latitude = latlon[0];
+            longitude = latlon[1];
+            httpGetAsync("/coordinates/" + latitude + ":" + longitude, process_coord, marker);
+            //console.log(latlon);
+        }
 
-        function GenerateEmergency()
-        {
+        function GenerateEmergency() {
             httpGetAsync("/generate_emergency", ProcessEmergency);
         }
 
-        function ProcessEmergency(message)
-        {
+        function ProcessEmergency(message) {
             message = JSON.parse(message);
             console.log(message);
             console.log(message.lat);
@@ -203,18 +203,18 @@
             var polyline = L.polyline(latlngs, { color: 'red' }).addTo(map);
         }
 
-	    var slider = document.getElementById("myRange");
-	    var output = document.getElementById("demo");
-	    output.innerHTML = slider.value;
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("demo");
+        output.innerHTML = slider.value;
 
-	    slider.oninput = function() {
-	      getNewCarsInterval = this.value;
-  	      output.innerHTML = getNewCarsInterval;
-	      clearInterval(interval);
-	      interval = 0;
-	      interval = window.setInterval(function(){
-		    httpGetAsync("/", process_coord);
-          }, getNewCarsInterval);
+        slider.oninput = function () {
+            getNewCarsInterval = this.value;
+            output.innerHTML = getNewCarsInterval;
+            clearInterval(interval);
+            interval = 0;
+            interval = window.setInterval(function () {
+                httpGetAsync("/", process_coord);
+            }, getNewCarsInterval);
         }
 
     </script>

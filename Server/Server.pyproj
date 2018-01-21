@@ -31,6 +31,9 @@
     <Compile Include="scripts\haversine.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="scripts\UserDB.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="scripts\__init__.py">
       <SubType>Code</SubType>
     </Compile>
@@ -48,11 +51,13 @@
     <Content Include="scripts\output.xml" />
     <Content Include="scripts\private.pem" />
     <Content Include="scripts\public.pem" />
-    <Content Include="static\index.html" />
+    <Content Include="templates\index.html" />
     <Content Include="static\junc_icon.png" />
     <Content Include="static\MovingMarker.js" />
+    <Content Include="templates\login.html" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="templates\" />
     <Folder Include="tests\" />
     <Folder Include="scripts\" />
     <Folder Include="static\" />

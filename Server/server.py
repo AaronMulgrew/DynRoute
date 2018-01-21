@@ -1,15 +1,37 @@
-from flask import Flask, current_app
+from flask import Flask, current_app, url_for, render_template, request, redirect, session, send_from_directory, flash, make_response
 import numpy
 import math
 import json
 from random import random
 from bisect import bisect
+from flask_sqlalchemy import SQLAlchemy
+from flask.ext.bcrypt import Bcrypt
 import re
 app = Flask(__name__)
 from flask_cors import CORS
 from scripts import haversine
 import datetime
 CORS(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+db.create_all()
+
+
+class User(db.Model):
+	""" Create user table"""
+	id = db.Column(db.Integer, primary_key=True)
+	username = db.Column(db.String(80), unique=True)
+	password = db.Column(db.String(80))
+
+	def __init__(self, username, password):
+		self.username = username
+		#self.password = password
+		pw_hash = bcrypt.generate_password_hash(password)
+		self.password = pw_hash
+
+
 
 class AllRoutes:
     all_routes = json.loads(open("routes.json", "r").read())
@@ -208,7 +230,34 @@ def coords(coordinates):
 
 @app.route('/index.html')
 def send_homepage():
-    return current_app.send_static_file('index.html')
+	""" Session control"""
+	if not session.get('logged_in'):
+		return render_template('index.html')
+	else:
+		print session['username']
+		return render_template('index.html', data=session['username'])
+
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    """Login Form"""
+    if request.method == 'GET':
+        return render_template('login.html')
+    else:
+        name = request.form['username']
+        passw = request.form['password']
+        data = User.query.filter_by(username=name).first()
+        if data:		
+            check = bcrypt.check_password_hash(data.password, passw)
+            print data.password
+            print check
+            if check:
+                session['logged_in'] = True
+                session['username'] = name
+                return url_for(index, name=name)
+                #flash("Successfully Logged in!")
+        else:
+            return render_template('index.html', error='Wrong username or password!')
 
 @app.route('/junc_icon.png')
 def send_junc_icon():
@@ -256,7 +305,6 @@ def GetRoutes():
 
 globalRoute = GlobalRouteHandler()
 if __name__ == "__main__":
-    #gen = GenerateData()
-    #r = gen.gen_rand_data()
-    # load the routes file
+    db.create_all()
+    app.secret_key = "123"
     app.run(host='0.0.0.0')
