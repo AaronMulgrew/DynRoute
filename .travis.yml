@@ -8,5 +8,6 @@ install:
   - pip install Flask
   - pip install flask_cors
   - pip install Flask-SQLAlchemy
+  - pip install flask-bcrypt
 script:
   - python -m tests.unit_tests
