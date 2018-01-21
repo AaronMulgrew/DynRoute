@@ -82,7 +82,8 @@ class JunctionHandler(object):
 
         if self.current_junc != False:
             self.junction_name = self.current_junc["junction_name"]
-            self.speed = self.current_junc["speed"]
+            # convert to int incase of accidental parsing as unicode
+            self.speed = int(self.current_junc["speed"])
             self.lat = self.current_coords[0]
             self.lon = self.current_coords[1]
             self.route = self.current_junc["routes"]
@@ -156,12 +157,12 @@ class JunctionHandler(object):
         # calculate the time needed to get to the junction 
         # by Distance over speed
         time = distanceM / self.speed
-        if traffic_load >= 90:
+        if traffic_load >= 77:
             time = time * 7
         elif traffic_load > 75:
-            new_exp = traffic_load - 75
+            new_exp = traffic_load - 70
             #traffic_load = traffic_load * time
-            new_time = math.exp(new_exp) / 2
+            new_time = math.exp(new_exp)
             print time
             time = new_time
         else:
@@ -188,7 +189,7 @@ class EmergencyHandler(JunctionHandler):
 
     def generate_emergency(self):
         route = self.generate_route()
-        print "not implemented yet."
+        return route
 
 
 
@@ -225,7 +226,9 @@ def send_javascript():
 
 @app.route('/generate_emergency')
 def generate_emergency_route():
-    return json.dumps({"hello":"world"})
+    Emergency = EmergencyHandler()
+    route = Emergency.generate_emergency()
+    return json.dumps(route)
 
 
 @app.route('/')

@@ -193,7 +193,14 @@
 
         function ProcessEmergency(message)
         {
+            message = JSON.parse(message);
             console.log(message);
+            console.log(message.lat);
+            var latlngs = [
+                [Number(message.lat), Number(message.lon)],
+                [Number(message.route.lat), Number(message.route.lon)]
+            ];
+            var polyline = L.polyline(latlngs, { color: 'red' }).addTo(map);
         }
 
 	    var slider = document.getElementById("myRange");
