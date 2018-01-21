@@ -7,5 +7,6 @@ before_install:
 install:
   - pip install Flask
   - pip install flask_cors
+  - pip install Flask-SQLAlchemy
 script:
   - python -m tests.unit_tests
