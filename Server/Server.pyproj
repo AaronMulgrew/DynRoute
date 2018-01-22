@@ -22,6 +22,9 @@
     <Compile Include="scripts\add_remove_junctions.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="scripts\API_auth.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="scripts\dijkstra_algorithm.py">
       <SubType>Code</SubType>
     </Compile>
@@ -39,6 +42,9 @@
     </Compile>
     <Compile Include="server.py" />
     <Compile Include="scripts\xml_parse.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="settings.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tests\unit_tests.py">

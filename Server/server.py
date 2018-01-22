@@ -1,8 +1,10 @@
-from flask import Flask, current_app, url_for, render_template, request, redirect, session, send_from_directory, flash, make_response
+from flask import Flask, current_app, url_for, render_template, request, redirect, session, send_from_directory, flash
 import numpy
 import math
 import json
+from scripts import API_auth
 from random import random
+import settings
 from bisect import bisect
 from flask_sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
@@ -238,6 +240,12 @@ def send_homepage():
 		return render_template('index.html', data=session['username'])
 
 
+@app.route("/logout")
+def logout():
+	"""Logout Form"""
+	session['logged_in'] = False
+	return redirect(url_for('send_homepage'))
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     """Login Form"""
@@ -252,10 +260,11 @@ def login():
             print data.password
             print check
             if check:
+                token = API_auth.encode(name, data.password)
                 session['logged_in'] = True
+                session['auth_token'] = token
                 session['username'] = name
-                return url_for(index, name=name)
-                #flash("Successfully Logged in!")
+                return redirect(url_for('send_homepage'))
         else:
             return render_template('index.html', error='Wrong username or password!')
 
@@ -275,9 +284,27 @@ def send_javascript():
 
 @app.route('/generate_emergency')
 def generate_emergency_route():
-    Emergency = EmergencyHandler()
-    route = Emergency.generate_emergency()
-    return json.dumps(route)
+    auth_token = request.headers['auth-token']
+    decoded = API_auth.decode(auth_token)
+    username = decoded['username']
+    password_hash = decoded['password_hash']
+    timestamp = decoded['timestamp']
+    timestamp = datetime.datetime.fromtimestamp(timestamp)
+    data = User.query.filter_by(username=username).first()
+    if data:
+        # this checks to see that the decrypted password
+        # is the same as the password hash for the login
+        if data.password == password_hash:
+            if timestamp > datetime.datetime.now()-datetime.timedelta(seconds=60):
+                Emergency = EmergencyHandler()
+                route = Emergency.generate_emergency()
+                return json.dumps(route)
+            else:
+                return "Token has expired."
+        else:
+            return "Wrong token!"
+    else:
+        return "Wrong token!"
 
 
 @app.route('/')
@@ -306,5 +333,5 @@ def GetRoutes():
 globalRoute = GlobalRouteHandler()
 if __name__ == "__main__":
     db.create_all()
-    app.secret_key = "123"
+    app.secret_key = settings.SECRET_KEY
     app.run(host='0.0.0.0')

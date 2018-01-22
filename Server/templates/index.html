@@ -27,16 +27,17 @@
 <body>
     {% block content %}
     {% if name %}
-        <h1>Hello {{ name }}!</h1>
+    <h1>Hello {{ name }}!</h1>
     {% endif %}
     {% if error %}
-        <h1>Error! {{ error }}!</h1>
+    <h1>Error! {{ error }}!</h1>
     {% endif %}
     {% if session['logged_in'] %}
 
     {% if data %}
-        <h3>Hello {{data}}</h3>
+    <h3>Hello {{data}}</h3>
     {% endif %}
+
 
     <a class="button" href="/logout">Logout</a> <br> <br>
 
@@ -55,7 +56,9 @@
     <div id="junctionToggle">
         <button onclick="PrepShowJunction()">Show Junctions</button>
         <button onclick="HideJunctions()">Hide Junctions</button>
+        {% if session['logged_in'] %}
         <button onclick="GenerateEmergency()">Dispatch Emergency Vehicle</button>
+        {% endif %}
     </div>
 
     <script type="text/javascript">
@@ -66,6 +69,11 @@
         var JuncInterval = 1000
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' })
             .addTo(map);
+
+        {% if session['auth_token'] %}
+        var AuthToken = " {{ session['auth_token'] }} "
+        {% endif %}
+
 
         //var line = L.polyline([[40.68510, -73.94136], [40.68576, -73.94149], [40.68649, -73.94165]]);
         //map.addLayer(line);
@@ -139,23 +147,32 @@
             //console.log(JunctionData);
         }
 
-        function httpGetAsync(theUrl, callback, marker = null) {
+        function httpGetAsync(theUrl, callback, marker = null, header = null, value = null) {
             /// this is handler for getting HTTP requests with a callback function
             var xmlHttp = new XMLHttpRequest();
-            xmlHttp.onreadystatechange = function () {
-                if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            xmlHttp.onreadystatechange = function ()
+            {
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                {
                     //console.log(xmlHttp.responseText);
-                    if (marker) {
+                    if (marker)
+                    {
                         callback(xmlHttp.responseText, marker);
                     }
-                    else {
+                    else
+                    {
                         callback(xmlHttp.responseText);
                     }
                 }
             }
             xmlHttp.open("GET", theUrl, true);
+            if (header) {
+                xmlHttp.setRequestHeader(header, value)
+            }
             xmlHttp.send(null);
         }
+
+
         function process_coord(data, myMovingMarker = null) {
             if (data === "false" || !data) {
                 removeMarker(myMovingMarker);
@@ -180,6 +197,15 @@
             }
         }
 
+        function CheckJson(str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
+
 
         function NewCoords(latlon, marker) {
             latitude = latlon[0];
@@ -189,18 +215,27 @@
         }
 
         function GenerateEmergency() {
-            httpGetAsync("/generate_emergency", ProcessEmergency);
+            console.log(sessionStorage);
+            httpGetAsync("/generate_emergency", ProcessEmergency,null,'auth_token', AuthToken);
         }
 
-        function ProcessEmergency(message) {
-            message = JSON.parse(message);
-            console.log(message);
-            console.log(message.lat);
-            var latlngs = [
-                [Number(message.lat), Number(message.lon)],
-                [Number(message.route.lat), Number(message.route.lon)]
-            ];
-            var polyline = L.polyline(latlngs, { color: 'red' }).addTo(map);
+        function ProcessEmergency(message)
+        {
+            if (CheckJson(message))
+            {
+                message = JSON.parse(message);
+                console.log(message);
+                console.log(message.lat);
+                var latlngs = [
+                    [Number(message.lat), Number(message.lon)],
+                    [Number(message.route.lat), Number(message.route.lon)]
+                ];
+                var polyline = L.polyline(latlngs, { color: 'red' }).addTo(map);
+            }
+            else
+            {
+                alert(message);
+            }
         }
 
         var slider = document.getElementById("myRange");
