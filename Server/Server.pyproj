@@ -54,15 +54,19 @@
     <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="requirements.txt" />
     <Content Include="scripts\output.xml" />
     <Content Include="scripts\private.pem" />
     <Content Include="scripts\public.pem" />
+    <Content Include="static\css\normalize.css" />
+    <Content Include="static\css\skeleton.css" />
     <Content Include="templates\index.html" />
     <Content Include="static\junc_icon.png" />
     <Content Include="static\MovingMarker.js" />
     <Content Include="templates\login.html" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="static\css\" />
     <Folder Include="templates\" />
     <Folder Include="tests\" />
     <Folder Include="scripts\" />

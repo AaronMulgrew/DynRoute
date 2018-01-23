@@ -1,6 +1,7 @@
-from flask import Flask, current_app, url_for, render_template, request, redirect, session, send_from_directory, flash
+from flask import current_app, url_for, render_template, request, redirect, session, send_from_directory, flash
 import numpy
 import math
+from __init__ import app, db, bcrypt
 import json
 from scripts import API_auth
 from random import random
@@ -9,16 +10,11 @@ from bisect import bisect
 from flask_sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
 import re
-app = Flask(__name__)
-from flask_cors import CORS
 from scripts import haversine
 import datetime
-CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
-db.create_all()
+
+
 
 
 class User(db.Model):
@@ -334,4 +330,4 @@ globalRoute = GlobalRouteHandler()
 if __name__ == "__main__":
     db.create_all()
     app.secret_key = settings.SECRET_KEY
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', ssl_context='adhoc')
