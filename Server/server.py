@@ -1,33 +1,27 @@
 from flask import current_app, url_for, render_template, request, redirect, session, send_from_directory, flash
 import numpy
 import math
-from __init__ import app, db, bcrypt
+from __init__ import app, bcrypt
+#, db, bcrypt
 import json
 from scripts import API_auth
 from random import random
 import settings
 from bisect import bisect
-from flask_sqlalchemy import SQLAlchemy
-from flask.ext.bcrypt import Bcrypt
 import re
 from scripts import haversine
 import datetime
+from OpenSSL import SSL
+from scripts import UserDB
+#context = SSL.Context(SSL.SSLv23_METHOD)
+#context.use_privatekey_file('server.key')
+#context.use_certificate_file('server.crt')
 
 
 
 
 
-class User(db.Model):
-	""" Create user table"""
-	id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.String(80), unique=True)
-	password = db.Column(db.String(80))
 
-	def __init__(self, username, password):
-		self.username = username
-		#self.password = password
-		pw_hash = bcrypt.generate_password_hash(password)
-		self.password = pw_hash
 
 
 
@@ -250,7 +244,7 @@ def login():
     else:
         name = request.form['username']
         passw = request.form['password']
-        data = User.query.filter_by(username=name).first()
+        data = UserDB.User.query.filter_by(username=name).first()
         if data:		
             check = bcrypt.check_password_hash(data.password, passw)
             print data.password
@@ -286,7 +280,7 @@ def generate_emergency_route():
     password_hash = decoded['password_hash']
     timestamp = decoded['timestamp']
     timestamp = datetime.datetime.fromtimestamp(timestamp)
-    data = User.query.filter_by(username=username).first()
+    data = UserDB.User.query.filter_by(username=username).first()
     if data:
         # this checks to see that the decrypted password
         # is the same as the password hash for the login
@@ -328,6 +322,5 @@ def GetRoutes():
 
 globalRoute = GlobalRouteHandler()
 if __name__ == "__main__":
-    db.create_all()
     app.secret_key = settings.SECRET_KEY
-    app.run(host='0.0.0.0', ssl_context='adhoc')
+    app.run(host='0.0.0.0')

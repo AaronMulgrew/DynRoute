@@ -1,11 +1,9 @@
 from flask import Flask
+import __init__
 from flask_sqlalchemy import SQLAlchemy
-from flask.ext.bcrypt import Bcrypt
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
-db.create_all()
+
+db = __init__.db
+bcrypt = __init__.bcrypt
 
 class User(db.Model):
 	""" Create user table"""
@@ -18,4 +16,3 @@ class User(db.Model):
 		#self.password = password
 		pw_hash = bcrypt.generate_password_hash(password)
 		self.password = pw_hash
-
