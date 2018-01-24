@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/skeleton.css">
-    <link rel="stylesheet" href="/static/leaflet/leaflet.css"/>
-    <script src="/static/leaflet/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
     <script src="MovingMarker.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <style type="text/css">
@@ -67,7 +67,7 @@
         var markers = []
         var showJunctions = false
         var JuncInterval = 1000
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: 'OSM' })
+        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' })
             .addTo(map);
 
         {% if session['auth_token'] %}
