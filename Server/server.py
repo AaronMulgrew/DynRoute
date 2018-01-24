@@ -13,9 +13,10 @@ from scripts import haversine
 import datetime
 from OpenSSL import SSL
 from scripts import UserDB
-#context = SSL.Context(SSL.SSLv23_METHOD)
-#context.use_privatekey_file('server.key')
-#context.use_certificate_file('server.crt')
+import ssl
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+context.load_cert_chain('certs/domain.crt', 'certs/domain.key')
+
 
 
 
@@ -323,4 +324,4 @@ def GetRoutes():
 globalRoute = GlobalRouteHandler()
 if __name__ == "__main__":
     app.secret_key = settings.SECRET_KEY
-    app.run(host='0.0.0.0')
+    app.run(debug=True, ssl_context=context)
