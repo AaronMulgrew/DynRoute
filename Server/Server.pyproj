@@ -22,6 +22,9 @@
     <Compile Include="scripts\add_remove_junctions.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="scripts\API_auth.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="scripts\dijkstra_algorithm.py">
       <SubType>Code</SubType>
     </Compile>
@@ -31,11 +34,17 @@
     <Compile Include="scripts\haversine.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="scripts\UserDB.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="scripts\__init__.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="server.py" />
     <Compile Include="scripts\xml_parse.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="settings.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tests\unit_tests.py">
@@ -45,14 +54,23 @@
     <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="requirements.txt" />
     <Content Include="scripts\output.xml" />
     <Content Include="scripts\private.pem" />
     <Content Include="scripts\public.pem" />
-    <Content Include="static\index.html" />
+    <Content Include="static\css\normalize.css" />
+    <Content Include="static\css\skeleton.css" />
+    <Content Include="static\leaflet\leaflet.css" />
+    <Content Include="static\leaflet\leaflet.js" />
+    <Content Include="templates\index.html" />
     <Content Include="static\junc_icon.png" />
     <Content Include="static\MovingMarker.js" />
+    <Content Include="templates\login.html" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="static\css\" />
+    <Folder Include="static\leaflet\" />
+    <Folder Include="templates\" />
     <Folder Include="tests\" />
     <Folder Include="scripts\" />
     <Folder Include="static\" />

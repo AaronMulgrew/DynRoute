@@ -86,7 +86,11 @@ def view_junction():
         print parsed['junctions'][junction_lat+'//'+junction_lon]['junction_name']
     except KeyError:
         print "Unfortunately your request did not return any results."
-        view_junction()
+        usr_search = raw_input("Would you like to search again? [Y/N]")
+        if usr_search.upper() == 'Y':
+            view_junction()
+        else:
+            return
     usr_input = raw_input("Would you like to edit or delete this junction? [E/D]")
     if usr_input.upper() == 'E':
         edit_junction(junction_lat, junction_lon)

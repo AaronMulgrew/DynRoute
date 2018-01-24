@@ -1,15 +1,30 @@
-from flask import Flask, current_app
+from flask import current_app, url_for, render_template, request, redirect, session, send_from_directory, flash
 import numpy
 import math
+from __init__ import app, bcrypt
+#, db, bcrypt
 import json
+from scripts import API_auth
 from random import random
+import settings
 from bisect import bisect
 import re
-app = Flask(__name__)
-from flask_cors import CORS
 from scripts import haversine
 import datetime
-CORS(app)
+from OpenSSL import SSL
+from scripts import UserDB
+import ssl
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+context.load_cert_chain('certs/domain.crt', 'certs/domain.key')
+
+
+
+
+
+
+
+
+
 
 class AllRoutes:
     all_routes = json.loads(open("routes.json", "r").read())
@@ -82,7 +97,8 @@ class JunctionHandler(object):
 
         if self.current_junc != False:
             self.junction_name = self.current_junc["junction_name"]
-            self.speed = self.current_junc["speed"]
+            # convert to int incase of accidental parsing as unicode
+            self.speed = int(self.current_junc["speed"])
             self.lat = self.current_coords[0]
             self.lon = self.current_coords[1]
             self.route = self.current_junc["routes"]
@@ -156,12 +172,12 @@ class JunctionHandler(object):
         # calculate the time needed to get to the junction 
         # by Distance over speed
         time = distanceM / self.speed
-        if traffic_load >= 90:
+        if traffic_load >= 77:
             time = time * 7
         elif traffic_load > 75:
-            new_exp = traffic_load - 75
+            new_exp = traffic_load - 70
             #traffic_load = traffic_load * time
-            new_time = math.exp(new_exp) / 2
+            new_time = math.exp(new_exp)
             print time
             time = new_time
         else:
@@ -188,7 +204,7 @@ class EmergencyHandler(JunctionHandler):
 
     def generate_emergency(self):
         route = self.generate_route()
-        print "not implemented yet."
+        return route
 
 
 
@@ -207,7 +223,41 @@ def coords(coordinates):
 
 @app.route('/index.html')
 def send_homepage():
-    return current_app.send_static_file('index.html')
+	""" Session control"""
+	if not session.get('logged_in'):
+		return render_template('index.html')
+	else:
+		print session['username']
+		return render_template('index.html', data=session['username'])
+
+
+@app.route("/logout")
+def logout():
+	"""Logout Form"""
+	session['logged_in'] = False
+	return redirect(url_for('send_homepage'))
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    """Login Form"""
+    if request.method == 'GET':
+        return render_template('login.html')
+    else:
+        name = request.form['username']
+        passw = request.form['password']
+        data = UserDB.User.query.filter_by(username=name).first()
+        if data:		
+            check = bcrypt.check_password_hash(data.password, passw)
+            print data.password
+            print check
+            if check:
+                token = API_auth.encode(name, data.password)
+                session['logged_in'] = True
+                session['auth_token'] = token
+                session['username'] = name
+                return redirect(url_for('send_homepage'))
+        else:
+            return render_template('index.html', error='Wrong username or password!')
 
 @app.route('/junc_icon.png')
 def send_junc_icon():
@@ -225,7 +275,27 @@ def send_javascript():
 
 @app.route('/generate_emergency')
 def generate_emergency_route():
-    return json.dumps({"hello":"world"})
+    auth_token = request.headers['auth-token']
+    decoded = API_auth.decode(auth_token)
+    username = decoded['username']
+    password_hash = decoded['password_hash']
+    timestamp = decoded['timestamp']
+    timestamp = datetime.datetime.fromtimestamp(timestamp)
+    data = UserDB.User.query.filter_by(username=username).first()
+    if data:
+        # this checks to see that the decrypted password
+        # is the same as the password hash for the login
+        if data.password == password_hash:
+            if timestamp > datetime.datetime.now()-datetime.timedelta(seconds=60):
+                Emergency = EmergencyHandler()
+                route = Emergency.generate_emergency()
+                return json.dumps(route)
+            else:
+                return "Token has expired."
+        else:
+            return "Wrong token!"
+    else:
+        return "Wrong token!"
 
 
 @app.route('/')
@@ -253,7 +323,5 @@ def GetRoutes():
 
 globalRoute = GlobalRouteHandler()
 if __name__ == "__main__":
-    #gen = GenerateData()
-    #r = gen.gen_rand_data()
-    # load the routes file
-    app.run(host='0.0.0.0')
+    app.secret_key = settings.SECRET_KEY
+    app.run(debug=True, ssl_context=context)
