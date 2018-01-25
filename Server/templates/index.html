@@ -74,12 +74,6 @@
         var AuthToken = " {{ session['auth_token'] }} "
         {% endif %}
 
-
-        //var line = L.polyline([[40.68510, -73.94136], [40.68576, -73.94149], [40.68649, -73.94165]]);
-        //map.addLayer(line);
-
-        //var marker = L.marker([40.68510, -73.94136]).addTo(map);
-
         function removeMarker(selectedMarker) {
             if (selectedMarker) {
                 map.removeLayer(selectedMarker);

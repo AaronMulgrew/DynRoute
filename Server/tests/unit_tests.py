@@ -2,6 +2,7 @@ import unittest
 import sys, os
 from scripts import haversine
 from scripts import dijkstra_algorithm
+from scripts import API_auth
 import server as server
 
 
@@ -157,6 +158,13 @@ class test_server(unittest.TestCase):
         # make sure we are producing something which is a valid python list.
         self.assertIsInstance(choice, list)
 
+class test_API_auth(unittest.TestCase):
+    def test_encode(self):
+        # this test tests the encode method for the JWT token
+        username = "Aaron"
+        password = 123456
+        encoded = API_auth.encode(username, password)
+        self.assertIsInstance(encoded, str)
 
 if __name__ == '__main__':
     unittest.main()
