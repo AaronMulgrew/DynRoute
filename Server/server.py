@@ -1,7 +1,8 @@
-from flask import current_app, url_for, render_template, request, redirect, session, send_from_directory, flash
+from flask import current_app, url_for, render_template, redirect, session, send_from_directory, flash
 import numpy
 import math
-from __init__ import app, bcrypt
+from flask.ext.api import status
+from __init__ import app, bcrypt, request
 #, db, bcrypt
 import json
 from scripts import API_auth
@@ -11,6 +12,7 @@ from bisect import bisect
 import re
 from scripts import haversine
 import datetime
+from models import emergency_route
 from OpenSSL import SSL
 from scripts import UserDB
 import ssl
@@ -275,27 +277,9 @@ def send_javascript():
 
 @app.route('/generate_emergency')
 def generate_emergency_route():
-    auth_token = request.headers['auth-token']
-    decoded = API_auth.decode(auth_token)
-    username = decoded['username']
-    password_hash = decoded['password_hash']
-    timestamp = decoded['timestamp']
-    timestamp = datetime.datetime.fromtimestamp(timestamp)
-    data = UserDB.User.query.filter_by(username=username).first()
-    if data:
-        # this checks to see that the decrypted password
-        # is the same as the password hash for the login
-        if data.password == password_hash:
-            if timestamp > datetime.datetime.now()-datetime.timedelta(seconds=60):
-                Emergency = EmergencyHandler()
-                route = Emergency.generate_emergency()
-                return json.dumps(route)
-            else:
-                return "Token has expired."
-        else:
-            return "Wrong token!"
-    else:
-        return "Wrong token!"
+
+    response_content = emergency_route.emergency_route()
+    return  response_content, status.HTTP_401_UNAUTHORIZED
 
 
 @app.route('/')

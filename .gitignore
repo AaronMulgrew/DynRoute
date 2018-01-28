@@ -10,3 +10,5 @@
 /Server/Server.pyperf
 /Server/tests/unit_tests.pyc
 /Server/scripts/dijkstra_algorithm.pyc
+/Server/models/emergency_route.pyc
+/Server/models/__init__.pyc

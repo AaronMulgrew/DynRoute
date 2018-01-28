@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8aec2035-2a81-4646-ae4a-864ce6abe187}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>server.py</StartupFile>
+    <StartupFile>tests\unit_tests.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -19,6 +19,12 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="models\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="models\emergency_route.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="scripts\add_remove_junctions.py">
       <SubType>Code</SubType>
     </Compile>
@@ -60,16 +66,14 @@
     <Content Include="scripts\public.pem" />
     <Content Include="static\css\normalize.css" />
     <Content Include="static\css\skeleton.css" />
-    <Content Include="static\leaflet\leaflet.css" />
-    <Content Include="static\leaflet\leaflet.js" />
     <Content Include="templates\index.html" />
     <Content Include="static\junc_icon.png" />
     <Content Include="static\MovingMarker.js" />
     <Content Include="templates\login.html" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="models\" />
     <Folder Include="static\css\" />
-    <Folder Include="static\leaflet\" />
     <Folder Include="templates\" />
     <Folder Include="tests\" />
     <Folder Include="scripts\" />

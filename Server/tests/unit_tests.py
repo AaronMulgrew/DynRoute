@@ -3,8 +3,40 @@ import sys, os
 from scripts import haversine
 from scripts import dijkstra_algorithm
 from scripts import API_auth
-import server as server
+try:
+    import server as server
+except ImportError:
+    sys.path.insert(0, os.path.abspath(".."))
+    from Server import server
+#from server import app
+#from app import app
 
+
+class test_flask_endpoints(unittest.TestCase): 
+    def setUp(self):
+        # creates a test client
+        self.app = server.app.test_client()
+        # propagate the exceptions to the test client
+        self.app.testing = True 
+
+    def test_generate_emergency_no_auth_token_resp_message(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('/generate_emergency')
+        self.assertEqual(result.data, "No auth token")
+
+    def test_generate_emergency_no_auth_token_resp_code(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('/generate_emergency')
+        self.assertEqual(result.status_code, 401)
+
+
+    def test_generate_emergency_wrong_auth_token_resp_message(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('/generate_emergency')
+        self.assertEqual(result.data, "No auth token")
 
 class test_emergency_handler(unittest.TestCase):
     def test_emergency(self):
