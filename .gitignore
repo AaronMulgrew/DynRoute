@@ -12,3 +12,5 @@
 /Server/scripts/dijkstra_algorithm.pyc
 /Server/models/emergency_route.pyc
 /Server/models/__init__.pyc
+/Server/models/global_route.pyc
+*.pyc

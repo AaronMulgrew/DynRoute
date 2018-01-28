@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8aec2035-2a81-4646-ae4a-864ce6abe187}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>tests\unit_tests.py</StartupFile>
+    <StartupFile>server.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -19,6 +19,15 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="all_routes.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="models\global_route.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="models\junction_handler.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="models\__init__.py">
       <SubType>Code</SubType>
     </Compile>

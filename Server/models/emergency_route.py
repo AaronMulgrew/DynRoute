@@ -1,4 +1,14 @@
 from __init__ import request
+import datetime
+from scripts import UserDB
+from scripts import API_auth
+from junction_handler import JunctionHandler
+
+class EmergencyHandler(JunctionHandler):
+
+    def generate_emergency(self):
+        route = self.generate_route()
+        return route
 
 def emergency_route():
     return_value = ""

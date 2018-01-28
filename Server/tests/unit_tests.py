@@ -1,6 +1,7 @@
 import unittest
 import sys, os
 from scripts import haversine
+from models import junction_handler, emergency_route, global_route
 from scripts import dijkstra_algorithm
 from scripts import API_auth
 try:
@@ -40,7 +41,7 @@ class test_flask_endpoints(unittest.TestCase):
 
 class test_emergency_handler(unittest.TestCase):
     def test_emergency(self):
-        emergency = server.EmergencyHandler()
+        emergency = emergency_route.EmergencyHandler()
         emergency.generate_emergency()
 
 class test_haversine(unittest.TestCase):
@@ -145,47 +146,37 @@ class test_dijkstra(unittest.TestCase):
         self.assertTrue(dijkstra.add_edges(edges))
 
 class test_server(unittest.TestCase):
+
+    def setUp(self):
+        self.JunctionHandler = junction_handler.JunctionHandler()
+        return super(test_server, self).setUp()
+
     def test_server_junction_handler(self):
-        newserver = server
-        newserver.GetRoutes()
-        junc = newserver.JunctionHandler()
-        self.assertIsInstance(junc, newserver.JunctionHandler)
+        junc = self.JunctionHandler
+        class_file = junction_handler
+        self.assertIsInstance(junc, class_file.JunctionHandler)
 
     def test_server_process_latlon(self):
         # check that the latlon function actually splits the latitude and longitude.
-        newserver = server
-        newserver.GetRoutes()
-        junc = newserver.JunctionHandler()
+        junc = self.JunctionHandler
         latlon = junc.process_lat_lon('120//-1')
         self.assertEqual(latlon, ('120', '-1'))
 
     def test_weighted_choice(self):
-        newserver = server
-        newserver.GetRoutes()
-        junc = server.JunctionHandler()
+        junc = self.JunctionHandler
         choice = junc.weighted_choice([[0, 50], [1, 15]])
         self.assertTrue(0 <= choice <= 1)
-
-    def test_server_route_handler(self):
-        newserver = server
-        newserver.GetRoutes()
-        junc = newserver.GlobalRouteHandler()
-        self.assertIsInstance(junc, newserver.GlobalRouteHandler)
 
     def test_server_calc_distance_time(self):
         object = {u'lat': u'52.632912', u'lon': u'-1.157873', u'road_type': 1}
         estimatedTime = 4.160666920213371
-        newserver = server
-        newserver.GetRoutes()
-        junc = server.JunctionHandler()
+        junc = self.JunctionHandler
         choice = junc.calculate_junction_distance_time(object, traffic_load=40)
         print choice
         self.assertTrue(choice, 5.2008336502667145)
 
     def test_pick_random_edge_route(self):
-        newserver = server
-        newserver.GetRoutes()
-        junc = server.JunctionHandler()
+        junc = self.JunctionHandler
         choice = junc.pick_random_edge_route()
         # make sure we are producing something which is a valid python list.
         self.assertIsInstance(choice, list)
