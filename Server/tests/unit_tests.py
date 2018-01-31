@@ -46,6 +46,12 @@ class test_all_routes(unittest.TestCase):
         self.allroutes = all_routes.AllRoutes()
         self.junction_data = self.allroutes.grab_junction_data()
 
+    def test_valid_add_junction(self):
+        time = datetime.datetime.now()
+        coords = ["1111","2222"]
+        result = self.allroutes.add_junction_data(time, coords)
+        self.assertTrue(result)
+
     def test_invalid_pop_route(self):
         time = datetime.datetime.now()
         returnvar = self.allroutes.pop_route(time)
@@ -54,9 +60,10 @@ class test_all_routes(unittest.TestCase):
     def test_valid_pop_route(self):
         time = datetime.datetime.now()
         coords = ["1111","2222"]
-        self.allroutes.junction_data[current_datetime] = coords
+        self.allroutes.add_junction_data(time, coords)
+        #self.allroutes.junction_data[current_datetime] = coords
         returnvar = self.allroutes.pop_route(time)
-        self.assertFalse(returnvar)
+        self.assertTrue(returnvar)
 
 class test_emergency_handler(unittest.TestCase):
     def test_emergency(self):
