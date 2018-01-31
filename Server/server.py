@@ -1,14 +1,14 @@
-from flask import current_app, url_for, render_template, redirect, session, send_from_directory, flash
-import numpy
-import math
-from flask.ext.api import status
-from __init__ import app, bcrypt, request
-#, db, bcrypt
+''' This is the base server.py file,
+mainly used for endpoint redirection to the models and scripts folders
+'''
 import json
+from flask import (current_app, url_for, \
+render_template, redirect, session)
+from flask_api import status
+from __init__ import app, bcrypt, request
 from scripts import API_auth
 
 import settings
-import re
 
 from models import emergency_route, junction_handler
 from OpenSSL import SSL
@@ -89,9 +89,13 @@ def send_javascript():
 
 @app.route('/generate_emergency')
 def generate_emergency_route():
-
     response_content = emergency_route.emergency_route()
-    return  response_content, status.HTTP_401_UNAUTHORIZED
+    content = response_content[0]
+    success = response_content[1]
+    if success == True:
+        return  content
+    else:
+        return content, status.HTTP_401_UNAUTHORIZED
 
 
 @app.route('/')

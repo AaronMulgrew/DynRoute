@@ -1,5 +1,7 @@
 import unittest
 import sys, os
+import datetime
+import all_routes
 from scripts import haversine
 from models import junction_handler, emergency_route, global_route
 from scripts import dijkstra_algorithm
@@ -38,6 +40,23 @@ class test_flask_endpoints(unittest.TestCase):
         # on the specified path
         result = self.app.get('/generate_emergency')
         self.assertEqual(result.data, "No auth token")
+
+class test_all_routes(unittest.TestCase):
+    def setUp(self):
+        self.allroutes = all_routes.AllRoutes()
+        self.junction_data = self.allroutes.grab_junction_data()
+
+    def test_invalid_pop_route(self):
+        time = datetime.datetime.now()
+        returnvar = self.allroutes.pop_route(time)
+        self.assertFalse(returnvar)
+
+    def test_valid_pop_route(self):
+        time = datetime.datetime.now()
+        coords = ["1111","2222"]
+        self.allroutes.junction_data[current_datetime] = coords
+        returnvar = self.allroutes.pop_route(time)
+        self.assertFalse(returnvar)
 
 class test_emergency_handler(unittest.TestCase):
     def test_emergency(self):

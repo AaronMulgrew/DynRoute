@@ -13,7 +13,8 @@ class JunctionHandler(object):
         """Default speed is 30 as this is the most common"""
         self.globalRoutes = global_route.GlobalRouteHandler()
         if current_route == None:
-            self._all_routes = all_routes.AllRoutes.all_routes
+            allroutes = all_routes.AllRoutes()
+            self._all_routes = allroutes.grab_all_routes()
             # this is a method call inside the constructure, not ideal but 
             # current route variable needs to be filled.
             self.current_route = self.pick_random_edge_route()
@@ -70,13 +71,13 @@ class JunctionHandler(object):
         ''' This function ensures that each route 
         has a weighted choice so traffic keeps to 
         trunk roads '''
-        print choices
         total = 0
         cum_weights = []
         for choice in choices:
             total += choice[1]
             cum_weights.append(total)
         x = random() * total
+        # this bisects the weight by probability
         i = bisect(cum_weights, x)
         return i
 
@@ -88,7 +89,9 @@ class JunctionHandler(object):
         return lat, lon
 
     def pick_random_edge_route(self):
-        routeslist = all_routes.AllRoutes.all_routes["junctions_edge"][0]
+        allroutes = all_routes.AllRoutes()
+        routes = allroutes.grab_all_routes()
+        routeslist = routes["junctions_edge"][0]
         # select a random 'route' according to the number
         selection_number = numpy.random.randint(0, len(routeslist))
         # select a junction at random to generate traffic

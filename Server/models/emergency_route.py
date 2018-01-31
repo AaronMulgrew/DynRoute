@@ -1,5 +1,6 @@
 from __init__ import request
 import datetime
+import json
 from scripts import UserDB
 from scripts import API_auth
 from junction_handler import JunctionHandler
@@ -12,6 +13,7 @@ class EmergencyHandler(JunctionHandler):
 
 def emergency_route():
     return_value = ""
+    success = False
     try:
         # this is the end point for the generate emergency token
         auth_token = request.headers['auth-token']
@@ -33,10 +35,11 @@ def emergency_route():
                 Emergency = EmergencyHandler()
                 route = Emergency.generate_emergency()
                 return_value = json.dumps(route)
+                success = True
             else:
                 return_value = "Token has expired."
         else:
             return_value = "Wrong token!"
     elif return_value == None:
         return_value = "Wrong token!"
-    return return_value
+    return [return_value, success]

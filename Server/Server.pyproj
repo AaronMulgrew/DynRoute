@@ -69,12 +69,14 @@
     <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="pylintrc" />
     <Content Include="requirements.txt" />
     <Content Include="scripts\output.xml" />
     <Content Include="scripts\private.pem" />
     <Content Include="scripts\public.pem" />
     <Content Include="static\css\normalize.css" />
     <Content Include="static\css\skeleton.css" />
+    <Content Include="static\javascript\traffic_control.js" />
     <Content Include="templates\index.html" />
     <Content Include="static\junc_icon.png" />
     <Content Include="static\MovingMarker.js" />
@@ -83,6 +85,7 @@
   <ItemGroup>
     <Folder Include="models\" />
     <Folder Include="static\css\" />
+    <Folder Include="static\javascript\" />
     <Folder Include="templates\" />
     <Folder Include="tests\" />
     <Folder Include="scripts\" />
