@@ -124,4 +124,4 @@ def GetRoutes():
 
 if __name__ == "__main__":
     app.secret_key = settings.SECRET_KEY
-    app.run(debug=True, ssl_context=context)
+    app.run(debug=False, ssl_context=context)

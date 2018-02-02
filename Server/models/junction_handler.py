@@ -106,16 +106,18 @@ class JunctionHandler(object):
         # calculate the time needed to get to the junction 
         # by Distance over speed
         time = distanceM / self.speed
-        if traffic_load >= 77:
+        if traffic_load >= 50:
             time = time * 7
-        elif traffic_load > 75:
-            new_exp = traffic_load - 70
-            #traffic_load = traffic_load * time
-            new_time = math.exp(new_exp)
-            print time
-            time = new_time
-        else:
-            time = time * 1.25
+        #if traffic_load >= 77:
+        #    time = time * 7
+        #elif traffic_load > 75:
+        #    new_exp = traffic_load - 70
+        #    #traffic_load = traffic_load * time
+        #    new_time = math.exp(new_exp)
+        #    print time
+        #    time = new_time
+        #else:
+        #    time = time * 1.25
         return time
 
     def generate_route(self):

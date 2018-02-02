@@ -4,6 +4,8 @@ class AllRoutes(object):
     def __init__(self):
         self.all_routes = json.loads(open("routes.json", "r").read())
         # this is the 'live' junction data dictionary
+        # it contains a series of dateTime entries
+        # that will iterated over from the code
         self.junction_data = dict()
 
     def grab_all_routes(self):
@@ -13,7 +15,10 @@ class AllRoutes(object):
         return self.junction_data
 
     def update_traffic_load(self, coords, traffic_load):
-        self.all_routes["junctions"][coords]["traffic_load"] = traffic_load
+        try:
+            self.all_routes["junctions"][coords]["traffic_load"] = traffic_load
+        except TypeError:
+            return False
         return True
 
     def add_junction_data(self, datetime, coords):

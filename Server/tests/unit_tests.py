@@ -65,6 +65,12 @@ class test_all_routes(unittest.TestCase):
         returnvar = self.allroutes.pop_route(time)
         self.assertTrue(returnvar)
 
+    def test_update_traffic_load_invalid(self):
+        coords = ["1111", "2222"]
+        traffic_load = 24
+        returnvar = self.allroutes.update_traffic_load(coords, traffic_load)
+        self.assertFalse(returnvar)
+
 class test_emergency_handler(unittest.TestCase):
     def test_emergency(self):
         emergency = emergency_route.EmergencyHandler()

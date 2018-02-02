@@ -12,7 +12,6 @@ class GlobalRouteHandler(object):
         for current_datetime in allroutes.junction_data.keys():
             # extract out the current coordinates by accessing the object in the dict
             if junction_data.get(current_datetime) == coords:
-                print "at junction data if statement"
 
                 # make sure the junction is in timerange
                 if current_datetime > datetime.datetime.now()-datetime.timedelta(seconds=8):
