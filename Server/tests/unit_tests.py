@@ -1,5 +1,6 @@
 import unittest
 import sys, os
+import json
 import datetime
 import all_routes
 from scripts import haversine
@@ -21,6 +22,36 @@ class test_flask_endpoints(unittest.TestCase):
         self.app = server.app.test_client()
         # propagate the exceptions to the test client
         self.app.testing = True 
+
+    def test_gen_route(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('/')
+        assert result.status_code == 200
+
+    def test_gen_route_json(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('/')
+        data = json.loads(result.data)
+        # make sure that there is a latitude key in the dict
+        assert 'lat' in data
+        assert 'lon' in data
+
+
+    def test_gen_next_route(self):
+        result = self.app.get('coordinates/52.632912:-1.157873')
+        assert result.status_code == 200
+
+    def test_gen_next_route_json(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/52.632912:-1.157873')
+        data = json.loads(result.data)
+        # make sure that there is a latitude key in the dict
+        assert 'lat' in data
+        assert 'lon' in data
+
 
     def test_generate_emergency_no_auth_token_resp_message(self):
         # sends HTTP GET request to the application

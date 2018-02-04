@@ -45,6 +45,10 @@ def send_homepage():
 		return render_template('index.html', data=session['username'])
 
 
+@app.route('/config.html')
+def send_config():
+	return render_template('config.html')
+
 @app.route("/logout")
 def logout():
 	"""Logout Form"""
@@ -89,13 +93,18 @@ def send_javascript():
 
 @app.route('/generate_emergency')
 def generate_emergency_route():
-    response_content = emergency_route.emergency_route()
-    content = response_content[0]
-    success = response_content[1]
-    if success == True:
-        return  content
+    ## simple check to see if the auth token is in the request 
+    ## header
+    if 'auth-token' in request.headers:
+        response_content = emergency_route.emergency_route()
+        content = response_content[0]
+        success = response_content[1]
+        if success == True:
+            return  content
+        else:
+            return content, status.HTTP_401_UNAUTHORIZED
     else:
-        return content, status.HTTP_401_UNAUTHORIZED
+        return "No auth token", status.HTTP_401_UNAUTHORIZED
 
 
 @app.route('/')

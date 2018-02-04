@@ -76,7 +76,9 @@
     <Content Include="scripts\public.pem" />
     <Content Include="static\css\normalize.css" />
     <Content Include="static\css\skeleton.css" />
+    <Content Include="static\images\helpicon.png" />
     <Content Include="static\javascript\traffic_control.js" />
+    <Content Include="templates\config.html" />
     <Content Include="templates\index.html" />
     <Content Include="static\junc_icon.png" />
     <Content Include="static\MovingMarker.js" />
@@ -86,6 +88,7 @@
     <Folder Include="models\" />
     <Folder Include="static\css\" />
     <Folder Include="static\javascript\" />
+    <Folder Include="static\images\" />
     <Folder Include="templates\" />
     <Folder Include="tests\" />
     <Folder Include="scripts\" />
