@@ -1,15 +1,26 @@
-from __init__ import request
+from __init__ import request, all_routes
 import datetime
 import json
+from models import global_route
+from global_route import GlobalRouteHandler
 from scripts import UserDB
 from scripts import API_auth
 from junction_handler import JunctionHandler
 
-class EmergencyHandler(JunctionHandler):
+class EmergencyHandler(GlobalRouteHandler):
+    
+    def __init__(self, current_route = None):
+        super(EmergencyHandler, self).__init__(current_route)
+        self._all_routes = self.all_routes.grab_all_routes()
+
 
     def generate_emergency(self):
-        route = self.generate_route()
-        return route
+        print self._all_routes
+        return self._all_routes
+
+
+
+
 
 def emergency_route():
     return_value = ""

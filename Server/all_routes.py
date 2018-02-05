@@ -9,6 +9,9 @@ class AllRoutes(object):
         self.junction_data = dict()
 
     def grab_all_routes(self):
+        #for key, value in self.all_routes['junctions'].iteritems():
+        #    valsss = value["traffic_load"]
+        #    print "Traffic Load: " + str(valsss)
         return self.all_routes
 
     def grab_junction_data(self):

@@ -81,10 +81,10 @@ def login():
 def send_junc_icon():
     return current_app.send_static_file('junc_icon.png')
 
-@app.route('/all_juncts')
-def return_all_junctions():
-    all_junctions = globalRoute.return_all_junctions()
-    return json.dumps(all_junctions)
+#@app.route('/all_juncts')
+#def return_all_junctions():
+#    all_junctions = globalRoute.return_all_junctions()
+#    return json.dumps(all_junctions)
 
 @app.route('/MovingMarker.js')
 def send_javascript():
@@ -100,7 +100,7 @@ def generate_emergency_route():
         content = response_content[0]
         success = response_content[1]
         if success == True:
-            return  content
+            return content
         else:
             return content, status.HTTP_401_UNAUTHORIZED
     else:

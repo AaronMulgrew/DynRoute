@@ -4,10 +4,13 @@ import datetime
 
 class GlobalRouteHandler(object):
 
+    def __init__(self, *args, **kwargs):
+        self.all_routes = allroutes
+
     def get_current_load(self, coords):
         traffic_load = 0
-        junction_data = allroutes.grab_junction_data()
-        routes = allroutes.grab_all_routes()
+        junction_data = self.all_routes.grab_junction_data()
+        routes = self.all_routes.grab_all_routes()
         # interate over all of the junction keys
         for current_datetime in allroutes.junction_data.keys():
             # extract out the current coordinates by accessing the object in the dict
@@ -18,7 +21,7 @@ class GlobalRouteHandler(object):
                     traffic_load += 4
                 else:
                     # pop the current time from the model
-                    allroutes.pop_route(current_datetime)
+                    self.all_routes.pop_route(current_datetime)
         if traffic_load > 100:
             # make sure that the traffic load never exceeds 100%
             traffic_load = 99
@@ -28,7 +31,7 @@ class GlobalRouteHandler(object):
         # split the coords
         coords = str(lat) + '//' + str(lon)
         try:
-            routes = allroutes.grab_all_routes()
+            routes = self.all_routes.grab_all_routes()
             current_junc = routes["junctions"][coords]
         except KeyError as e:
             current_junc = False
@@ -43,16 +46,4 @@ class GlobalRouteHandler(object):
 
         #self.route = current_route
         return current_junc
-
-    def return_all_junctions(self):
-        _all_routes = AllRoutes.all_routes["junctions"]
-        junc_list = []
-        #print self._junction_data
-        for junc in _all_routes:
-            #print junc
-            j = JunctionHandler()
-            lat, lon = j.process_lat_lon(junc)
-            junction = {"junction":_all_routes[junc],"lat":lat,"lon":lon}
-            junc_list.append(junction)
-        return junc_list
 
