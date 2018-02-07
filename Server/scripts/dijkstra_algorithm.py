@@ -15,8 +15,8 @@ class Dijkstra():
         print "not Implemented yet"
 
     def add_edges(self, edges):
-        if type(edges) != list:
-            raise TypeError("edges variable is not a list.")
+        if type(edges) != dict:
+            raise TypeError("edges variable is not a dictionary.")
         else:
             self.edges = edges
             return True
