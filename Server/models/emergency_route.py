@@ -4,7 +4,7 @@ import json
 from models import global_route
 from global_route import GlobalRouteHandler
 from scripts import UserDB
-from scripts import API_auth
+from scripts import API_auth, dijkstra_algorithm
 from junction_handler import JunctionHandler
 
 class EmergencyHandler(GlobalRouteHandler):
@@ -16,6 +16,8 @@ class EmergencyHandler(GlobalRouteHandler):
 
     def generate_emergency(self):
         print self._all_routes
+        dijkstra = dijkstra_algorithm.Dijkstra()
+        dijkstra.add_edges(self._all_routes)
         return self._all_routes
 
 

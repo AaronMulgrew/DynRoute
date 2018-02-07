@@ -83,6 +83,7 @@
     <Content Include="static\junc_icon.png" />
     <Content Include="static\MovingMarker.js" />
     <Content Include="templates\login.html" />
+    <Content Include="templates\Unauthorized.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="models\" />
