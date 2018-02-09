@@ -11,11 +11,6 @@ def get_distance_haversine(distance1, distance2):
     lat2 = distance2[0]
     lon2 = distance2[1]
 
-    '''lat1 = 52.632930
-    lon1 = -1.161572
-    lat2 = 52.632912
-    lon2 = -1.157873'''
-
     try:
         ## calculate the distance in latitude and longtiude in radians
         distanceLat = radians(lat2 - lat1)

@@ -23,7 +23,6 @@ function HideJunctions() {
 }
 
 var interval = window.setInterval(function () {
-    /// call your function here
     httpGetAsync("/", process_coord);
 }, 1000);
 
@@ -32,6 +31,21 @@ function PrepShowJunction() {
         ShowJunction();
     }, 1000);
 }
+
+// this is a general cleanup function
+// incase a marker timesout
+var interval = window.setInterval(function () {
+    var TenSecs = 10 * 1000; /* ms */
+    var TimeNow = Date.now();
+    for (var i = 0; i < markers.length; i++) {
+        var MarkerTimestamp = markers[i][1]
+        if (TimeNow - MarkerTimestamp > TenSecs)
+        {
+            map.removeLayer(markers[i][0]);
+        }
+        //console.log(markers[i]);
+    }
+}, 2000);
 
 function ShowJunction() {
     if (showJunctions == false) {
@@ -113,7 +127,7 @@ function process_coord(data, myMovingMarker = null) {
         if (showJunctions != true) {
             var myMovingMarker = L.Marker.movingMarker([[obj.lat, obj.lon], [obj.route.lat, obj.route.lon]],
                 [timeSecs]).addTo(map);
-            markers.push(myMovingMarker);
+            markers.push([myMovingMarker, Date.now()]);
             myMovingMarker.start();
         }
         setTimeout(NewCoords, timeSecs, [obj.route.lat, obj.route.lon], myMovingMarker);

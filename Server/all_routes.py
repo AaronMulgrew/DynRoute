@@ -24,6 +24,15 @@ class AllRoutes(object):
             return False
         return True
 
+    def update_current_time(self, lat, lon, route_lat, route_lon, time):
+        try:
+            if route_lat in self.all_routes["junctions"][coords]["routes"]:
+                print route_lat
+            #self.all_routes["junctions"][coords]["time"] = time
+        except TypeError:
+            return False
+        return True
+
     def add_junction_data(self, datetime, coords):
         self.junction_data[datetime] = coords
         return True

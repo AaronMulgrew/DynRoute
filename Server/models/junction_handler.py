@@ -15,7 +15,7 @@ class JunctionHandler(object):
         if current_route == None:
             allroutes = all_routes.AllRoutes()
             self._all_routes = allroutes.grab_all_routes()
-            # this is a method call inside the constructure, not ideal but 
+            # this is a method call inside the constructor, not ideal but 
             # current route variable needs to be filled.
             self.current_route = self.pick_random_edge_route()
             # current coords is a seperate variable as this is the 'title' for the 
@@ -91,7 +91,7 @@ class JunctionHandler(object):
     def pick_random_edge_route(self):
         allroutes = all_routes.AllRoutes()
         routes = allroutes.grab_all_routes()
-        routeslist = routes["junctions_edge"][0]
+        routeslist = routes["junctions_edge"]
         # select a random 'route' according to the number
         selection_number = numpy.random.randint(0, len(routeslist))
         # select a junction at random to generate traffic
@@ -118,6 +118,9 @@ class JunctionHandler(object):
         #    time = new_time
         #else:
         #    time = time * 1.25
+
+        # make sure the current time gets added to the current state
+        self.globalRoutes.update_current_time(self.lat, self.lon, newroute['lat'], newroute['lon'], time)
         return time
 
     def generate_route(self):

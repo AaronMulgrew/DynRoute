@@ -21,6 +21,13 @@ class Dijkstra():
             self.edges = edges
             return True
 
+    def reprocess_data(self, data):
+        print data
+        for key, value in data['junctions_edge'].iteritems():
+            print value
+        for element in data['junctions'].keys():
+            print element
+
     def process_path(self, cost, path, element=[]):
         if isinstance(path[1], tuple):
             element.append(path[0])

@@ -11,12 +11,15 @@ class EmergencyHandler(GlobalRouteHandler):
     
     def __init__(self, current_route = None):
         super(EmergencyHandler, self).__init__(current_route)
+        # underscore before var name signifies it's private
+        # to this class
         self._all_routes = self.all_routes.grab_all_routes()
 
 
     def generate_emergency(self):
         print self._all_routes
         dijkstra = dijkstra_algorithm.Dijkstra()
+        dijkstra.reprocess_data(self._all_routes)
         dijkstra.add_edges(self._all_routes)
         return self._all_routes
 
@@ -35,6 +38,7 @@ def emergency_route():
         password_hash = decoded['password_hash']
         timestamp = decoded['timestamp']
         timestamp = datetime.datetime.fromtimestamp(timestamp)
+        # Not raw SQL to protect against Injection attacks
         data = UserDB.User.query.filter_by(username=username).first()
     except KeyError:
         return_value = "No auth token"
@@ -44,7 +48,8 @@ def emergency_route():
         # this checks to see that the decrypted password
         # is the same as the password hash for the login
         if data.password == password_hash:
-            if timestamp > datetime.datetime.now()-datetime.timedelta(seconds=60):
+            # verify the timestamp for the next 30 minutes
+            if timestamp > datetime.datetime.now()-datetime.timedelta(minutes=30):
                 Emergency = EmergencyHandler()
                 route = Emergency.generate_emergency()
                 return_value = json.dumps(route)
