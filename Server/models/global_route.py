@@ -49,7 +49,4 @@ class GlobalRouteHandler(object):
 
     def update_current_time(self, lat, lon, route_lat, route_lon, time):
         result = allroutes.update_current_time(lat, lon, route_lat, route_lon, time)
-        if result == True:
-            return True
-        else:
-            return False
+        return result

@@ -25,12 +25,23 @@ class AllRoutes(object):
         return True
 
     def update_current_time(self, lat, lon, route_lat, route_lon, time):
-        try:
-            if route_lat in self.all_routes["junctions"][coords]["routes"]:
+        coords = lat + '//' + lon
+        # check to see which dict the junction is within
+        if coords in self.all_routes["junctions_edge"]:
+            junction = self.all_routes["junctions_edge"][coords]
+        else:
+            try:
+                junction = self.all_routes["junctions"][coords]
+            except TypeError:
+                # return false as all avenues have been explored
+                return False
+
+
+        # make sure we iterate over the routes in the junction
+        for element in junction["routes"]:
+            if route_lat == element['lat']:
                 print route_lat
-            #self.all_routes["junctions"][coords]["time"] = time
-        except TypeError:
-            return False
+                element["time"] = time
         return True
 
     def add_junction_data(self, datetime, coords):
