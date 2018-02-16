@@ -1,5 +1,6 @@
 from collections import defaultdict
-import heapq
+import haversine
+import Queue
 
 class EdgeItem:
     def __init__(self, destination, distance):
@@ -12,7 +13,6 @@ class Dijkstra():
         self.nodes = set()
         self.edges = dict()
         self.weighting = dict()
-        print "not Implemented yet"
 
     def add_edges(self, edges):
         if type(edges) != dict:
@@ -23,11 +23,44 @@ class Dijkstra():
 
     def reprocess_data(self, data):
         print data
+        timeList = {}
         for key, value in data['junctions_edge'].iteritems():
+            routes = value['routes']
+            for one_route in routes:
+                time = one_route['time']
+                #make lat and lon one element
+                lat_lon = one_route['lat'] + '//' + one_route['lon']
+                if key in timeList:
+                    route = timeList[key]
+                    newtimeList = timeList[key].append({'source': key, 'dest': lat_lon, 'time': time})
+                    timeList[key] = newtimeList
+                else:
+                    timeList[key] = [{'source': key, 'dest': lat_lon, 'time': time}]
             print value
-        for element in data['junctions'].keys():
-            print element
+            #self.edges[key] = timeList
+        for key in data['junctions'].keys():
+            print key
+            one_junction = data['junctions'][key]
+            print one_junction
+            for route in one_junction['routes']:
+                if route:
+                    time = route['time']
+                    #make lat and lon one element
+                    lat_lon = route['lat'] + '//' + route['lon']
+                    if key in timeList:
+                        route = timeList[key]
+                        route.append({'source': key, 'dest': lat_lon, 'time': time})
+                        timeList[key] = route
+                    else:
+                        timeList[key] = [{'source': key, 'dest': lat_lon, 'time': time}]
+                #timeList.append((key, lat_lon, time))
+            print timeList
+            #self.edges[key]= timeList
+        self.edges = timeList
+        #print self.edges[key]
 
+    # this flattens the tuple into a format more 
+    # easily supportable (list)
     def process_path(self, cost, path, element=[]):
         if isinstance(path[1], tuple):
             element.append(path[0])
@@ -37,45 +70,51 @@ class Dijkstra():
             return element
         return element
 
-    def compute_shortest(self, source, destination):
-        nodelist = dict()
+    def compute_shortest_route(self, source, dest):
         edges = self.edges
-        # create our own dict with each entry
-        # named differently to parameters
-        for each_source, each_destination, distance in edges:
-            # create new instance of edgeitem class
-            item = EdgeItem(each_destination, distance)
-            # create a dictionary full of lists
-            if nodelist.get(each_source) is not None:
-                nodelist[each_source].append(item)
+        print edges
+        q = Queue.Queue()
+        for edge in edges:
+            oneedge = edges[edge]
+            print oneedge
+            q.put(oneedge)
+        # this is our source time dictionary
+        # will be used to fill times to get to dest
+        time = dict()
+        for elem in list(q.queue):
+            # this is our vertex
+            v = q.get()
+            for node in v:
+                # cannot call it source and dest as only
+                # iterating over one node
+                previous = node['source']
+                next = node['dest']
+                junc_time = node['time']
+                # here we check to see that there is a previous node
+                if next in time.keys() and previous in time.keys():
+                    element = time[previous]
+                    vtime = time[previous]['time'] + junc_time
+                    if vtime < time[next]:
+                        time[next] = {'source': previous, 'dest': next, 'time':vtime}
+                else:
+                    # this means that it is a edge node, hence no time penalty
+                    if previous not in time.keys():
+                        time[previous] = {'source': previous, 'time': 0}
+                    # otherwise treat it as normal (No cost as no previous)
+                    time[next] = {'source': previous, 'dest': next, 'time': junc_time}
+                print node
+            print oneedge
+        print time
+
+        route = list()
+        nextitem = dest
+        while time.get(nextitem) is not None:
+            onenode = time[nextitem]
+            if 'dest' in onenode:
+                route.append(nextitem)
+                nextitem = time[nextitem]['source']
             else:
-                itemlist = list()
-                itemlist.append(item)
-                nodelist[each_source] = itemlist
-
-        # populate the heap with init values
-        queue, seen = [(0,source,[])], set()
-        while queue:
-            # pop the smallest item from the queue
-            item = heapq.heappop(queue)
-            # cost of retrieving the item
-            cost = item[0]
-            # this is the node of the value
-            # if node is the same as the starting node
-            # cost will be 0
-            node = item[1]
-            path = item[2]
-            if node not in seen:
-                seen.add(node)
-                path = (node, path)
-                #path2 = path2.append(v1)
-                if node == destination:
-                    path = self.process_path(cost, path)
-                    # we have to reverse the path as the algorithm
-                    # discovers back to front.
-                    return [cost, list(reversed(path))]
-                for item in nodelist[node]:
-                    if item.destination not in seen:
-                        heapq.heappush(queue, (cost+item.distance, item.destination, path))
-
-        return "no path found"
+                break
+            print nextitem
+        print route
+        return route

@@ -22,9 +22,7 @@ function HideJunctions() {
     markers = []
 }
 
-var interval = window.setInterval(function () {
-    httpGetAsync("/", process_coord);
-}, 1000);
+
 
 function PrepShowJunction() {
     JuncInterval = window.setInterval(function () {
@@ -35,12 +33,15 @@ function PrepShowJunction() {
 // this is a general cleanup function
 // incase a marker timesout
 var interval = window.setInterval(function () {
-    var TenSecs = 10 * 1000; /* ms */
+    var TwentySecs = 20 * 1000; /* ms */
     var TimeNow = Date.now();
     for (var i = 0; i < markers.length; i++) {
         var MarkerTimestamp = markers[i][1]
-        if (TimeNow - MarkerTimestamp > TenSecs)
+        if (TimeNow - MarkerTimestamp > TwentySecs)
         {
+            // this removes the marker from the map
+            // if the marker hasn't reached a new junction
+            // within 20 seconds.
             map.removeLayer(markers[i][0]);
         }
         //console.log(markers[i]);
@@ -152,7 +153,7 @@ function NewCoords(latlon, marker) {
 }
 
 function GenerateEmergency() {
-    console.log(sessionStorage);
+    //console.log(sessionStorage);
     httpGetAsync("/generate_emergency", ProcessEmergency,null,'auth_token', AuthToken);
 }
 
@@ -162,12 +163,11 @@ function ProcessEmergency(message)
     {
         message = JSON.parse(message);
         console.log(message);
-        console.log(message.lat);
-        var latlngs = [
-            [Number(message.lat), Number(message.lon)],
-            [Number(message.route.lat), Number(message.route.lon)]
-        ];
-        var polyline = L.polyline(latlngs, { color: 'red' }).addTo(map);
+        //var latlngs = [
+        //    [Number(message.lat), Number(message.lon)],
+        //    [Number(message.route.lat), Number(message.route.lon)]
+        //];
+        var polyline = L.polyline(message, { color: 'red' }).addTo(map);
     }
     else
     {

@@ -17,6 +17,7 @@ def add_junction():
         dictionary['lat'] = raw_input("Please type the latitude of route: ")
         dictionary['lon'] = raw_input("Please type longitude of route: ")
         dictionary['road_type'] = raw_input("Please type road type of route: ")
+        dictionary['time'] = 0
         routes.append(dictionary)
     if routes_amount == 0:
         routes = [{}]
@@ -41,10 +42,12 @@ def edit_junction(lat, lon):
         except Exception as e:
             print e
         print (parsed['junctions'][lat+'//'+lon]['speed'])
+
     elif element_to_edit.upper() == "JUNCTION NAME":
         current_element = parsed['junctions'][lat + '//' + lon]['junction_name']
         new_val = raw_input("Current Junction name is: " + str(current_element) + "\n new Name: ")
         parsed['junctions'][lat+'//'+lon]['junction_name'] = new_val
+
     elif element_to_edit.upper() == 'ROUTES':
         print "Current Routes: "
         current_element = parsed['junctions'][lat+'//'+lon]['routes']
@@ -59,12 +62,13 @@ def edit_junction(lat, lon):
             latitude = raw_input("Please enter latitude for new route: ")
             longitude = raw_input("Please enter longitude for new route: ")
             road_type = raw_input("Please enter road type for new route: [1 - Trunk road/ 5 - Side street")
+            time = 0
             # this is if the current routes is empty.
             if current_element == [{}]:
                 # current_element is not needed as a variable if it's empty.
-                parsed['junctions'][lat+'//'+lon]['routes'] = [{"lat":latitude, "lon":longitude}]
+                parsed['junctions'][lat+'//'+lon]['routes'] = [{"lat":latitude, "lon":longitude, "road_type": road_type, "time":0}]
             else:
-                current_element.append({"lat":latitude, "lon":longitude})
+                current_element.append({"lat":latitude, "lon":longitude, "road_type": road_type, "time":0})
         else:
             return
 

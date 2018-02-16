@@ -8,10 +8,10 @@ class AllRoutes(object):
         # that will iterated over from the code
         self.junction_data = dict()
 
+    def populate_all_routes(self):
+        print self.all_routes
+
     def grab_all_routes(self):
-        #for key, value in self.all_routes['junctions'].iteritems():
-        #    valsss = value["traffic_load"]
-        #    print "Traffic Load: " + str(valsss)
         return self.all_routes
 
     def grab_junction_data(self):

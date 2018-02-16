@@ -106,8 +106,11 @@ class JunctionHandler(object):
         # calculate the time needed to get to the junction 
         # by Distance over speed
         time = distanceM / self.speed
+        if newroute[u'road_type'] == 3:
+            time = time * 2
+
         if traffic_load >= 50:
-            time = time * 7
+            time = time * 3
         #if traffic_load >= 77:
         #    time = time * 7
         #elif traffic_load > 75:

@@ -20,10 +20,18 @@ class EmergencyHandler(GlobalRouteHandler):
         print self._all_routes
         dijkstra = dijkstra_algorithm.Dijkstra()
         dijkstra.reprocess_data(self._all_routes)
-        dijkstra.add_edges(self._all_routes)
-        return self._all_routes
+        result = dijkstra.compute_shortest_route('52.633747//-1.143091', '52.634965//-1.139803')
+        #dijkstra.add_edges(self._all_routes)
+        route = self.process_route(result)
+        return route
 
-
+    def process_route(self, route):
+        print route
+        newroute = list()
+        for element in route:
+            lat, lon = element.split('//')
+            newroute.append({'lat':lat, 'lon':lon})
+        return newroute
 
 
 

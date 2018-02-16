@@ -27,6 +27,24 @@ class GlobalRouteHandler(object):
             traffic_load = 99
         return traffic_load
 
+    def process_lat_lon(self, latlon):
+        coords = latlon.replace("//", " ").split()
+        lat = coords[0]
+        lon = coords[1]
+        return lat, lon
+
+    def return_all_junctions(self):
+        _all_routes = self.all_routes.grab_all_routes()
+        _all_routes = _all_routes['junctions']
+        junc_list = []
+        #print self._junction_data
+        for junc in _all_routes:
+            #print junc
+            lat, lon = self.process_lat_lon(junc)
+            junction = {"junction":_all_routes[junc],"lat":lat,"lon":lon}
+            junc_list.append(junction)
+        return junc_list
+
     def search_route(self, lat, lon):
         # split the coords
         coords = str(lat) + '//' + str(lon)

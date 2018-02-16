@@ -50,6 +50,7 @@
 		"routes": [{
 			"lat": "52.634359",
 			"lon": "-1.141536",
+			"road_type": 1,
 			"time": 0
 		}],
 		"traffic_load": 0,
@@ -82,6 +83,7 @@
 		"routes": [{
 			"lat": "52.634965",
 			"lon": "-1.139803",
+			"road_type": 1,
 			"time": 0
 		}],
 		"traffic_load": 0,
@@ -108,6 +110,7 @@
 		"routes": [{
 			"lat": "52.634785",
 			"lon": "-1.140588",
+			"road_type": 1,
 			"time": 0
 		}],
 		"traffic_load": 0,
@@ -115,9 +118,47 @@
 		"speed": "30"
 	},
 	"52.631886//-1.152602": {
-		"routes": [{}],
+		"routes": [{
+			"lat": "52.630928",
+			"lon": "-1.148088",
+			"road_type": 3,
+			"time": 0
+		}],
 		"traffic_load": 0,
 		"junction_name": "Hinckley road/fosse road central",
+		"speed": 30
+	},
+	"52.630928//-1.148088": {
+		"routes": [{
+			"lat": "52.631071",
+			"lon": "-1.147474",
+			"road_type": 3,
+			"time": 0
+		}],
+		"traffic_load": 0,
+		"junction_name": "Hinckley road/A4560/Braunstone",
+		"speed": 30
+	},
+	"52.631071//-1.147474": {
+		"routes": [{
+			"lat": "52.63255",
+			"lon": "-1.14664",
+			"road_type": 3,
+			"time": 0
+		}],
+		"traffic_load": 0,
+		"junction_name": "A4560/Braunstone North",
+		"speed": 30
+	},
+	"52.63255//-1.14664": {
+		"routes": [{
+			"lat": "52.633923",
+			"lon": "-1.146260",
+			"road_type": 3,
+			"time": 0
+		}],
+		"traffic_load": 0,
+		"junction_name": "A4560/New Park St North",
 		"speed": 30
 	},
 	"52.634965//-1.139803": {

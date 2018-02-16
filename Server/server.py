@@ -10,7 +10,7 @@ from scripts import API_auth
 
 import settings
 
-from models import emergency_route, junction_handler
+from models import emergency_route, junction_handler, global_route
 from OpenSSL import SSL
 from scripts import UserDB
 import ssl
@@ -81,10 +81,11 @@ def login():
 def send_junc_icon():
     return current_app.send_static_file('junc_icon.png')
 
-#@app.route('/all_juncts')
-#def return_all_junctions():
-#    all_junctions = globalRoute.return_all_junctions()
-#    return json.dumps(all_junctions)
+@app.route('/all_juncts')
+def return_all_junctions():
+    routehandler = global_route.GlobalRouteHandler()
+    all_junctions = routehandler.return_all_junctions()
+    return json.dumps(all_junctions)
 
 @app.route('/MovingMarker.js')
 def send_javascript():
@@ -115,20 +116,20 @@ def generate_edge_coords():
     #lon = gen_coord_lon()
     return json.dumps(route)
 
-def GetRoutes():
+#def GetRoutes():
 
-    #globalRoutes = GlobalRouteHandler()
-    #print globalRoutes.search_route(52.634169, -1.149998)
+#    #globalRoutes = GlobalRouteHandler()
+#    #print globalRoutes.search_route(52.634169, -1.149998)
 
-    # load the global variable
-    global _ALL_ROUTES
-    _ALL_ROUTES = open("routes.json", "r").read()
-    # this checks to see that the JSON file is valid.
-    try:
-        _ALL_ROUTES = json.loads(_ALL_ROUTES)
-    except ValueError:
-        print "\"Routes.json\" is not a valid JSON file."
-        exit(1)
+#    # load the global variable
+#    global _ALL_ROUTES
+#    _ALL_ROUTES = open("routes.json", "r").read()
+#    # this checks to see that the JSON file is valid.
+#    try:
+#        _ALL_ROUTES = json.loads(_ALL_ROUTES)
+#    except ValueError:
+#        print "\"Routes.json\" is not a valid JSON file."
+#        exit(1)
 
 
 if __name__ == "__main__":
