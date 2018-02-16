@@ -212,6 +212,7 @@ class test_server(unittest.TestCase):
 
     def setUp(self):
         self.JunctionHandler = junction_handler.JunctionHandler()
+        self.GlobalRoute = global_route.GlobalRouteHandler()
         return super(test_server, self).setUp()
 
     def test_server_junction_handler(self):
@@ -231,12 +232,16 @@ class test_server(unittest.TestCase):
         self.assertTrue(0 <= choice <= 1)
 
     def test_server_calc_distance_time(self):
-        object = {u'lat': u'52.632912', u'lon': u'-1.157873', u'road_type': 1}
-        estimatedTime = 4.160666920213371
-        junc = self.JunctionHandler
-        choice = junc.calculate_junction_distance_time(object, traffic_load=40)
+
+        source_lat = '52.632930'
+        source_lon = '-1.161572'
+        speed = 60
+        object = {u'lat': '52.632912', u'lon': '-1.157873', u'road_type': 1, u'time': 0}
+        traffic_load = 0
+        junc = self.GlobalRoute
+        choice = junc.calculate_junction_distance_time(source_lat, source_lon, speed, object, traffic_load)
         print choice
-        self.assertTrue(choice, 5.2008336502667145)
+        self.assertTrue(choice, 4.160666920213371)
 
     def test_pick_random_edge_route(self):
         junc = self.JunctionHandler

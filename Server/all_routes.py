@@ -8,7 +8,17 @@ class AllRoutes(object):
         # that will iterated over from the code
         self.junction_data = dict()
 
+    ''' this is a module that populates the default time values
+    to ensure the emergency vehicle algorithm works as expected.'''
     def populate_all_routes(self):
+        for junction in self.all_routes['junctions_edge']:
+            junc = self.all_routes['junctions_edge'][junction]
+            source_lat, source_lon = junction.split('//')
+            for route in junc['routes']:
+                one_route = route
+
+                print one_route
+            print junc
         print self.all_routes
 
     def grab_all_routes(self):
@@ -25,7 +35,7 @@ class AllRoutes(object):
         return True
 
     def update_current_time(self, lat, lon, route_lat, route_lon, time):
-        coords = lat + '//' + lon
+        coords = str(lat) + '//' + str(lon)
         # check to see which dict the junction is within
         if coords in self.all_routes["junctions_edge"]:
             junction = self.all_routes["junctions_edge"][coords]

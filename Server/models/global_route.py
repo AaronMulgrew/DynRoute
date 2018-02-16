@@ -1,6 +1,9 @@
 import all_routes
 allroutes = all_routes.AllRoutes()
+allroutes.populate_all_routes()
 import datetime
+from scripts import haversine
+import traffic_heuristics
 
 class GlobalRouteHandler(object):
 
@@ -32,6 +35,18 @@ class GlobalRouteHandler(object):
         lat = coords[0]
         lon = coords[1]
         return lat, lon
+
+
+    def calculate_junction_distance_time(self, source_lat, source_lon, speed, newroute, traffic_load):
+        distanceM = haversine.get_distance_haversine([float(source_lat), float(source_lon)], [float(newroute['lat']), float(newroute['lon'])])
+        # calculate the time needed to get to the junction 
+        # by Distance over speed
+        time = distanceM / speed
+        
+        time = traffic_heuristics.handle_time(newroute, time, traffic_load)
+        # make sure the current time gets added to the current state
+        self.update_current_time(source_lat, source_lon, newroute['lat'], newroute['lon'], time)
+        return time
 
     def return_all_junctions(self):
         _all_routes = self.all_routes.grab_all_routes()

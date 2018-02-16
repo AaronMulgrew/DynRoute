@@ -1,12 +1,10 @@
-from __init__ import request, all_routes
+from __init__ import all_routes
 import datetime
 import json
 from models import global_route
 from global_route import GlobalRouteHandler
 from scripts import UserDB
 from scripts import API_auth, dijkstra_algorithm
-from junction_handler import JunctionHandler
-
 class EmergencyHandler(GlobalRouteHandler):
     
     def __init__(self, current_route = None):
@@ -26,6 +24,8 @@ class EmergencyHandler(GlobalRouteHandler):
         return route
 
     def process_route(self, route):
+        # this readies the JSON object
+        # for the browser
         print route
         newroute = list()
         for element in route:
@@ -35,12 +35,10 @@ class EmergencyHandler(GlobalRouteHandler):
 
 
 
-def emergency_route():
+def emergency_route(auth_token):
     return_value = ""
     success = False
     try:
-        # this is the end point for the generate emergency token
-        auth_token = request.headers['auth-token']
         decoded = API_auth.decode(auth_token)
         username = decoded['username']
         password_hash = decoded['password_hash']

@@ -101,30 +101,30 @@ class JunctionHandler(object):
         selected_junction = routeslist[selected_route_key]
         return [selected_route_key, selected_junction]
 
-    def calculate_junction_distance_time(self, newroute, traffic_load):
-        distanceM = haversine.get_distance_haversine([float(self.lat), float(self.lon)], [float(newroute['lat']), float(newroute['lon'])])
-        # calculate the time needed to get to the junction 
-        # by Distance over speed
-        time = distanceM / self.speed
-        if newroute[u'road_type'] == 3:
-            time = time * 2
+    #def calculate_junction_distance_time(self, newroute, traffic_load):
+    #    distanceM = haversine.get_distance_haversine([float(self.lat), float(self.lon)], [float(newroute['lat']), float(newroute['lon'])])
+    #    # calculate the time needed to get to the junction 
+    #    # by Distance over speed
+    #    time = distanceM / self.speed
+    #    if newroute[u'road_type'] == 3:
+    #        time = time * 2
 
-        if traffic_load >= 50:
-            time = time * 3
-        #if traffic_load >= 77:
-        #    time = time * 7
-        #elif traffic_load > 75:
-        #    new_exp = traffic_load - 70
-        #    #traffic_load = traffic_load * time
-        #    new_time = math.exp(new_exp)
-        #    print time
-        #    time = new_time
-        #else:
-        #    time = time * 1.25
+    #    if traffic_load >= 50:
+    #        time = time * 3
+    #    #if traffic_load >= 77:
+    #    #    time = time * 7
+    #    #elif traffic_load > 75:
+    #    #    new_exp = traffic_load - 70
+    #    #    #traffic_load = traffic_load * time
+    #    #    new_time = math.exp(new_exp)
+    #    #    print time
+    #    #    time = new_time
+    #    #else:
+    #    #    time = time * 1.25
 
-        # make sure the current time gets added to the current state
-        self.globalRoutes.update_current_time(self.lat, self.lon, newroute['lat'], newroute['lon'], time)
-        return time
+    #    # make sure the current time gets added to the current state
+    #    self.globalRoutes.update_current_time(self.lat, self.lon, newroute['lat'], newroute['lon'], time)
+    #    return time
 
     def generate_route(self):
         """This generates a random route, calling the time function"""
@@ -134,6 +134,6 @@ class JunctionHandler(object):
         newroute = potential_routes[selection_number]
         traffic_load = self.globalRoutes.get_current_load(self.lat + "//" + self.lon)
         # this will be the time to reach destination
-        time = self.calculate_junction_distance_time(newroute, traffic_load)
+        time = self.globalRoutes.calculate_junction_distance_time(self.lat, self.lon, self.speed, newroute, traffic_load)
         route = {"lat": str(self.lat), "lon": str(self.lon), "time": time, "route": {"lat":str(newroute["lat"]), "lon":str(newroute["lon"])}}
         return route

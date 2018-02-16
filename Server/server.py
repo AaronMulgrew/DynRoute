@@ -5,12 +5,12 @@ import json
 from flask import (current_app, url_for, \
 render_template, redirect, session)
 from flask_api import status
-from __init__ import app, bcrypt, request
+from __init__ import app, bcrypt, request, junction_handler, global_route
 from scripts import API_auth
 
 import settings
 
-from models import emergency_route, junction_handler, global_route
+from models import emergency_route
 from OpenSSL import SSL
 from scripts import UserDB
 import ssl
@@ -97,7 +97,9 @@ def generate_emergency_route():
     ## simple check to see if the auth token is in the request 
     ## header
     if 'auth-token' in request.headers:
-        response_content = emergency_route.emergency_route()
+        # this is the end point for the generate emergency token
+        auth_token = request.headers['auth-token']
+        response_content = emergency_route.emergency_route(auth_token)
         content = response_content[0]
         success = response_content[1]
         if success == True:

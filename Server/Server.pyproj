@@ -49,6 +49,9 @@
     <Compile Include="scripts\haversine.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="models\traffic_heuristics.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="scripts\UserDB.py">
       <SubType>Code</SubType>
     </Compile>
