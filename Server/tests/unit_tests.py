@@ -111,7 +111,7 @@ class test_haversine(unittest.TestCase):
     def test_haversine(self):
         ## this is the distance from the two sets of coordinates in metres.
         distance = 249.6400152128023
-        self.assertEqual(haversine.get_distance_haversine([52.632930, -1.161572], [52.632912, -1.157873]), distance)
+        self.assertEqual(haversine.get_distance_haversine([52.632930, -1.161572, 52.632912, -1.157873]), distance)
 
     def test_haversine_min(self):
         ## this is the distance from the two sets of coordinates in metres.
@@ -120,7 +120,7 @@ class test_haversine(unittest.TestCase):
         lon1 = 0.00000
         lat2 = 0.00000
         lon2 = 0.00001
-        self.assertEqual(haversine.get_distance_haversine([lat1, lon1], [lat2, lon2]), distance)
+        self.assertEqual(haversine.get_distance_haversine([lat1, lon1, lat2, lon2]), distance)
 
     def test_haversine_max(self):
         ## this is the distance from the two sets of coordinates in metres.
@@ -129,8 +129,8 @@ class test_haversine(unittest.TestCase):
         lon1 = 0.00000
         lat2 = 90
         lon2 = -180
-        x = haversine.get_distance_haversine([lat1, lon1], [lat2, lon2])
-        self.assertEqual(haversine.get_distance_haversine([lat1, lon1], [lat2, lon2]), distance)
+        x = haversine.get_distance_haversine([lat1, lon1, lat2, lon2])
+        self.assertEqual(haversine.get_distance_haversine([lat1, lon1, lat2, lon2]), distance)
 
     def test_haversine_invalid(self):
         lat1 = "zzzzz"
@@ -139,7 +139,7 @@ class test_haversine(unittest.TestCase):
         lon2 = -180
         # this test checks that the Exception that is raised
         # also matches with the error message.
-        self.assertRaisesRegexp(TypeError, "Could not convert as variables are not floats", haversine.get_distance_haversine, [lat1, lon1], [lat2, lon2])
+        self.assertRaisesRegexp(TypeError, "Could not convert as variables are not floats", haversine.get_distance_haversine, [lat1, lon1, lat2, lon2])
 
 class test_dijkstra(unittest.TestCase):
 

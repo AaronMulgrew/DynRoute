@@ -1,4 +1,6 @@
 import json
+from scripts import haversine
+from models import traffic_heuristics
 
 class AllRoutes(object):
     def __init__(self):
@@ -11,13 +13,17 @@ class AllRoutes(object):
     ''' this is a module that populates the default time values
     to ensure the emergency vehicle algorithm works as expected.'''
     def populate_all_routes(self):
-        for junction in self.all_routes['junctions_edge']:
-            junc = self.all_routes['junctions_edge'][junction]
-            source_lat, source_lon = junction.split('//')
+        for lat_lon in self.all_routes['junctions_edge']:
+            junc = self.all_routes['junctions_edge'][lat_lon]
+            source_lat, source_lon = lat_lon.split('//')
             for route in junc['routes']:
-                one_route = route
-
-                print one_route
+                # get the distance in meters
+                distanceM = haversine.get_distance_haversine([source_lat, source_lon, route['lat'], route['lon']])
+                time = distanceM / junc['speed']
+                # this code runs on startup so default value will be 0
+                traffic_load = 0
+                time = traffic_heuristics.handle_time(route, time, traffic_load)
+                self.update_current_time(source_lat, source_lon, route['lat'], route['lon'], time)
             print junc
         print self.all_routes
 

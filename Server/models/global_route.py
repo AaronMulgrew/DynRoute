@@ -38,7 +38,7 @@ class GlobalRouteHandler(object):
 
 
     def calculate_junction_distance_time(self, source_lat, source_lon, speed, newroute, traffic_load):
-        distanceM = haversine.get_distance_haversine([float(source_lat), float(source_lon)], [float(newroute['lat']), float(newroute['lon'])])
+        distanceM = haversine.get_distance_haversine([float(source_lat), float(source_lon), float(newroute['lat']), float(newroute['lon'])])
         # calculate the time needed to get to the junction 
         # by Distance over speed
         time = distanceM / speed
