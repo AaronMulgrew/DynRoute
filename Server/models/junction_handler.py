@@ -101,31 +101,6 @@ class JunctionHandler(object):
         selected_junction = routeslist[selected_route_key]
         return [selected_route_key, selected_junction]
 
-    #def calculate_junction_distance_time(self, newroute, traffic_load):
-    #    distanceM = haversine.get_distance_haversine([float(self.lat), float(self.lon)], [float(newroute['lat']), float(newroute['lon'])])
-    #    # calculate the time needed to get to the junction 
-    #    # by Distance over speed
-    #    time = distanceM / self.speed
-    #    if newroute[u'road_type'] == 3:
-    #        time = time * 2
-
-    #    if traffic_load >= 50:
-    #        time = time * 3
-    #    #if traffic_load >= 77:
-    #    #    time = time * 7
-    #    #elif traffic_load > 75:
-    #    #    new_exp = traffic_load - 70
-    #    #    #traffic_load = traffic_load * time
-    #    #    new_time = math.exp(new_exp)
-    #    #    print time
-    #    #    time = new_time
-    #    #else:
-    #    #    time = time * 1.25
-
-    #    # make sure the current time gets added to the current state
-    #    self.globalRoutes.update_current_time(self.lat, self.lon, newroute['lat'], newroute['lon'], time)
-    #    return time
-
     def generate_route(self):
         """This generates a random route, calling the time function"""
         potential_routes = self.route

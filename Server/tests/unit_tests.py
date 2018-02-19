@@ -143,6 +143,56 @@ class test_haversine(unittest.TestCase):
 
 class test_dijkstra(unittest.TestCase):
 
+    def test_dijkstra_algorithm_basic(self):
+        dijkstra = dijkstra_algorithm.Dijkstra()
+        edges = {
+	    "A-B": [{
+		    "dest": "B",
+		    "source": "A",
+		    "time": 3.3231189058838946
+	    }],
+	    "A-C": [{
+		    "dest": "C",
+		    "source": "A",
+		    "time": 1
+	    }],
+	    "C-D": [{
+		    "dest": "D",
+		    "source": "C",
+		    "time": 1
+	    }],	
+        "B-D": [{
+		    "dest": "D",
+		    "source": "B",
+		    "time": 3
+	    }]}
+        dijkstra.add_edges(edges)
+        result = dijkstra.compute_shortest_route("A", "D")
+        edges = {
+	    "A-B": [{
+		    "dest": "B",
+		    "source": "A",
+		    "time": 3.3231189058838946
+	    }],
+	    "A-C": [{
+		    "dest": "C",
+		    "source": "A",
+		    "time": 10
+	    }],
+	    "C-D": [{
+		    "dest": "D",
+		    "source": "C",
+		    "time": 10
+	    }],	
+        "B-D": [{
+		    "dest": "D",
+		    "source": "B",
+		    "time": 3
+	    }]}
+        dijkstra.add_edges(edges)
+        result = dijkstra.compute_shortest_route("A", "D")
+        print result
+
     def test_dijkstra_general(self):
         dijkstra = dijkstra_algorithm.Dijkstra()
         edges = {

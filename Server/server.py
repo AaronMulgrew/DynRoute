@@ -5,7 +5,7 @@ import json
 from flask import (current_app, url_for, \
 render_template, redirect, session)
 from flask_api import status
-from __init__ import app, bcrypt, request, junction_handler, global_route
+from __init__ import app, bcrypt, request, junction_handler, global_route, add_junction
 from scripts import API_auth
 
 import settings
@@ -14,6 +14,7 @@ from models import emergency_route
 from OpenSSL import SSL
 from scripts import UserDB
 import ssl
+routehandler = global_route.GlobalRouteHandler()
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 context.load_cert_chain('certs/domain.crt', 'certs/domain.key')
 
@@ -55,6 +56,18 @@ def logout():
 	session['logged_in'] = False
 	return redirect(url_for('send_homepage'))
 
+
+@app.route('/add_junction/', methods=['GET','POST'])
+def add_junc_endpoint():
+    if request.method == 'GET':
+        routehandler.refresh_all_routes()
+        return render_template('add_junction.html')
+    else:
+        request_data = request.get_json()
+        add_junc = add_junction.AddJunction()
+        result = add_junc.add_junction(request_data)
+        return json.dumps(result)
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     """Login Form"""
@@ -83,7 +96,6 @@ def send_junc_icon():
 
 @app.route('/all_juncts')
 def return_all_junctions():
-    routehandler = global_route.GlobalRouteHandler()
     all_junctions = routehandler.return_all_junctions()
     return json.dumps(all_junctions)
 
@@ -117,22 +129,6 @@ def generate_edge_coords():
     #lat = gen_coord_lat()
     #lon = gen_coord_lon()
     return json.dumps(route)
-
-#def GetRoutes():
-
-#    #globalRoutes = GlobalRouteHandler()
-#    #print globalRoutes.search_route(52.634169, -1.149998)
-
-#    # load the global variable
-#    global _ALL_ROUTES
-#    _ALL_ROUTES = open("routes.json", "r").read()
-#    # this checks to see that the JSON file is valid.
-#    try:
-#        _ALL_ROUTES = json.loads(_ALL_ROUTES)
-#    except ValueError:
-#        print "\"Routes.json\" is not a valid JSON file."
-#        exit(1)
-
 
 if __name__ == "__main__":
     app.secret_key = settings.SECRET_KEY

@@ -24,11 +24,35 @@ class AllRoutes(object):
                 traffic_load = 0
                 time = traffic_heuristics.handle_time(route, time, traffic_load)
                 self.update_current_time(source_lat, source_lon, route['lat'], route['lon'], time)
+        for lat_lon in self.all_routes['junctions']:
+            junc = self.all_routes['junctions'][lat_lon]
+            source_lat, source_lon = lat_lon.split('//')
+            for route in junc['routes']:
+                try:
+                    # get the distance in meters
+                    distanceM = haversine.get_distance_haversine([source_lat, source_lon, route['lat'], route['lon']])
+                except KeyError:
+                    continue
+                time = distanceM / float(junc['speed'])
+                # this code runs on startup so default value will be 0
+                traffic_load = 0
+                time = traffic_heuristics.handle_time(route, time, traffic_load)
+                self.update_current_time(source_lat, source_lon, route['lat'], route['lon'], time)
+
             print junc
         print self.all_routes
 
     def grab_all_routes(self):
         return self.all_routes
+
+    def refresh_all_routes(self):
+        ''' this function reloads the routes file incase of a new update
+        '''
+        try:
+            self.all_routes = json.loads(open("routes.json", "r").read())
+            return True
+        except Exception:
+            return False
 
     def grab_junction_data(self):
         return self.junction_data

@@ -1,24 +1,28 @@
-from __init__ import all_routes
+import all_routes
 import datetime
 import json
 from models import global_route
 from global_route import GlobalRouteHandler
 from scripts import UserDB
 from scripts import API_auth, dijkstra_algorithm
+all_routes = all_routes.AllRoutes()
+
+''' Emergency Handler inherits from the globalRouteHandler class
+in order to share all the same states '''
 class EmergencyHandler(GlobalRouteHandler):
     
     def __init__(self, current_route = None):
         super(EmergencyHandler, self).__init__(current_route)
         # underscore before var name signifies it's private
         # to this class
-        self._all_routes = self.all_routes.grab_all_routes()
+        self._all_routes = ""
 
 
     def generate_emergency(self):
-        print self._all_routes
+        self._all_routes = self.all_routes.grab_all_routes()
         dijkstra = dijkstra_algorithm.Dijkstra()
         dijkstra.reprocess_data(self._all_routes)
-        result = dijkstra.compute_shortest_route('52.633747//-1.143091', '52.634965//-1.139803')
+        result = dijkstra.compute_shortest_route('52.632930//-1.161572', '52.634965//-1.139803')
         #dijkstra.add_edges(self._all_routes)
         route = self.process_route(result)
         return route

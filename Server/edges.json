@@ -1,0 +1,1 @@
+{"A": [{"dest": "C", "source": "A", "time": 1}], "C": [{"dest": "D", "source": "C", "time": 1}], "B": [{"dest": "D", "source": "B", "time": 3}]}

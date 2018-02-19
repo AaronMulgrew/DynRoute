@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Quick Start - Leaflet</title>
+    <style type="text/css">
+        html, body {
+            height: 100%;
+        }
+
+        #map {
+            height: 60%;
+        }
+    </style>
+    <meta charset="utf-8" />
+    <script src="/static/javascript/traffic_control.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+
+</head>
+<body onload="ShowJunction(MarkerClick);">
+
+
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([52.635897, -1.132896], 15);
+        var markers = []
+        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' })
+            .addTo(map);
+        var juncIcon = L.icon({
+            iconUrl: '/junc_icon.png',
+            iconSize: [32, 32],
+            shadowSize: [0, 0]
+        });
+
+        var popup = L.popup();
+        // this is holding the lat and lon of the selected junction
+        var SelectedJunc = "";
+
+        customMarkerRoute = L.Marker.extend({
+            options: {
+                CustomData: 'Custom data!',
+                CustomLatLon: 'Custom LatLon'
+            }
+        });
+
+        function MarkerClick(e)
+        {
+            SelectedJunc = e.target.options.CustomLatLon.toString();
+            document.getElementById("RouteName").innerHTML = e.target.options.CustomData.toString();
+        }
+
+        function onMapClick(e)
+        {
+            popup
+                .setLatLng(e.latlng)
+                .setContent("You clicked the map at " + e.latlng.toString())
+                .openOn(map);
+            document.getElementById("Lat").innerHTML = e.latlng.lat.toString();
+            document.getElementById("Lon").innerHTML = e.latlng.lng.toString();
+        }
+        map.on('click', onMapClick);
+
+        function Submit()
+        {
+
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('POST', '/add_junction/', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            selectedJunction = document.getElementById("RouteName").innerHTML;
+            Lat = document.getElementById('Lat').innerHTML;
+            Lon = document.getElementById('Lon').innerHTML;
+            JuncName = document.getElementById('JuncName').value;
+            Speed = document.getElementById('Speed').value;
+            RoadType = document.getElementById('RoadType').value;
+            LatLon = Lat.toString() + '//' + Lon.toString();
+            xhr.onreadystatechange = function ()
+            {//Call a function when the state changes.
+                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                    // Request finished. Do processing here.
+                    console.log(xhr.XMLHttpRequest)
+                }
+                else {
+                    alert(xhr.responseText.toString())
+                }
+            }
+            xhr.send(JSON.stringify({
+                'SelectedJunction': selectedJunction,
+                'NewLatLon': LatLon,
+                'OldLatLon': SelectedJunc,
+                'JuncName': JuncName,
+                'Speed': Speed,
+                'RoadType': RoadType
+            }));
+        }
+    </script>
+
+    <div class="container">
+        <div class="row">
+            <div class="five columns">
+                <label class="one-third columns">Selected Junction:</label>
+                <label class="one-third columns" id="RouteName"></label>
+            </div>
+            <div class="five columns">
+                <label class="one-third columns">Selected Latitude:</label>
+                <label class="one-third columns" id="Lat"></label>
+                <label class="one-third columns">Selected Longitude:</label>
+                <label class="one-third columns" id="Lon"></label>
+
+            </div>
+            <div class="five columns">
+                <label for="junc_name">Junction Name</label>
+                <input class="u-full-width" name="Junction Name" , id="JuncName">
+                <label for="junc_name">Speed</label>
+                <input class="u-full-width" name="Speed" id="Speed">
+            </div>
+            <div class="two columns">
+                <label for="junc_name">Road Type 1 - 5 (1=Trunk Road)(5=side street)</label>
+                <input class="u-full-width" name="Speed" id="RoadType">
+            </div>
+            <div class="two columns">
+                <label for="exampleEmailInput">&nbsp;</label>
+                <input type="submit" value="Submit" onclick="Submit()">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

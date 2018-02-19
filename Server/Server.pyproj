@@ -22,6 +22,7 @@
     <Compile Include="all_routes.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="models\add_junction.py" />
     <Compile Include="models\global_route.py">
       <SubType>Code</SubType>
     </Compile>
@@ -81,6 +82,7 @@
     <Content Include="static\css\skeleton.css" />
     <Content Include="static\images\helpicon.png" />
     <Content Include="static\javascript\traffic_control.js" />
+    <Content Include="templates\add_junction.html" />
     <Content Include="templates\config.html" />
     <Content Include="templates\index.html" />
     <Content Include="static\junc_icon.png" />

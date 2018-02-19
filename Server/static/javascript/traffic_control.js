@@ -48,21 +48,26 @@ var interval = window.setInterval(function () {
     }
 }, 2000);
 
-function ShowJunction() {
-    if (showJunctions == false) {
-        for (var i = 0; i < markers.length; i++) {
-            map.removeLayer(markers[i]);
+function ShowJunction(JunctionMarkerBind=false) {
+    if (JunctionMarkerBind == false)
+    {
+        if (showJunctions == false)
+        {
+            for (var i = 0; i < markers.length; i++)
+            {
+                map.removeLayer(markers[i]);
+            }
+            // make sure we clear the markers array
+            markers = []
         }
-        // make sure we clear the markers array
-        markers = []
     }
     showJunctions = true
-    httpGetAsync("/all_juncts", ProcessJunctions)
+    httpGetAsync("/all_juncts", ProcessJunctions, null, null, null, JunctionMarkerBind)
 }
 
 
 
-function ProcessJunctions(JunctionData) {
+function ProcessJunctions(JunctionData, JunctionMarkerBind=false) {
     JunctionData = JSON.parse(JunctionData);
     var i;
     for (i in JunctionData) {
@@ -70,10 +75,22 @@ function ProcessJunctions(JunctionData) {
         var lon = Number(JunctionData[i].lon);
         var pos = markers.indexOf(lat + ":" + lon);
         if (pos == -1) {
+            if (JunctionMarkerBind != false)
+            {
+                var myMarker = new customMarkerRoute([lat, lon], {
+                    icon: juncIcon,
+                    CustomData: JunctionData[i].junction.junction_name,
+                    CustomLatLon: JunctionData[i].lat+'//'+JunctionData[i].lon
+                }).on('click', JunctionMarkerBind).addTo(map);
+                //marker = L.marker([lat, lon], { icon: juncIcon }, { 'title': 'title' }).on('click', JunctionMarkerBind).addTo(map);
+            }
+            else
+            {
+                marker = L.marker([lat, lon], { icon: juncIcon }).addTo(map);
+                marker.bindPopup("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.traffic_load);
+                markers.push(marker, lat + ":" + lon);
+            }
             //var marker = L.marker([40.68510, -73.94136]).addTo(map);
-            marker = L.marker([lat, lon], { icon: juncIcon }).addTo(map);
-            marker.bindPopup("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.traffic_load);
-            markers.push(marker, lat + ":" + lon);
         }
         else {
             // this is minus one because we have added both the marker and the latitude/longitude values
@@ -85,7 +102,7 @@ function ProcessJunctions(JunctionData) {
     //console.log(JunctionData);
 }
 
-function httpGetAsync(theUrl, callback, marker = null, header = null, value = null) {
+function httpGetAsync(theUrl, callback, marker = null, header = null, value = null, JunctionMarkerBind = null) {
     /// this is handler for getting HTTP requests with a callback function
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function ()
@@ -99,7 +116,13 @@ function httpGetAsync(theUrl, callback, marker = null, header = null, value = nu
             }
             else
             {
-                callback(xmlHttp.responseText);
+                if (JunctionMarkerBind) {
+                    callback(xmlHttp.responseText, JunctionMarkerBind)
+                }
+                else
+                {
+                    callback(xmlHttp.responseText);
+                }
             }
         }
     }

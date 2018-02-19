@@ -1,6 +1,5 @@
 import all_routes
 allroutes = all_routes.AllRoutes()
-allroutes.populate_all_routes()
 import datetime
 from scripts import haversine
 import traffic_heuristics
@@ -79,6 +78,12 @@ class GlobalRouteHandler(object):
 
         #self.route = current_route
         return current_junc
+
+    def refresh_all_routes(self):
+        ''' this is an interface to the all_routes.py
+        file '''
+        result = allroutes.refresh_all_routes()
+        return result
 
     def update_current_time(self, lat, lon, route_lat, route_lon, time):
         result = allroutes.update_current_time(lat, lon, route_lat, route_lon, time)
