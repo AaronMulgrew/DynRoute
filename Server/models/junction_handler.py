@@ -15,7 +15,7 @@ class JunctionHandler(object):
         if current_route == None:
             allroutes = all_routes.AllRoutes()
             self._all_routes = allroutes.grab_all_routes()
-            # this is a method call inside the constructure, not ideal but 
+            # this is a method call inside the constructor, not ideal but 
             # current route variable needs to be filled.
             self.current_route = self.pick_random_edge_route()
             # current coords is a seperate variable as this is the 'title' for the 
@@ -91,7 +91,7 @@ class JunctionHandler(object):
     def pick_random_edge_route(self):
         allroutes = all_routes.AllRoutes()
         routes = allroutes.grab_all_routes()
-        routeslist = routes["junctions_edge"][0]
+        routeslist = routes["junctions_edge"]
         # select a random 'route' according to the number
         selection_number = numpy.random.randint(0, len(routeslist))
         # select a junction at random to generate traffic
@@ -101,33 +101,16 @@ class JunctionHandler(object):
         selected_junction = routeslist[selected_route_key]
         return [selected_route_key, selected_junction]
 
-    def calculate_junction_distance_time(self, newroute, traffic_load):
-        distanceM = haversine.get_distance_haversine([float(self.lat), float(self.lon)], [float(newroute['lat']), float(newroute['lon'])])
-        # calculate the time needed to get to the junction 
-        # by Distance over speed
-        time = distanceM / self.speed
-        if traffic_load >= 50:
-            time = time * 7
-        #if traffic_load >= 77:
-        #    time = time * 7
-        #elif traffic_load > 75:
-        #    new_exp = traffic_load - 70
-        #    #traffic_load = traffic_load * time
-        #    new_time = math.exp(new_exp)
-        #    print time
-        #    time = new_time
-        #else:
-        #    time = time * 1.25
-        return time
-
     def generate_route(self):
         """This generates a random route, calling the time function"""
         potential_routes = self.route
         #select a random 'route' according to the number
         selection_number = self.weighted_junc_search()
         newroute = potential_routes[selection_number]
-        traffic_load = self.globalRoutes.get_current_load(self.lat + "//" + self.lon)
+        traffic_load = self.globalRoutes.get_current_load(self.lat + "//" + self.lon, newroute['lat'] + "//" + newroute['lon'])
+        self.globalRoutes.add_junction_data(str(self.lat + "//" + self.lon + str(newroute['lat']) + "//" + str(newroute['lon'])))
+        self.globalRoutes.update_traffic_load(self.lat + '//' + self.lon, newroute['lat'], newroute['lon'], traffic_load)
         # this will be the time to reach destination
-        time = self.calculate_junction_distance_time(newroute, traffic_load)
+        time = self.globalRoutes.calculate_junction_distance_time(self.lat, self.lon, self.speed, newroute, traffic_load)
         route = {"lat": str(self.lat), "lon": str(self.lon), "time": time, "route": {"lat":str(newroute["lat"]), "lon":str(newroute["lon"])}}
         return route

@@ -60,7 +60,7 @@
 		"52.634785//-1.140588": {
 			"routes": [{
 				"lat": "52.634965",
-				"road_type": 3,
+				"road_type": 1,
 				"traffic_load": 0,
 				"lon": "-1.139803",
 				"time": 0
@@ -374,6 +374,7 @@
 		},
 		"52.637952//-1.123362": {
 			"routes": [{
+				"traffic_load": 0
 			}],
 			"junction_name": "St Matthews way (east) 2 roundabout",
 			"speed": 50

@@ -98,8 +98,11 @@ class test_all_routes(unittest.TestCase):
 
     def test_update_traffic_load_invalid(self):
         coords = ["1111", "2222"]
+        route_lat = "111"
+        route_lon = "222"
+
         traffic_load = 24
-        returnvar = self.allroutes.update_traffic_load(coords, traffic_load)
+        returnvar = self.allroutes.update_traffic_load(coords, route_lat, route_lon, traffic_load)
         self.assertFalse(returnvar)
 
 class test_emergency_handler(unittest.TestCase):
@@ -111,7 +114,7 @@ class test_haversine(unittest.TestCase):
     def test_haversine(self):
         ## this is the distance from the two sets of coordinates in metres.
         distance = 249.6400152128023
-        self.assertEqual(haversine.get_distance_haversine([52.632930, -1.161572], [52.632912, -1.157873]), distance)
+        self.assertEqual(haversine.get_distance_haversine([52.632930, -1.161572, 52.632912, -1.157873]), distance)
 
     def test_haversine_min(self):
         ## this is the distance from the two sets of coordinates in metres.
@@ -120,7 +123,7 @@ class test_haversine(unittest.TestCase):
         lon1 = 0.00000
         lat2 = 0.00000
         lon2 = 0.00001
-        self.assertEqual(haversine.get_distance_haversine([lat1, lon1], [lat2, lon2]), distance)
+        self.assertEqual(haversine.get_distance_haversine([lat1, lon1, lat2, lon2]), distance)
 
     def test_haversine_max(self):
         ## this is the distance from the two sets of coordinates in metres.
@@ -129,8 +132,8 @@ class test_haversine(unittest.TestCase):
         lon1 = 0.00000
         lat2 = 90
         lon2 = -180
-        x = haversine.get_distance_haversine([lat1, lon1], [lat2, lon2])
-        self.assertEqual(haversine.get_distance_haversine([lat1, lon1], [lat2, lon2]), distance)
+        x = haversine.get_distance_haversine([lat1, lon1, lat2, lon2])
+        self.assertEqual(haversine.get_distance_haversine([lat1, lon1, lat2, lon2]), distance)
 
     def test_haversine_invalid(self):
         lat1 = "zzzzz"
@@ -139,72 +142,122 @@ class test_haversine(unittest.TestCase):
         lon2 = -180
         # this test checks that the Exception that is raised
         # also matches with the error message.
-        self.assertRaisesRegexp(TypeError, "Could not convert as variables are not floats", haversine.get_distance_haversine, [lat1, lon1], [lat2, lon2])
+        self.assertRaisesRegexp(TypeError, "Could not convert as variables are not floats", haversine.get_distance_haversine, [lat1, lon1, lat2, lon2])
 
 class test_dijkstra(unittest.TestCase):
 
+    def test_dijkstra_algorithm_basic(self):
+        dijkstra = dijkstra_algorithm.Dijkstra()
+        edges = {
+	    "A-B": [{
+		    "dest": "B",
+		    "source": "A",
+		    "time": 3.3231189058838946
+	    }],
+	    "A-C": [{
+		    "dest": "C",
+		    "source": "A",
+		    "time": 1
+	    }],
+	    "C-D": [{
+		    "dest": "D",
+		    "source": "C",
+		    "time": 1
+	    }],	
+        "B-D": [{
+		    "dest": "D",
+		    "source": "B",
+		    "time": 3
+	    }]}
+        dijkstra.add_edges(edges)
+        result = dijkstra.compute_shortest_route("A", "D")
+        edges = {
+	    "A-B": [{
+		    "dest": "B",
+		    "source": "A",
+		    "time": 3.3231189058838946
+	    }],
+	    "A-C": [{
+		    "dest": "C",
+		    "source": "A",
+		    "time": 10
+	    }],
+	    "C-D": [{
+		    "dest": "D",
+		    "source": "C",
+		    "time": 10
+	    }],	
+        "B-D": [{
+		    "dest": "D",
+		    "source": "B",
+		    "time": 3
+	    }]}
+        dijkstra.add_edges(edges)
+        result = dijkstra.compute_shortest_route("A", "D")
+        print result
+
     def test_dijkstra_general(self):
         dijkstra = dijkstra_algorithm.Dijkstra()
-        edges = [
-            ("A", "B", 7),
-            ("A", "D", 5),
-            ("B", "C", 8),
-            ("B", "D", 9),
-            ("B", "E", 7),
-            ("C", "E", 5),
-            ("D", "E", 15),
-            ("D", "F", 6),
-            ("E", "F", 8),
-            ("E", "G", 9),
-            ("F", "G", 11)
-        ]
+        edges = {
+            "1":("A", "B", 7),
+            "2":("A", "D", 5),
+            "3":("B", "C", 8),
+            "4":("B", "D", 9),
+            "5":("B", "E", 7),
+            "6":("C", "E", 5),
+            "7":("D", "E", 15),
+            "8":("D", "F", 6),
+            "9":("E", "F", 8),
+            "10":("E", "G", 9),
+            "11":("F", "G", 11)
+        }
         dijkstra.add_edges(edges)
 
-        route = dijkstra.compute_shortest("A", "E")
-        print route
+        #route = dijkstra.compute_shortest("A", "E")
+        #print route
 
     def test_dijsktra_output_format(self):
         dijkstra = dijkstra_algorithm.Dijkstra()
-        edges = [
-            ("A", "B", 7),
-            ("A", "D", 5),
-            ("B", "C", 8),
-            ("B", "D", 9),
-            ("B", "E", 7),
-            ("C", "E", 5),
-            ("D", "E", 15),
-            ("D", "F", 6),
-            ("E", "F", 8),
-            ("E", "G", 9),
-            ("F", "G", 11)
-        ]
+        edges = {
+            "1":("A", "B", 7),
+            "2":("A", "D", 5),
+            "3":("B", "C", 8),
+            "4":("B", "D", 9),
+            "5":("B", "E", 7),
+            "6":("C", "E", 5),
+            "7":("D", "E", 15),
+            "8":("D", "F", 6),
+            "9":("E", "F", 8),
+            "10":("E", "G", 9),
+            "11":("F", "G", 11)
+        }
         dijkstra.add_edges(edges)
 
-        route = dijkstra.compute_shortest("A", "E")
-        self.assertEqual([14, ['A', 'B', 'E', 'A', 'B', 'E']], route)
+        #route = dijkstra.compute_shortest("A", "E")
+        #self.assertEqual([14, ['A', 'B', 'E', 'A', 'B', 'E']], route)
 
     def test_dijkstra_add_edges_invalid(self):
         dijkstra = dijkstra_algorithm.Dijkstra()
-        edges = {}
+        edges = []
         # this test checks that the Exception that is raised
         # also matches with the error message.
-        self.assertRaisesRegexp(TypeError, "edges variable is not a list.", dijkstra.add_edges, edges)
+        self.assertRaisesRegexp(TypeError, "edges variable is not a dictionary.", dijkstra.add_edges, edges)
 
     def test_dijkstra_add_edges_valid(self):
         dijkstra = dijkstra_algorithm.Dijkstra()
-        edges = [
-            ("A", "B", 7),
-            ("A", "D", 5),
-            ("B", "C", 8),
-            ("B", "D", 9),
-            ("B", "E", 7),
-            ("C", "E", 5),
-            ("D", "E", 15),
-            ("D", "F", 6),
-            ("E", "F", 8),
-            ("E", "G", 9),
-            ("F", "G", 11)
-        ]
+        edges = {
+            "1":("A", "B", 7),
+            "2":("A", "D", 5),
+            "3":("B", "C", 8),
+            "4":("B", "D", 9),
+            "5":("B", "E", 7),
+            "6":("C", "E", 5),
+            "7":("D", "E", 15),
+            "8":("D", "F", 6),
+            "9":("E", "F", 8),
+            "10":("E", "G", 9),
+            "11":("F", "G", 11)
+        }
         # this test checks that the add edges function is ok.
         self.assertTrue(dijkstra.add_edges(edges))
 
@@ -212,6 +265,7 @@ class test_server(unittest.TestCase):
 
     def setUp(self):
         self.JunctionHandler = junction_handler.JunctionHandler()
+        self.GlobalRoute = global_route.GlobalRouteHandler()
         return super(test_server, self).setUp()
 
     def test_server_junction_handler(self):
@@ -231,12 +285,16 @@ class test_server(unittest.TestCase):
         self.assertTrue(0 <= choice <= 1)
 
     def test_server_calc_distance_time(self):
-        object = {u'lat': u'52.632912', u'lon': u'-1.157873', u'road_type': 1}
-        estimatedTime = 4.160666920213371
-        junc = self.JunctionHandler
-        choice = junc.calculate_junction_distance_time(object, traffic_load=40)
+
+        source_lat = '52.632930'
+        source_lon = '-1.161572'
+        speed = 60
+        object = {u'lat': '52.632912', u'lon': '-1.157873', u'road_type': 1, u'time': 0}
+        traffic_load = 0
+        junc = self.GlobalRoute
+        choice = junc.calculate_junction_distance_time(source_lat, source_lon, speed, object, traffic_load)
         print choice
-        self.assertTrue(choice, 5.2008336502667145)
+        self.assertTrue(choice, 4.160666920213371)
 
     def test_pick_random_edge_route(self):
         junc = self.JunctionHandler

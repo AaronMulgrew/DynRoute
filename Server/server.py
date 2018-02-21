@@ -5,15 +5,16 @@ import json
 from flask import (current_app, url_for, \
 render_template, redirect, session)
 from flask_api import status
-from __init__ import app, bcrypt, request
+from __init__ import app, bcrypt, request, junction_handler, global_route, add_junction
 from scripts import API_auth
 
 import settings
 
-from models import emergency_route, junction_handler
+from models import emergency_route
 from OpenSSL import SSL
 from scripts import UserDB
 import ssl
+routehandler = global_route.GlobalRouteHandler()
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 context.load_cert_chain('certs/domain.crt', 'certs/domain.key')
 
@@ -55,6 +56,18 @@ def logout():
 	session['logged_in'] = False
 	return redirect(url_for('send_homepage'))
 
+
+@app.route('/add_junction/', methods=['GET','POST'])
+def add_junc_endpoint():
+    if request.method == 'GET':
+        routehandler.refresh_all_routes()
+        return render_template('add_junction.html')
+    else:
+        request_data = request.get_json()
+        add_junc = add_junction.AddJunction()
+        result = add_junc.add_junction(request_data)
+        return json.dumps(result)
+
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     """Login Form"""
@@ -77,14 +90,30 @@ def login():
         else:
             return render_template('index.html', error='Wrong username or password!')
 
-@app.route('/junc_icon.png')
-def send_junc_icon():
-    return current_app.send_static_file('junc_icon.png')
+@app.route('/junc_icon<traffic_load>.png')
+def send_junc_icon(traffic_load):
+    try:
+        traffic_load = int(traffic_load)
+    except ValueError:
+        # this defaults back to the grey traffic load
+        traffic_load = 1000
+    if traffic_load <= 10:
+        filename = 'junc_icon0-10.png'
+    elif traffic_load <= 40:
+        filename = 'junc_icon11-40.png'
+    elif traffic_load <= 75:
+        filename = 'junc_icon41-75.png'
+    elif traffic_load <= 100:
+        filename = 'junc_icon76-100.png'
+    else:
+        filename = 'junc_icon.png'
 
-#@app.route('/all_juncts')
-#def return_all_junctions():
-#    all_junctions = globalRoute.return_all_junctions()
-#    return json.dumps(all_junctions)
+    return current_app.send_static_file(str(filename))
+
+@app.route('/all_juncts')
+def return_all_junctions():
+    all_junctions = routehandler.return_all_junctions()
+    return json.dumps(all_junctions)
 
 @app.route('/MovingMarker.js')
 def send_javascript():
@@ -96,7 +125,9 @@ def generate_emergency_route():
     ## simple check to see if the auth token is in the request 
     ## header
     if 'auth-token' in request.headers:
-        response_content = emergency_route.emergency_route()
+        # this is the end point for the generate emergency token
+        auth_token = request.headers['auth-token']
+        response_content = emergency_route.emergency_route(auth_token)
         content = response_content[0]
         success = response_content[1]
         if success == True:
@@ -114,22 +145,6 @@ def generate_edge_coords():
     #lat = gen_coord_lat()
     #lon = gen_coord_lon()
     return json.dumps(route)
-
-def GetRoutes():
-
-    #globalRoutes = GlobalRouteHandler()
-    #print globalRoutes.search_route(52.634169, -1.149998)
-
-    # load the global variable
-    global _ALL_ROUTES
-    _ALL_ROUTES = open("routes.json", "r").read()
-    # this checks to see that the JSON file is valid.
-    try:
-        _ALL_ROUTES = json.loads(_ALL_ROUTES)
-    except ValueError:
-        print "\"Routes.json\" is not a valid JSON file."
-        exit(1)
-
 
 if __name__ == "__main__":
     app.secret_key = settings.SECRET_KEY

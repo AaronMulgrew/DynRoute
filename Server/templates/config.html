@@ -1,9 +1,14 @@
 ﻿<head>
     <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/skeleton.css">
+    <script>
+        function Help()
+        {
+            document.getElementById("tooltiptext").style.visibility = "visible";
+        }
+    </script>
 </head>
 <h2>Config</h2>
-
 <style>
     /* Tooltip container */
     .tooltip {
@@ -12,7 +17,7 @@
     }
 
     /* Tooltip text */
-    .tooltip .tooltiptext {
+    .tooltiptext {
             visibility: hidden;
             width: 100%;
             height: 100%;
@@ -20,39 +25,47 @@
             background-color: black;
             color: #fff;
             text-align: center;
-            left: 100%;
+            left: 110%;
             border-radius: 6px;
             position: absolute;
             z-index: 1;
         }
 
         /* Show the tooltip text when you mouse over the tooltip container */
-        .tooltip:target .tooltiptext {
+        /*.tooltip:focus .tooltiptext {
             visibility: visible;
-        }
+        }*/
+
+    #usernameID:focus-within + .tooltiptext
+    {
+        background-color: black;
+        visibility: visible;
+    }
+
 </style>
 
 
+<body>
+    <div class="container">
+        <form action="/submitConfig/" method="POST">
+            <div class="row">
+                <div class="five columns">
+                    <label class="one-third columns" for="Username">Username</label>
 
-<div class="container">
-    <form action="/submitConfig/" method="POST">
-        <div class="row">
-            <div class="five columns">
-                <label class="one-third columns" for="Username">Username</label>
-
-                <div class="tooltip">
-                    <input class="one-third columns" type="text" placeholder="Username" name="username" />
-                    <p class="tooltiptext">This text</p>
+                    <div class="tooltip">
+                        <input id="usernameID" class="one-third columns" type="text" placeholder="Username" name="username" />
+                        <p class="tooltiptext">This text</p>
+                    </div>
+                </div>
+                <div class="five columns">
+                    <label for="Username">Password</label>
+                    <input class="u-full-width" type="password" placeholder="Password" name="password">
+                </div>
+                <div class="two columns">
+                    <label for="exampleEmailInput">&nbsp;</label>
+                    <input type="submit" value="Login">
                 </div>
             </div>
-            <div class="five columns">
-                <label for="Username">Password</label>
-                <input class="u-full-width" type="password" placeholder="Password" name="password">
-            </div>
-            <div class="two columns">
-                <label for="exampleEmailInput">&nbsp;</label>
-                <input type="submit" value="Login">
-            </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+</body>

@@ -22,6 +22,7 @@
     <Compile Include="all_routes.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="models\add_junction.py" />
     <Compile Include="models\global_route.py">
       <SubType>Code</SubType>
     </Compile>
@@ -47,6 +48,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="scripts\haversine.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="models\traffic_heuristics.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="scripts\UserDB.py">
@@ -78,11 +82,17 @@
     <Content Include="static\css\skeleton.css" />
     <Content Include="static\images\helpicon.png" />
     <Content Include="static\javascript\traffic_control.js" />
+    <Content Include="static\junc_icon0-10.png" />
+    <Content Include="static\junc_icon11-40.png" />
+    <Content Include="static\junc_icon41-75.png" />
+    <Content Include="static\junc_icon76-100.png" />
+    <Content Include="templates\add_junction.html" />
     <Content Include="templates\config.html" />
     <Content Include="templates\index.html" />
     <Content Include="static\junc_icon.png" />
     <Content Include="static\MovingMarker.js" />
     <Content Include="templates\login.html" />
+    <Content Include="templates\Unauthorized.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="models\" />

@@ -1,0 +1,193 @@
+{
+	"junctions_edge": {
+		"52.632930//-1.161572": {
+			"routes": [{
+				"lat": "52.632912",
+				"road_type": 1,
+				"lon": "-1.157873",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "A47 - Wyngate Drive",
+			"speed": 60
+		}
+	},
+	"junctions": {
+		"52.633747//-1.143091": {
+			"routes": [{
+				"lat": "52.633939",
+				"road_type": 1,
+				"lon": "-1.141648",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "St Augustine Road - River crossing",
+			"speed": 30
+		},
+		"52.634169//-1.149998": {
+			"routes": [{
+				"lat": "52.633923",
+				"road_type": 1,
+				"lon": "-1.146260",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "A47 - Glenfield Road East",
+			"speed": 30
+		},
+		"52.633818//-1.154483": {
+			"routes": [{
+				"lat": "52.634169",
+				"road_type": 1,
+				"lon": "-1.149998",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "A47",
+			"speed": 60
+		},
+		"52.633939//-1.141648": {
+			"routes": [{
+				"lat": "52.634359",
+				"road_type": 1,
+				"lon": "-1.141536",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "St Augustine Road - A47",
+			"speed": 30
+		},
+		"52.631071//-1.147474": {
+			"routes": [{
+				"lat": "52.63255",
+				"road_type": 3,
+				"lon": "-1.14664",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "A4560/Braunstone North",
+			"speed": 30
+		},
+		"52.634053//-1.144829": {
+			"routes": [{
+				"lat": "52.633747",
+				"road_type": 1,
+				"lon": "-1.143091",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "St Augustine Road - Car Park turnoff",
+			"speed": 30
+		},
+		"52.632610//-1.143972": {
+			"routes": [{}],
+			"traffic_load": 0,
+			"junction_name": "Duns Lane/Corah Street",
+			"speed": "30"
+		},
+		"52.633923//-1.146260": {
+			"routes": [{
+				"lat": "52.634053",
+				"road_type": 1,
+				"lon": "-1.144829",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "A47 - A5460 junction",
+			"speed": 30
+		},
+		"52.634785//-1.140588": {
+			"routes": [{
+				"lat": "52.634965",
+				"road_type": 1,
+				"lon": "-1.139803",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "A47/ring road / St. Nicholas Place",
+			"speed": "30"
+		},
+		"52.632912//-1.157873": {
+			"routes": [{
+				"lat": "52.633818",
+				"road_type": 1,
+				"lon": "-1.154483",
+				"time": 0
+			}, {
+				"lat": "52.631886",
+				"road_type": 3,
+				"lon": "-1.152602",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "A47 - Westcotes Road",
+			"speed": 60
+		},
+		"52.630928//-1.148088": {
+			"routes": [{
+				"lat": "52.631071",
+				"road_type": 3,
+				"lon": "-1.147474",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "Hinckley road/A4560/Braunstone",
+			"speed": 30
+		},
+		"52.634359//-1.141536": {
+			"routes": [{
+				"lat": "52.634785",
+				"road_type": 1,
+				"lon": "-1.140588",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "A47/Talbot Lane",
+			"speed": "30"
+		},
+		"52.63255//-1.14664": {
+			"routes": [{
+				"lat": "52.633923",
+				"road_type": 3,
+				"lon": "-1.146260",
+				"time": 0
+			}, {
+				"lat": "52.631977",
+				"road_type": "3",
+				"lon": "-1.144379",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "A4560/New Park St North",
+			"speed": 30
+		},
+		"52.631886//-1.152602": {
+			"routes": [{
+				"lat": "52.630928",
+				"road_type": 3,
+				"lon": "-1.148088",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "Hinckley road/fosse road central",
+			"speed": 30
+		},
+		"52.634965//-1.139803": {
+			"routes": [{}],
+			"traffic_load": 0,
+			"junction_name": "St Nicholas Place/Jubilee Square",
+			"speed": "30"
+		},
+		"52.631977//-1.144379": {
+			"routes": [{
+				"lat": "52.632610",
+				"road_type": "3",
+				"lon": "-1.143972",
+				"time": 0
+			}],
+			"traffic_load": 0,
+			"junction_name": "New Park St/Duns Lane",
+			"speed": "30"
+		}
+	}
+}

@@ -1,33 +1,35 @@
 from math import radians, sin, cos, atan2, sqrt
 
 
-def get_distance_haversine(distance1, distance2):
+def get_distance_haversine(lat_lon_list):
     ### implementation of the haversine formula in python
     # get the radius in metres
     radius = 6371 * 1000 
 
-    lat1 = distance1[0]
-    lon1 = distance1[1]
-    lat2 = distance2[0]
-    lon2 = distance2[1]
+    source_lat = lat_lon_list[0]
+    source_lon = lat_lon_list[1]
+    dest_lat = lat_lon_list[2]
+    dest_lon = lat_lon_list[3]
 
-    '''lat1 = 52.632930
-    lon1 = -1.161572
-    lat2 = 52.632912
-    lon2 = -1.157873'''
+    # checks to see if all items in the list are unicode
+    if all(isinstance(item, unicode) for item in lat_lon_list):
+        source_lat = float(source_lat)
+        source_lon = float(source_lon)
+        dest_lat = float(dest_lat)
+        dest_lon = float(dest_lon)
 
     try:
         ## calculate the distance in latitude and longtiude in radians
-        distanceLat = radians(lat2 - lat1)
-        distanceLon = radians(lon2 - lon1)
+        distanceLat = radians(dest_lat - source_lat)
+        distanceLon = radians(dest_lon - source_lon)
     except TypeError:
         # this is incase unicode params are provided
         raise TypeError("Could not convert as variables are not floats")
 
     # cosine and sine transforms
     a = sin(distanceLat/2) * sin(distanceLat/2) \
-        + cos(radians(lat1)) \
-        * cos(radians(lat2)) * sin(distanceLon/2) * sin(distanceLon/2)
+        + cos(radians(source_lat)) \
+        * cos(radians(dest_lat)) * sin(distanceLon/2) * sin(distanceLon/2)
     
     c = 2 * atan2(sqrt(a), sqrt(1-a))
     # get the distance from the radius times by 
