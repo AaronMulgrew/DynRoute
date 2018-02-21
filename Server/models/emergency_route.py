@@ -22,7 +22,7 @@ class EmergencyHandler(GlobalRouteHandler):
         self._all_routes = self.all_routes.grab_all_routes()
         dijkstra = dijkstra_algorithm.Dijkstra()
         dijkstra.reprocess_data(self._all_routes)
-        result = dijkstra.compute_shortest_route('52.632930//-1.161572', '52.634965//-1.139803')
+        result = dijkstra.compute_shortest_route('52.632930//-1.161572', '52.637952//-1.123362')
         #dijkstra.add_edges(self._all_routes)
         route = self.process_route(result)
         return route
@@ -30,7 +30,6 @@ class EmergencyHandler(GlobalRouteHandler):
     def process_route(self, route):
         # this readies the JSON object
         # for the browser
-        print route
         newroute = list()
         for element in route:
             lat, lon = element.split('//')
@@ -58,8 +57,8 @@ def emergency_route(auth_token):
         # this checks to see that the decrypted password
         # is the same as the password hash for the login
         if data.password == password_hash:
-            # verify the timestamp for the next 30 minutes
-            if timestamp > datetime.datetime.now()-datetime.timedelta(minutes=30):
+            # verify the timestamp for the next 90 minutes
+            if timestamp > datetime.datetime.now()-datetime.timedelta(minutes=90):
                 Emergency = EmergencyHandler()
                 route = Emergency.generate_emergency()
                 return_value = json.dumps(route)

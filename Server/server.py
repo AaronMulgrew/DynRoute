@@ -90,9 +90,25 @@ def login():
         else:
             return render_template('index.html', error='Wrong username or password!')
 
-@app.route('/junc_icon.png')
-def send_junc_icon():
-    return current_app.send_static_file('junc_icon.png')
+@app.route('/junc_icon<traffic_load>.png')
+def send_junc_icon(traffic_load):
+    try:
+        traffic_load = int(traffic_load)
+    except ValueError:
+        # this defaults back to the grey traffic load
+        traffic_load = 1000
+    if traffic_load <= 10:
+        filename = 'junc_icon0-10.png'
+    elif traffic_load <= 40:
+        filename = 'junc_icon11-40.png'
+    elif traffic_load <= 75:
+        filename = 'junc_icon41-75.png'
+    elif traffic_load <= 100:
+        filename = 'junc_icon76-100.png'
+    else:
+        filename = 'junc_icon.png'
+
+    return current_app.send_static_file(str(filename))
 
 @app.route('/all_juncts')
 def return_all_junctions():

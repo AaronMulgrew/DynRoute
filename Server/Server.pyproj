@@ -82,6 +82,10 @@
     <Content Include="static\css\skeleton.css" />
     <Content Include="static\images\helpicon.png" />
     <Content Include="static\javascript\traffic_control.js" />
+    <Content Include="static\junc_icon0-10.png" />
+    <Content Include="static\junc_icon11-40.png" />
+    <Content Include="static\junc_icon41-75.png" />
+    <Content Include="static\junc_icon76-100.png" />
     <Content Include="templates\add_junction.html" />
     <Content Include="templates\config.html" />
     <Content Include="templates\index.html" />

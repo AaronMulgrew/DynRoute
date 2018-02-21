@@ -57,11 +57,18 @@ class AllRoutes(object):
     def grab_junction_data(self):
         return self.junction_data
 
-    def update_traffic_load(self, coords, traffic_load):
+    def update_traffic_load(self, coords, route_lat, route_lon, traffic_load):
+        #incase of unicode encoding
+        coords = str(coords)
         try:
-            self.all_routes["junctions"][coords]["traffic_load"] = traffic_load
-        except TypeError:
-            return False
+            junction = self.all_routes["junctions"][coords]
+        except KeyError:
+            junction = self.all_routes["junctions_edge"][coords]
+        for route in junction['routes']:
+            if route['lat'] == route_lat and route['lon'] == route_lon:
+                #self.all_routes["junctions"][coords][route]['traffic_load'] = traffic_load
+                route['traffic_load'] = traffic_load
+
         return True
 
     def update_current_time(self, lat, lon, route_lat, route_lon, time):
@@ -80,7 +87,7 @@ class AllRoutes(object):
         # make sure we iterate over the routes in the junction
         for element in junction["routes"]:
             if route_lat == element['lat']:
-                print route_lat
+                #print route_lat
                 element["time"] = time
         return True
 

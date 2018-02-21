@@ -1,6 +1,13 @@
-
-
+// this is the global variable for the emergency vehicle
+var EmergencyLine;
+// this is the global token for the authenticated user to activate an emergency
 var token;
+var EmergencyInterval;
+var juncIcon = L.icon({
+    iconUrl: 'junc_icon.png',
+    iconSize: [32, 32],
+    shadowSize: [0, 0]
+});
 
 function init(authToken)
 {
@@ -77,6 +84,7 @@ function ProcessJunctions(JunctionData, JunctionMarkerBind=false) {
         if (pos == -1) {
             if (JunctionMarkerBind != false)
             {
+                /// this if statement runs if the user is in ADD JUNCTION mode.
                 var myMarker = new customMarkerRoute([lat, lon], {
                     icon: juncIcon,
                     CustomData: JunctionData[i].junction.junction_name,
@@ -86,16 +94,28 @@ function ProcessJunctions(JunctionData, JunctionMarkerBind=false) {
             }
             else
             {
+                var juncIcon = L.icon({
+                    iconUrl: 'junc_icon' + JunctionData[i].junction.routes[0].traffic_load + '.png',
+                    iconSize: [32, 32],
+                    shadowSize: [0, 0]
+                });
                 marker = L.marker([lat, lon], { icon: juncIcon }).addTo(map);
-                marker.bindPopup("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.traffic_load);
+                marker.bindPopup("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.routes[0].traffic_load);
                 markers.push(marker, lat + ":" + lon);
             }
             //var marker = L.marker([40.68510, -73.94136]).addTo(map);
         }
-        else {
+        else
+        {
+            var juncIcon = L.icon({
+                iconUrl: 'junc_icon' + JunctionData[i].junction.routes[0].traffic_load + '.png',
+                iconSize: [32, 32],
+                shadowSize: [0, 0]
+            });
             // this is minus one because we have added both the marker and the latitude/longitude values
-            marker = markers[pos - 1]
-            marker._popup.setContent("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.traffic_load);
+            marker = markers[pos - 1];
+            marker.setIcon(juncIcon);
+            marker._popup.setContent("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.routes[0].traffic_load);
         }
 
     }
@@ -107,23 +127,27 @@ function httpGetAsync(theUrl, callback, marker = null, header = null, value = nu
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function ()
     {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-        {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             //console.log(xmlHttp.responseText);
-            if (marker)
-            {
+            if (marker) {
                 callback(xmlHttp.responseText, marker);
             }
-            else
-            {
+            else {
                 if (JunctionMarkerBind) {
                     callback(xmlHttp.responseText, JunctionMarkerBind)
                 }
-                else
-                {
+                else {
                     callback(xmlHttp.responseText);
                 }
             }
+        }
+        else if (xmlHttp.status == 401)
+        {
+            alert("Token Expired or no token provided!");
+        }
+        else if (xmlHttp.status != 200)
+        {
+            console.log("Error!", xmlHttp.status.toString());
         }
     }
     xmlHttp.open("GET", theUrl, true);
@@ -175,9 +199,23 @@ function NewCoords(latlon, marker) {
     //console.log(latlon);
 }
 
+
 function GenerateEmergency() {
     //console.log(sessionStorage);
-    httpGetAsync("/generate_emergency", ProcessEmergency,null,'auth_token', AuthToken);
+    if (EmergencyLine) {
+        httpGetAsync("/generate_emergency", ProcessEmergency, null, 'auth_token', AuthToken, null, EmergencyLine);
+    }
+    else
+    {
+        httpGetAsync("/generate_emergency", ProcessEmergency, null, 'auth_token', AuthToken);
+    }
+    if (EmergencyInterval) {}
+    else
+    {
+        EmergencyInterval = window.setInterval(function () {
+            GenerateEmergency();
+        }, 4000);
+    }
 }
 
 function ProcessEmergency(message)
@@ -185,12 +223,16 @@ function ProcessEmergency(message)
     if (CheckJson(message))
     {
         message = JSON.parse(message);
-        console.log(message);
-        //var latlngs = [
-        //    [Number(message.lat), Number(message.lon)],
-        //    [Number(message.route.lat), Number(message.route.lon)]
-        //];
-        var polyline = L.polyline(message, { color: 'red' }).addTo(map);
+        if (EmergencyLine)
+        {
+            map.removeLayer(EmergencyLine);
+            EmergencyLine = L.polyline(message, { color: 'green' }).addTo(map);
+        }
+        else
+        {
+            var oldemergency = L.polyline(message, { color: 'red' }).addTo(map);
+            EmergencyLine = L.polyline(message, { color: 'green' }).addTo(map);
+        }
     }
     else
     {

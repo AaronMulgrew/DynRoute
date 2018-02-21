@@ -107,7 +107,9 @@ class JunctionHandler(object):
         #select a random 'route' according to the number
         selection_number = self.weighted_junc_search()
         newroute = potential_routes[selection_number]
-        traffic_load = self.globalRoutes.get_current_load(self.lat + "//" + self.lon)
+        traffic_load = self.globalRoutes.get_current_load(self.lat + "//" + self.lon, newroute['lat'] + "//" + newroute['lon'])
+        self.globalRoutes.add_junction_data(str(self.lat + "//" + self.lon + str(newroute['lat']) + "//" + str(newroute['lon'])))
+        self.globalRoutes.update_traffic_load(self.lat + '//' + self.lon, newroute['lat'], newroute['lon'], traffic_load)
         # this will be the time to reach destination
         time = self.globalRoutes.calculate_junction_distance_time(self.lat, self.lon, self.speed, newroute, traffic_load)
         route = {"lat": str(self.lat), "lon": str(self.lon), "time": time, "route": {"lat":str(newroute["lat"]), "lon":str(newroute["lon"])}}

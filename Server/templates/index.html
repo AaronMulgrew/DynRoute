@@ -76,11 +76,6 @@
         var JuncInterval = 1000
         L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: 'OSM' })
             .addTo(map);
-        var juncIcon = L.icon({
-            iconUrl: 'junc_icon.png',
-            iconSize: [32, 32],
-            shadowSize: [0, 0]
-        });
 
         var slider = document.getElementById("myRange");
         var output = document.getElementById("demo");
@@ -95,9 +90,9 @@
                 httpGetAsync("/", process_coord);
             }, getNewCarsInterval);
         }
-        var interval = window.setInterval(function () {
-            httpGetAsync("/", process_coord);
-        }, 1000);
+        //var interval = window.setInterval(function () {
+        //    httpGetAsync("/", process_coord);
+        //}, 1000);
     </script>
 
 </body>

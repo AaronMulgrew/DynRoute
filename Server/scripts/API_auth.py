@@ -10,7 +10,6 @@ def encode(username, password_hash):
 
 def decode(encoded_string):
     decoded_jwt = jwt.decode(encoded_string, settings.SECRET_KEY, algorithms=['HS256'])
-    print(type(decoded_jwt))
     username = decoded_jwt['username']
     password_hash = decoded_jwt['password_hash']
     return decoded_jwt

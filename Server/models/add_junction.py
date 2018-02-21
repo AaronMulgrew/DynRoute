@@ -18,6 +18,7 @@ class AddJunction(object):
         decimal_point = latlon.find('.')
         # trim latitude down to six decimal places 
         # as this matches the JSON file.
+        # whereas the standard of accuracy is higher in the browser.
         latlon = latlon[:decimal_point+7]
         return latlon
 
@@ -28,11 +29,11 @@ class AddJunction(object):
         
         print request
         lat_lon = request['NewLatLon']
-        speed = request['Speed']
+        speed = int(request['Speed'])
         junction_name = request['SelectedJunction']
         new_junction_name = request['JuncName']
         old_lat_lon = request['OldLatLon']
-        road_type = request['RoadType']
+        road_type = int(request['RoadType'])
         lat, lon = lat_lon.split('//')
         old_lat, old_lon = old_lat_lon.split('//')
         lat = self.process_lat_lon_float(lat)
@@ -41,7 +42,7 @@ class AddJunction(object):
         self.lon = lon
         self.old_lat = str(old_lat)
         self.old_lon = old_lon
-        self.speed = speed
+        self.speed = int(speed)
         self.junction_name = junction_name
         self.road_type = road_type
         self.new_junction_name = new_junction_name
@@ -69,8 +70,8 @@ class AddJunction(object):
         lat_lon = str(self.old_lat) + '//' + str(self.old_lon)
         new_lat_lon = str(self.lat) + '//' + str(self.lon)
         current_junc = self.all_routes['junctions'].get(lat_lon)
-        newroute = {'lat':self.lat, 'lon':self.lon, 'road_type':self.road_type, 'time':0}
-        newjunction = {'traffic_load': 0, 'junction_name': self.new_junction_name, 'speed': self.speed,
+        newroute = {'lat':self.lat, 'lon':self.lon, 'road_type':self.road_type, 'time':0, 'traffic_load': 0}
+        newjunction = {'junction_name': self.new_junction_name, 'speed': self.speed,
                        'routes':[{}]}
         if current_junc:
             if current_junc['junction_name'] == self.junction_name:
