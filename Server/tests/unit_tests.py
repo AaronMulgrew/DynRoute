@@ -98,8 +98,11 @@ class test_all_routes(unittest.TestCase):
 
     def test_update_traffic_load_invalid(self):
         coords = ["1111", "2222"]
+        route_lat = "111"
+        route_lon = "222"
+
         traffic_load = 24
-        returnvar = self.allroutes.update_traffic_load(coords, traffic_load)
+        returnvar = self.allroutes.update_traffic_load(coords, route_lat, route_lon, traffic_load)
         self.assertFalse(returnvar)
 
 class test_emergency_handler(unittest.TestCase):

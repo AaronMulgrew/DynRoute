@@ -60,10 +60,12 @@ class AllRoutes(object):
     def update_traffic_load(self, coords, route_lat, route_lon, traffic_load):
         #incase of unicode encoding
         coords = str(coords)
-        try:
+        if coords in self.all_routes["junctions"]:
             junction = self.all_routes["junctions"][coords]
-        except KeyError:
+        elif coords in self.all_routes["junctions_edge"]:
             junction = self.all_routes["junctions_edge"][coords]
+        else:
+            return False
         for route in junction['routes']:
             if route['lat'] == route_lat and route['lon'] == route_lon:
                 #self.all_routes["junctions"][coords][route]['traffic_load'] = traffic_load
