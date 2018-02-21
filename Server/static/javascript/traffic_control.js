@@ -3,11 +3,7 @@ var EmergencyLine;
 // this is the global token for the authenticated user to activate an emergency
 var token;
 var EmergencyInterval;
-var juncIcon = L.icon({
-    iconUrl: 'junc_icon.png',
-    iconSize: [32, 32],
-    shadowSize: [0, 0]
-});
+
 
 function init(authToken)
 {
@@ -82,6 +78,12 @@ function ProcessJunctions(JunctionData, JunctionMarkerBind=false) {
         var lon = Number(JunctionData[i].lon);
         var pos = markers.indexOf(lat + ":" + lon);
         if (pos == -1) {
+            // this creates the 'default' junction icon
+            var juncIcon = L.icon({
+                iconUrl: '../junc_icondefault.png',
+                iconSize: [32, 32],
+                shadowSize: [0, 0]
+            });
             if (JunctionMarkerBind != false)
             {
                 /// this if statement runs if the user is in ADD JUNCTION mode.
@@ -94,7 +96,7 @@ function ProcessJunctions(JunctionData, JunctionMarkerBind=false) {
             }
             else
             {
-                var juncIcon = L.icon({
+                juncIcon = L.icon({
                     iconUrl: 'junc_icon' + JunctionData[i].junction.routes[0].traffic_load + '.png',
                     iconSize: [32, 32],
                     shadowSize: [0, 0]
