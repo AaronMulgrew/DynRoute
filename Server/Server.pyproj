@@ -29,6 +29,9 @@
     <Compile Include="models\junction_handler.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="models\login.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="models\__init__.py">
       <SubType>Code</SubType>
     </Compile>
@@ -41,7 +44,7 @@
     <Compile Include="scripts\API_auth.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="scripts\dijkstra_algorithm.py">
+    <Compile Include="models\dijkstra_algorithm.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="scripts\encrypt_decrypt_RSA.py">

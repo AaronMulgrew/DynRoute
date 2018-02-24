@@ -6,15 +6,16 @@ from flask import (current_app, url_for, \
 render_template, redirect, session)
 from flask_api import status
 from __init__ import app, bcrypt, request, junction_handler, global_route, add_junction
+routehandler = global_route.GlobalRouteHandler()
 from scripts import API_auth
 
 import settings
 
 from models import emergency_route
+from models import login as check_login
 from OpenSSL import SSL
 from scripts import UserDB
 import ssl
-routehandler = global_route.GlobalRouteHandler()
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 context.load_cert_chain('certs/domain.crt', 'certs/domain.key')
 
@@ -46,6 +47,13 @@ def send_homepage():
 		return render_template('index.html', data=session['username'])
 
 
+@app.route('/calculate_time', methods = ['GET'])
+def calc_time():
+    coords = json.loads(request.headers['route'])
+    result = routehandler.calculate_time_route(coords)
+    return json.dumps(result)
+
+
 @app.route('/config.html')
 def send_config():
 	return render_template('config.html')
@@ -74,21 +82,31 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     else:
-        name = request.form['username']
-        passw = request.form['password']
-        data = UserDB.User.query.filter_by(username=name).first()
-        if data:		
-            check = bcrypt.check_password_hash(data.password, passw)
-            print data.password
-            print check
-            if check:
-                token = API_auth.encode(name, data.password)
-                session['logged_in'] = True
-                session['auth_token'] = token
-                session['username'] = name
-                return redirect(url_for('send_homepage'))
+        name = str(request.form['username'])
+        passw = str(request.form['password'])
+        result = check_login.check_login(name, passw)
+        if result:
+            token = API_auth.encode(name, result['password'])
+            session['logged_in'] = True
+            session['auth_token'] = token
+            session['username'] = name
+            return redirect(url_for('send_homepage'))
         else:
             return render_template('index.html', error='Wrong username or password!')
+
+@app.route('/login_api', methods=['POST'])
+def login_api():
+    name = str(request.form['username'])
+    passw = str(request.form['password'])
+    result = check_login.check_login(name, passw)
+    if result:
+        # generates a token based on the password hash
+        token = API_auth.encode(name, result['password'])
+        return json.dumps({'token':token})
+    else:
+        return "invalid Username or Password", status.HTTP_401_UNAUTHORIZED
+
+
 
 @app.route('/junc_icon<traffic_load>.png')
 def send_junc_icon(traffic_load):

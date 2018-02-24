@@ -68,7 +68,11 @@ class GlobalRouteHandler(object):
 
     def search_route(self, lat, lon):
         _all_routes = self.all_routes.grab_all_routes()
-        junc = _all_routes['junctions'][lat+'//'+lon]
+        lat_lon = lat+'//'+lon
+        if lat_lon in _all_routes['junctions']:
+            junc = _all_routes['junctions'][lat+'//'+lon]
+        else:
+            junc = _all_routes['junctions_edge'][lat+'//'+lon]
         return junc
 
     def refresh_all_routes(self):
@@ -85,6 +89,23 @@ class GlobalRouteHandler(object):
         timenow = datetime.datetime.now()
         result = allroutes.add_junction_data(timenow, coords)
         return result
+
+    def calculate_time_route(self, coords):
+        time = 0
+        for index, item in enumerate(coords):
+            lat = str(item['lat'])
+            lon = str(item['lon'])
+            junction = self.search_route(lat, lon)
+            routes = junction['routes']
+            for route in routes:
+                if route.get('lat'):
+                    lat = route['lat']
+                    lon = route['lon']
+                    # do a direct comparison to the next route in the list
+                    # as the list will always be sequential
+                    if lat == coords[index+1]['lat'] and lon == coords[index+1]['lon']:
+                        time = time + route['time']
+        return time
 
     def update_traffic_load(self, source_latlon, route_lat, route_lon, traffic_load):
         allroutes.update_traffic_load(source_latlon, route_lat, route_lon, traffic_load)

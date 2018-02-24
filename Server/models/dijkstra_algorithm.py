@@ -1,5 +1,5 @@
 from collections import defaultdict
-import haversine
+from scripts import haversine
 from models import global_route
 global_route = global_route.GlobalRouteHandler()
 import Queue
@@ -127,13 +127,6 @@ class Dijkstra():
                 #else:
                     #print 'not in key'
 
-                #else:
-                #    # this means that it is a edge node, hence no time penalty
-                #    if previous not in time.keys():
-                #        time[previous] = {'source': previous, 'time': 0}
-                #    # otherwise treat it as normal (No cost as no previous)
-                #    time[next] = {'source': previous, 'dest': next, 'time': junc_time}
-
         route = list()
         nextitem = dest
         while time.get(nextitem) is not None:
@@ -147,4 +140,4 @@ class Dijkstra():
                 break
             #print nextitem
         route.reverse()
-        return route
+        return {"route": route}

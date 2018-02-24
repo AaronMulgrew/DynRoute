@@ -4,8 +4,7 @@ import json
 import datetime
 import all_routes
 from scripts import haversine
-from models import junction_handler, emergency_route, global_route
-from scripts import dijkstra_algorithm
+from models import junction_handler, emergency_route, global_route, dijkstra_algorithm
 from scripts import API_auth
 try:
     import server as server
@@ -38,6 +37,13 @@ class test_flask_endpoints(unittest.TestCase):
         assert 'lat' in data
         assert 'lon' in data
 
+    def test_login(self):
+
+        result = self.app.post('/login_api', data=dict(
+        username='Admin',
+        password='123456'))
+        data = json.loads(result.data)
+        assert 'token' in data
 
     def test_gen_next_route(self):
         result = self.app.get('coordinates/52.632912:-1.157873')

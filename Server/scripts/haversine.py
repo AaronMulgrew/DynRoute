@@ -3,7 +3,7 @@ from math import radians, sin, cos, atan2, sqrt
 
 def get_distance_haversine(lat_lon_list):
     ### implementation of the haversine formula in python
-    # get the radius in metres
+    # get the radius of the earth in metres
     radius = 6371 * 1000 
 
     source_lat = lat_lon_list[0]

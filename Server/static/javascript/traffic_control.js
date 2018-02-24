@@ -3,7 +3,8 @@ var EmergencyLine;
 // this is the global token for the authenticated user to activate an emergency
 var token;
 var EmergencyInterval;
-
+// this is the Non dynamic route stored in the browser for the time function
+var OldRoute;
 
 function init(authToken)
 {
@@ -201,11 +202,17 @@ function NewCoords(latlon, marker) {
     //console.log(latlon);
 }
 
+function ProcessRouteTime(time) {
+    time = JSON.parse(time);
+    document.getElementById('time_taken_non_dynamic').innerHTML = time.toString();
+
+}
 
 function GenerateEmergency() {
     //console.log(sessionStorage);
     if (EmergencyLine) {
         httpGetAsync("/generate_emergency", ProcessEmergency, null, 'auth_token', AuthToken, null, EmergencyLine);
+        httpGetAsync("/calculate_time", ProcessRouteTime, null, "route", JSON.stringify(OldRoute))
     }
     else
     {
@@ -225,15 +232,20 @@ function ProcessEmergency(message)
     if (CheckJson(message))
     {
         message = JSON.parse(message);
+        route = message.route;
+        time_taken = message.time;
         if (EmergencyLine)
         {
             map.removeLayer(EmergencyLine);
-            EmergencyLine = L.polyline(message, { color: 'green' }).addTo(map);
+            EmergencyLine = L.polyline(route, { color: 'green' }).addTo(map);
+            document.getElementById('time_taken').innerHTML = time_taken.toString();
         }
         else
         {
-            var oldemergency = L.polyline(message, { color: 'red' }).addTo(map);
-            EmergencyLine = L.polyline(message, { color: 'green' }).addTo(map);
+            OldRoute = route;
+            var oldemergency = L.polyline(route, { color: 'red' }).addTo(map);
+            EmergencyLine = L.polyline(route, { color: 'green' }).addTo(map);
+            document.getElementById('time_taken_non_dynamic').innerHTML = time_taken.toString();
         }
     }
     else

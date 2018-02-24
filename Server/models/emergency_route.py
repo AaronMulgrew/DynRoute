@@ -1,10 +1,10 @@
 import all_routes
 import datetime
 import json
-from models import global_route
+from models import global_route, dijkstra_algorithm
 from global_route import GlobalRouteHandler
 from scripts import UserDB
-from scripts import API_auth, dijkstra_algorithm
+from scripts import API_auth
 all_routes = all_routes.AllRoutes()
 
 ''' Emergency Handler inherits from the globalRouteHandler class
@@ -25,13 +25,15 @@ class EmergencyHandler(GlobalRouteHandler):
         result = dijkstra.compute_shortest_route('52.632930//-1.161572', '52.637952//-1.123362')
         #dijkstra.add_edges(self._all_routes)
         route = self.process_route(result)
-        return route
+        time_taken = self.calculate_time_route(route)
+        return {"route":route, "time":time_taken}
 
     def process_route(self, route):
         # this readies the JSON object
         # for the browser
+        # to convert from our python list
         newroute = list()
-        for element in route:
+        for element in route['route']:
             lat, lon = element.split('//')
             newroute.append({'lat':lat, 'lon':lon})
         return newroute
