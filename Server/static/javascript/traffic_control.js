@@ -234,6 +234,7 @@ function ProcessEmergency(message)
         message = JSON.parse(message);
         route = message.route;
         time_taken = message.time;
+        document.getElementById('TimeTaken').style.display = "block";
         if (EmergencyLine)
         {
             map.removeLayer(EmergencyLine);

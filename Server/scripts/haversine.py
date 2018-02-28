@@ -30,7 +30,9 @@ def get_distance_haversine(lat_lon_list):
     a = sin(distanceLat/2) * sin(distanceLat/2) \
         + cos(radians(source_lat)) \
         * cos(radians(dest_lat)) * sin(distanceLon/2) * sin(distanceLon/2)
-    
+
+    # Atan2 is the arc of the earth between 
+    # two points exactly in the middle of the Y and X axis
     c = 2 * atan2(sqrt(a), sqrt(1-a))
     # get the distance from the radius times by 
     # great circle distance in radians

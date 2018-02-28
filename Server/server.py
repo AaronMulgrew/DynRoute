@@ -37,7 +37,7 @@ def coords(coordinates):
     else:
         return json.dumps(False)
 
-@app.route('/index.html')
+@app.route('/index')
 def send_homepage():
 	""" Session control"""
 	if not session.get('logged_in'):
@@ -54,9 +54,12 @@ def calc_time():
     return json.dumps(result)
 
 
-@app.route('/config.html')
+@app.route('/config')
 def send_config():
-	return render_template('config.html')
+    if session['logged_in'] == True:
+    	return render_template('config.html')
+    else:
+        return render_template('Unauthorized.html')
 
 @app.route("/logout")
 def logout():
@@ -68,8 +71,11 @@ def logout():
 @app.route('/add_junction/', methods=['GET','POST'])
 def add_junc_endpoint():
     if request.method == 'GET':
-        routehandler.refresh_all_routes()
-        return render_template('add_junction.html')
+        if 'logged_in' in session.keys():
+            routehandler.refresh_all_routes()
+            return render_template('add_junction.html')
+        else:
+            return render_template('Unauthorized.html')
     else:
         request_data = request.get_json()
         add_junc = add_junction.AddJunction()
@@ -156,7 +162,7 @@ def generate_emergency_route():
         return "No auth token", status.HTTP_401_UNAUTHORIZED
 
 
-@app.route('/')
+@app.route('/gen_route')
 def generate_edge_coords():
     junc = junction_handler.JunctionHandler()
     route = junc.generate_route()

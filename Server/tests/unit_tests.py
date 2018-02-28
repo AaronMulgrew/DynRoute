@@ -25,13 +25,13 @@ class test_flask_endpoints(unittest.TestCase):
     def test_gen_route(self):
         # sends HTTP GET request to the application
         # on the specified path
-        result = self.app.get('/')
+        result = self.app.get('/gen_route')
         assert result.status_code == 200
 
     def test_gen_route_json(self):
         # sends HTTP GET request to the application
         # on the specified path
-        result = self.app.get('/')
+        result = self.app.get('/gen_route')
         data = json.loads(result.data)
         # make sure that there is a latitude key in the dict
         assert 'lat' in data

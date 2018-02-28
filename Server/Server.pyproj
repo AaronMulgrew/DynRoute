@@ -83,7 +83,10 @@
     <Content Include="scripts\public.pem" />
     <Content Include="static\css\normalize.css" />
     <Content Include="static\css\skeleton.css" />
+    <Content Include="static\css\Stylesheet.css" />
+    <Content Include="static\fonts\oxygen.woff2" />
     <Content Include="static\images\helpicon.png" />
+    <Content Include="static\javascript\menu.js" />
     <Content Include="static\javascript\traffic_control.js" />
     <Content Include="static\junc_icon0-10.png" />
     <Content Include="static\junc_icon11-40.png" />
@@ -102,6 +105,7 @@
     <Folder Include="static\css\" />
     <Folder Include="static\javascript\" />
     <Folder Include="static\images\" />
+    <Folder Include="static\fonts\" />
     <Folder Include="templates\" />
     <Folder Include="tests\" />
     <Folder Include="scripts\" />

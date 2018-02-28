@@ -1,0 +1,128 @@
+html, body {
+    height: 100%;
+    font-family: 'Oxygen';
+}
+
+
+/***This is the Oxygen font used in the buttons.*/
+/* latin-ext */
+@font-face {
+    font-family: 'Oxygen';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Oxygen Regular'), local('Oxygen-Regular'), url(/static/fonts/oxygen.woff2) format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: 'Oxygen';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Oxygen Regular'), local('Oxygen-Regular'), url(/static/fonts/oxygen.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+.button {
+    color: white;
+    background-color: #232323;
+    transition: background-color 1s ease-out;
+    transition: color 1s ease-out;
+}
+
+.button:hover {
+    color: black;
+    background-color: white;
+    cursor: pointer;
+}
+
+.container {
+    width: 100%;
+}
+
+#map {
+    height: 70%;
+}
+
+#slidecontainer {
+    /*margin-top: 60%;*/
+    width: 90%;
+}
+
+#hamburger {
+    z-index: 999;
+    float: right;
+    position: relative;
+}
+
+.containerhamburger {
+    z-index: 999;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.bar1, .bar2, .bar3 {
+    z-index: 999;
+    width: 35px;
+    height: 5px;
+    background-color: #333;
+    margin: 6px 0;
+    transition: 0.4s;
+}
+
+.change .bar1 {
+    -webkit-transform: rotate(-45deg) translate(-9px, 6px);
+    transform: rotate(-45deg) translate(-9px, 6px);
+    background-color: white;
+}
+
+.change .bar2 {
+    opacity: 0;
+}
+
+.change .bar3 {
+    -webkit-transform: rotate(45deg) translate(-8px, -8px);
+    transform: rotate(45deg) translate(-8px, -8px);
+    background-color: white;
+}
+
+#menubar {
+    visibility: hidden;
+    z-index: 20;
+    position: fixed;
+    background-color: #000000;
+    opacity: 0;
+    width: 100%;
+    float: left;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    transition: opacity 1s;
+}
+
+#menubar.fadein {
+    opacity: 0.9;
+}
+
+#menuitem {
+    width: 70%;
+    height: 15%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5%;
+}
+
+#menuitem.button {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.5vw;
+    font-family: 'Oxygen';
+}
+
+#TimeTaken {
+    display: none;
+}
+
+#welcomeheading {
+    text-align: right;
+}

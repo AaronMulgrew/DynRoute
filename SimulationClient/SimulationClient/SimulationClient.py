@@ -10,7 +10,7 @@ class UserBehavior(TaskSet):
 
     def do_traverse(self):
         self.client.verify = False
-        response = self.client.get("/")
+        response = self.client.get("/gen_route")
         print response.content
         content = json.loads(response.content)
         print content
