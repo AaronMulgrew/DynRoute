@@ -8,6 +8,11 @@ from scripts import API_auth
 import datetime
 
 def check_login(username, password):
+
+    if len(username) < 1 or len(username) > 50:
+        return "Invalid"
+    if len(password) < 1 or len(password) > 50:
+        return "Invalid"
     data = UserDB.User.query.filter_by(username=username).first()
     if data:
         check = bcrypt.check_password_hash(data.password, password)
@@ -16,7 +21,7 @@ def check_login(username, password):
             # make sure we return the password hash not the 
             # actual password
             return {'password':data.password}
-    return False
+    return "Wrong"
 
 
 def check_auth_token(auth_token):

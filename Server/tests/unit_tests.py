@@ -37,13 +37,71 @@ class test_flask_endpoints(unittest.TestCase):
         assert 'lat' in data
         assert 'lon' in data
 
-    def test_login(self):
 
+
+    def test_login_extreme_min(self):
+
+        result = self.app.post('/login_api', data=dict(
+        username='',
+        password=''))
+        self.assertEqual(result.data, "invalid Username or Password")
+        self.assertEqual(result.status_code, 401)
+
+    def test_login_min(self):
+        result = self.app.post('/login_api', data=dict(
+        username='A',
+        password='1'))
+        self.assertEqual(result.data, "wrong Username or Password")
+        self.assertEqual(result.status_code, 401)
+
+    def test_login_min_plus_one(self):
+        result = self.app.post('/login_api', data=dict(
+        username='Ad',
+        password='12'))
+        self.assertEqual(result.data, "wrong Username or Password")
+        self.assertEqual(result.status_code, 401)
+
+    def test_login_max_minus_one(self):
+        result = self.app.post('/login_api', data=dict(
+        username='1234567893123212131231232122223323213213213321332',
+        password='1234567893123212131231232122223323213213213321332'))
+        self.assertEqual(result.data, "wrong Username or Password")
+        self.assertEqual(result.status_code, 401)
+
+    def test_login_max(self):
+        result = self.app.post('/login_api', data=dict(
+        username='12345678931232121312312321222233232132132133213321',
+        password='12345678931232121312312321222233232132132133213321'))
+        self.assertEqual(result.data, "wrong Username or Password")
+        self.assertEqual(result.status_code, 401)
+
+    def test_login_max_plus_one(self):
+        result = self.app.post('/login_api', data=dict(
+        username='123456789312321213123123212222332321321321332133212',
+        password='123456789312321213123123212222332321321321332133212'))
+        self.assertEqual(result.data, "invalid Username or Password")
+        self.assertEqual(result.status_code, 401)
+
+    def test_login_mid(self):
         result = self.app.post('/login_api', data=dict(
         username='Admin',
         password='123456'))
         data = json.loads(result.data)
         assert 'token' in data
+
+    def test_login_extreme_max(self):
+        result = self.app.post('/login_api', data=dict(
+        username='123456789312321213123123212222332321321321332133212123456789312321213123123212222332321321321332133212',
+        password='123456789312321213123123212222332321321321332133212123456789312321213123123212222332321321321332133212'))
+        self.assertEqual(result.data, "invalid Username or Password")
+        self.assertEqual(result.status_code, 401)
+
+    def test_login_invalid(self):
+        result = self.app.post('/login_api', data=dict(
+        username="DROP TABLE USER;",
+        password="SELECT * FROM USER"))
+        self.assertEqual(result.data, "wrong Username or Password")
+        self.assertEqual(result.status_code, 401)
 
     def test_gen_next_route(self):
         result = self.app.get('coordinates/52.632912:-1.157873')

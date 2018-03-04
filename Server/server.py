@@ -116,12 +116,15 @@ def login_api():
     name = str(request.form['username'])
     passw = str(request.form['password'])
     result = check_login.check_login(name, passw)
-    if result:
+    if result == "Wrong":
+        return "wrong Username or Password", status.HTTP_401_UNAUTHORIZED
+    elif result == "Invalid":
+        return "invalid Username or Password", status.HTTP_401_UNAUTHORIZED
+    else:
         # generates a token based on the password hash
         token = API_auth.encode(name, result['password'])
         return json.dumps({'token':token})
-    else:
-        return "invalid Username or Password", status.HTTP_401_UNAUTHORIZED
+
 
 
 
