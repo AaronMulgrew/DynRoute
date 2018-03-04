@@ -31,13 +31,16 @@ def coords(coordinates):
     lon = str(lat_lon[1])
     Junction = junction_handler.JunctionHandler([lat,lon])
     routeExists = Junction.check_if_route_exists()
-    if routeExists != False:
+    if isinstance(routeExists, str):
+        # this runs if the junctionhandler returns an error
+        return routeExists, status.HTTP_400_BAD_REQUEST
+    elif routeExists == True:
         route = Junction.generate_route()
         return json.dumps(route)
     else:
-        return json.dumps(False)
+        return "Junction Not Found.", status.HTTP_400_BAD_REQUEST
 
-@app.route('/index')
+@app.route('/')
 def send_homepage():
 	""" Session control"""
 	if not session.get('logged_in'):
@@ -77,10 +80,18 @@ def add_junc_endpoint():
         else:
             return render_template('Unauthorized.html')
     else:
-        request_data = request.get_json()
-        add_junc = add_junction.AddJunction()
-        result = add_junc.add_junction(request_data)
-        return json.dumps(result)
+        if 'logged_in' in session.keys():
+            auth_token = session['auth_token']
+            # verify that the authorisation token used
+            # is valid.
+            result = check_login.check_auth_token(auth_token)
+            if result[1]:
+                request_data = request.get_json()
+                add_junc = add_junction.AddJunction()
+                result = add_junc.add_junction(request_data)
+                return json.dumps(result)
+            else:
+                return json.dumps(result[0])
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():

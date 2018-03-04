@@ -85,6 +85,7 @@
     <Content Include="static\css\skeleton.css" />
     <Content Include="static\css\Stylesheet.css" />
     <Content Include="static\fonts\oxygen.woff2" />
+    <Content Include="static\images\favicon.ico" />
     <Content Include="static\images\helpicon.png" />
     <Content Include="static\javascript\menu.js" />
     <Content Include="static\javascript\traffic_control.js" />

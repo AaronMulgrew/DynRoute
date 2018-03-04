@@ -3,29 +3,127 @@
 <head>
 
     <title>Quick Start - Leaflet</title>
-    <style type="text/css">
-        html, body {
-            height: 100%;
-        }
-
-        #map {
-            height: 60%;
-        }
-    </style>
     <meta charset="utf-8" />
-
+        <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/skeleton.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
     <script src="/static/javascript/traffic_control.js"></script>
-    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="/static/images/favicon.ico" />
+    <script src="/static/javascript/menu.js"></script>
+    <link rel="stylesheet" href="/static/css/Stylesheet.css" />
+    <style>
+        #map {
+            height:100%;
+            width: 100%;
+        }
 
+        #mapcontainer {
+            height: 50%;
+            width: 100%;
+        }
+    </style>
 
 </head>
 <body onload="ShowJunction(MarkerClick);">
+    <div class="container">
+        <div class="row">
+            <div class="eleven columns">
+                <h2>Dynamic Routing System - Add Junction</h2>
+            </div>
+            <div class="one column">
+                <div class="five columns">
+                    <div id="hamburger" class="containerhamburger" onclick="toggleHamburger(this)">
+                        <div class="bar1"></div>
+                        <div class="bar2"></div>
+                        <div class="bar3"></div>
+                    </div>
+                    <div id="menubar">
+                        <div class="menucontainer">
+                            <div class="row">
+                                <div class="twelve columns">
+                                    <div class="six columns offset-by-four">
+                                        <a class="button" id="menuitem" href="/">Home</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="twelve columns">
+                                    <div class="six columns offset-by-four">
+                                        {% if data %}
+                                        <a class="button" id="menuitem" href="/logout">Logout</a>
+                                        {% else %}
+                                        <a class="button" id="menuitem" href="/login">Login</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% if session['logged_in'] %}
+                            <div class="row">
+                                <div class="twelve columns">
+                                    <div class="six columns offset-by-four">
+                                        <a class="button" id="menuitem" href="/config">Update Configuration</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="twelve columns">
+                                    <div class="six columns offset-by-four">
+                                        <a class="button" id="menuitem" href="/add_junction/">Add Junction</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-    <div id="map"></div>
+    <div class="container" id="mapcontainer">
+        <div id="map"></div>
+    </div>
+
+
+    <div class="container">
+        <div class="container">
+            <div class="row">
+                <div class="three columns">
+                    <label class="three columns">Selected Junction:</label>
+                    <label class="three columns" id="RouteName"></label>
+                </div>
+                <div class="nine columns">
+                    <label class="two columns">Selected Latitude:</label>
+                    <label class="two columns" id="Lat"></label>
+                    <label class="two columns">Selected Longitude:</label>
+                    <label class="two columns" id="Lon"></label>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="four columns">
+                    <label for="junc_name">Junction Name</label>
+                    <input class="u-full-width" name="Junction Name" , id="JuncName">
+                    <label for="junc_name">Speed</label>
+                    <input class="u-full-width" name="Speed" id="Speed">
+                </div>
+                <div class="four columns">
+                    <label for="junc_name">Road Type 1 - 5 (1=Trunk Road)(5=side street)</label>
+                    <input class="u-full-width" name="Speed" id="RoadType">
+                </div>
+                <div class="four columns">
+                    <label for="exampleEmailInput">&nbsp;</label>
+                    <input type="submit" value="Submit" onclick="Submit()">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script>
         var map = L.map('map').setView([52.635897, -1.132896], 15);
         var markers = []
@@ -48,14 +146,12 @@
             }
         });
 
-        function MarkerClick(e)
-        {
+        function MarkerClick(e) {
             SelectedJunc = e.target.options.CustomLatLon.toString();
             document.getElementById("RouteName").innerHTML = e.target.options.CustomData.toString();
         }
 
-        function onMapClick(e)
-        {
+        function onMapClick(e) {
             popup
                 .setLatLng(e.latlng)
                 .setContent("You clicked the map at " + e.latlng.toString())
@@ -65,8 +161,7 @@
         }
         map.on('click', onMapClick);
 
-        function Submit()
-        {
+        function Submit() {
 
 
             var xhr = new XMLHttpRequest();
@@ -80,17 +175,15 @@
             Speed = document.getElementById('Speed').value;
             RoadType = document.getElementById('RoadType').value;
             LatLon = Lat.toString() + '//' + Lon.toString();
-            xhr.onreadystatechange = function ()
-            {
-                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200)
-                {
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
                     // Request finished and success here
                     console.log(xhr.XMLHttpRequest);
                     alert("Success");
+                    // make sure we refresh the webpage to see the results.
                     location.reload();
                 }
-                else if (xhr.status != 200)
-                {
+                else if (xhr.status != 200) {
                     alert(xhr.responseText.toString())
                 }
             }
@@ -105,35 +198,7 @@
         }
     </script>
 
-    <div class="container">
-        <div class="row">
-            <div class="five columns">
-                <label class="one-third columns">Selected Junction:</label>
-                <label class="one-third columns" id="RouteName"></label>
-            </div>
-            <div class="five columns">
-                <label class="one-third columns">Selected Latitude:</label>
-                <label class="one-third columns" id="Lat"></label>
-                <label class="one-third columns">Selected Longitude:</label>
-                <label class="one-third columns" id="Lon"></label>
 
-            </div>
-            <div class="five columns">
-                <label for="junc_name">Junction Name</label>
-                <input class="u-full-width" name="Junction Name" , id="JuncName">
-                <label for="junc_name">Speed</label>
-                <input class="u-full-width" name="Speed" id="Speed">
-            </div>
-            <div class="two columns">
-                <label for="junc_name">Road Type 1 - 5 (1=Trunk Road)(5=side street)</label>
-                <input class="u-full-width" name="Speed" id="RoadType">
-            </div>
-            <div class="two columns">
-                <label for="exampleEmailInput">&nbsp;</label>
-                <input type="submit" value="Submit" onclick="Submit()">
-            </div>
-        </div>
-    </div>
 
 </body>
 </html>

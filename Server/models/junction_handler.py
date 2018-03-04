@@ -12,6 +12,7 @@ class JunctionHandler(object):
     def __init__(self, current_route=None):
         """Default speed is 30 as this is the most common"""
         self.globalRoutes = global_route.GlobalRouteHandler()
+
         if current_route == None:
             allroutes = all_routes.AllRoutes()
             self._all_routes = allroutes.grab_all_routes()
@@ -24,8 +25,12 @@ class JunctionHandler(object):
             self.current_junc = self.current_route[1]
         else:
             if len(current_route) == 2:
-                self.current_junc = self.globalRoutes.search_route(current_route[0], current_route[1])
-                self.current_coords = current_route[0], current_route[1]
+                self.is_valid_junc = self.check_junction_coords_valid(current_route[0], current_route[1])
+                if self.is_valid_junc:
+                    self.current_junc = self.globalRoutes.search_route(current_route[0], current_route[1])
+                    self.current_coords = current_route[0], current_route[1]
+                else:
+                    self.current_junc = False
 
         if self.current_junc != False:
             self.junction_name = self.current_junc["junction_name"]
@@ -35,13 +40,26 @@ class JunctionHandler(object):
             self.lon = self.current_coords[1]
             self.route = self.current_junc["routes"]
 
-    
+    def check_junction_coords_valid(self, lat, lon):
+        try:
+            lat = float(lat)
+            lon = float(lon)
+        except ValueError:
+            return False
+        valid = False
+        if lat >= -90 and lat <= +90 and lon >= -180 and lon <= +180:
+            valid = True
+        return valid
+
     def check_if_route_exists(self):
         #print self.route[0]
         if self.current_junc != False and self.route[0] != {}:
             return True
         else:
-            return False
+            if self.is_valid_junc:
+                return False
+            else:
+                return "Invalid data format"
 
     def weighted_junc_search(self):
         potential_routes = self.route

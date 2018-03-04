@@ -49,7 +49,71 @@ class test_flask_endpoints(unittest.TestCase):
         result = self.app.get('coordinates/52.632912:-1.157873')
         assert result.status_code == 200
 
-    def test_gen_next_route_json(self):
+
+    def test_gen_next_route_extreme_min(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/-8888:-12000')
+        data = result.data
+        # make sure that there is a latitude key in the dict
+        self.assertEqual(data,"Invalid data format")
+        self.assertEqual(result.status_code, 400)
+
+    def test_gen_next_route_min_minus_one(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/-91.000:-181.000')
+        data = result.data
+        # make sure that there is a latitude key in the dict
+        self.assertEqual(data,"Invalid data format")
+        self.assertEqual(result.status_code, 400)
+
+    def test_gen_next_route_min(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/-90.000:-180.000')
+        data = result.data
+        # make sure that there is a latitude key in the dict
+        self.assertEqual(data,"Junction Not Found.")
+        self.assertEqual(result.status_code, 400)
+
+    def test_gen_next_route_min_plus_one(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/-79:000:-179.000')
+        data = result.data
+        # make sure that there is a latitude key in the dict
+        self.assertEqual(data,"Junction Not Found.")
+        self.assertEqual(result.status_code, 400)
+
+    def test_gen_next_route_max_minus_one(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/+79.000:179.000')
+        data = result.data
+        # make sure that there is a latitude key in the dict
+        self.assertEqual(data,"Junction Not Found.")
+        self.assertEqual(result.status_code, 400)
+
+    def test_gen_next_route_max(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/+80.000:180.000')
+        data = result.data
+        # make sure that there is a latitude key in the dict
+        self.assertEqual(data,"Junction Not Found.")
+        self.assertEqual(result.status_code, 400)
+
+    def test_gen_next_route_max_plus_one(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/+81.000:181.000')
+        data = result.data
+        # make sure that there is a latitude key in the dict
+        self.assertEqual(data,"Invalid data format")
+        self.assertEqual(result.status_code, 400)
+
+    def test_gen_next_route_mid(self):
         # sends HTTP GET request to the application
         # on the specified path
         result = self.app.get('coordinates/52.632912:-1.157873')
@@ -57,6 +121,34 @@ class test_flask_endpoints(unittest.TestCase):
         # make sure that there is a latitude key in the dict
         assert 'lat' in data
         assert 'lon' in data
+
+    def test_gen_next_route_extreme_max(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/32109382:312397812')
+        data = result.data
+        # make sure that there is a latitude key in the dict
+        self.assertEqual(data,"Invalid data format")
+        self.assertEqual(result.status_code, 400)
+
+
+    def test_gen_next_route_invalid_data_type(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/Ejejeje:eqweqw')
+        data = result.data
+        # make sure that there is a latitude key in the dict
+        self.assertEqual(data,"Invalid data format")
+        self.assertEqual(result.status_code, 400)
+
+    def test_gen_next_route_invalid_data_type_2(self):
+        # sends HTTP GET request to the application
+        # on the specified path
+        result = self.app.get('coordinates/--2333:+++3333')
+        data = result.data
+        # make sure that there is a latitude key in the dict
+        self.assertEqual(data,"Invalid data format")
+        self.assertEqual(result.status_code, 400)
 
 
     def test_generate_emergency_no_auth_token_resp_message(self):

@@ -72,7 +72,10 @@ class GlobalRouteHandler(object):
         if lat_lon in _all_routes['junctions']:
             junc = _all_routes['junctions'][lat+'//'+lon]
         else:
-            junc = _all_routes['junctions_edge'][lat+'//'+lon]
+            try:
+                junc = _all_routes['junctions_edge'][lat+'//'+lon]
+            except KeyError:
+                return False
         return junc
 
     def refresh_all_routes(self):
