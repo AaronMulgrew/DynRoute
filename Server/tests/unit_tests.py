@@ -17,10 +17,15 @@ except ImportError:
 
 class test_flask_endpoints(unittest.TestCase): 
     def setUp(self):
+
+        server.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///unit_test.db'
         # creates a test client
         self.app = server.app.test_client()
         # propagate the exceptions to the test client
         self.app.testing = True 
+
+        #self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///unit_test.db'
+
 
     def test_gen_route(self):
         # sends HTTP GET request to the application

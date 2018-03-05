@@ -102,14 +102,14 @@ def login():
         name = str(request.form['username'])
         passw = str(request.form['password'])
         result = check_login.check_login(name, passw)
-        if result:
+        if 'password' in result:
             token = API_auth.encode(name, result['password'])
             session['logged_in'] = True
             session['auth_token'] = token
             session['username'] = name
             return redirect(url_for('send_homepage'))
         else:
-            return render_template('index.html', error='Wrong username or password!')
+            return render_template('login.html', error='Wrong username or password')
 
 @app.route('/login_api', methods=['POST'])
 def login_api():
@@ -125,7 +125,21 @@ def login_api():
         token = API_auth.encode(name, result['password'])
         return json.dumps({'token':token})
 
-
+@app.route('/get_all_usernames', methods=['GET'])
+def get_all_usernames():
+    if 'logged_in' in session.keys():
+        auth_token = session['auth_token']
+        # verify that the authorisation token used
+        # is valid.
+        result = check_login.check_auth_token(auth_token)
+        if result[1]:
+            usernames = list()
+            users = UserDB.User.query.all()
+            for user in users:
+                usernames.append(user.username)
+                return json.dumps(usernames)
+        else:
+            return json.dumps("Invalid Privileges")
 
 
 @app.route('/junc_icon<traffic_load>.png')
