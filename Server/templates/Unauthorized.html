@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="/static/css/skeleton.css">
     <script src="/static/javascript/menu.js"></script>
     <link rel="stylesheet" href="/static/css/Stylesheet.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 </head>
 <body>
     <div class="container">
@@ -16,22 +18,68 @@
             <div class="bar2"></div>
             <div class="bar3"></div>
         </div>
+        <!--<div id="menubar">
+        <div class="menucontainer">
+            <div class="row">
+                <div class="twelve columns">
+                    <div class="six columns offset-by-four">
+                        <a class="button" id="menuitem" href="/">Home</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="twelve columns">
+                    <div class="six columns offset-by-four">
+                        {% if session['logged_in'] %}
+                        <a class="button" id="menuitem" href="/logout">Logout</a>
+                        {% else %}
+                        <a class="button" id="menuitem" href="/login">Login</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
         <div id="menubar">
             <div class="menucontainer">
                 <div class="row">
                     <div class="twelve columns">
                         <div class="six columns offset-by-four">
-                            {% if data %}
-                            <a class="button" id="loginout" href="/logout">Logout</a>
+                            <a class="button" id="menuitem" href="/">Home</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="twelve columns">
+                        <div class="six columns offset-by-four">
+                            {% if session['logged_in'] %}
+                            <a class="button" id="menuitem" href="/logout">Logout</a>
                             {% else %}
-                            <a class="button" id="loginout" href="/login">Login</a>
+                            <a class="button" id="menuitem" href="/login">Login</a>
                             {% endif %}
                         </div>
                     </div>
                 </div>
+                {% if session['admin'] %}
+                <div class="row">
+                    <div class="twelve columns">
+                        <div class="six columns offset-by-four">
+                            <a class="button" id="menuitem" href="/config">User Management</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="twelve columns">
+                        <div class="six columns offset-by-four">
+                            <a class="button" id="menuitem" href="/add_junction/">Add Junction</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
-        <h1>You are unauthorized to view this page. Please log in</h1>
+        <h1>You are unauthorized to view this page.</h1>
     </div>
 </body>
 </html>

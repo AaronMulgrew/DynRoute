@@ -4,25 +4,14 @@ from models import global_route
 global_route = global_route.GlobalRouteHandler()
 import Queue
 import heapq
-class EdgeItem:
-    def __init__(self, destination, distance):
-        self.destination = destination
-        self.distance = distance
-
 
 class Dijkstra():
     def __init__(self):
-        self.nodes = set()
         self.edges = dict()
-        self.weighting = dict()
         self.start_node = False
 
-    def add_edges(self, edges):
-        if type(edges) != dict:
-            raise TypeError("edges variable is not a dictionary.")
-        else:
-            self.edges = edges
-            return True
+    def set_edges(self, edges):
+        self.edges = edges
 
     def reprocess_data(self, data):
         #print data

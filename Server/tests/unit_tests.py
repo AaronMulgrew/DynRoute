@@ -268,8 +268,92 @@ class test_all_routes(unittest.TestCase):
 
 class test_emergency_handler(unittest.TestCase):
     def test_emergency(self):
-        emergency = emergency_route.EmergencyHandler()
-        emergency.generate_emergency()
+        emergency = emergency_route.EmergencyHandler("-122", "-8", "-1", "-5")
+        result = emergency.generate_emergency()
+        self.assertIsNotNone(result)
+
+class test_emergency_handler_endpoint(unittest.TestCase):
+
+    def setUp(self):
+
+        server.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///unit_test.db'
+        # creates a test client
+        self.app = server.app.test_client()
+        # propagate the exceptions to the test client
+        self.app.testing = True
+        result = self.app.post('/login_api', data={"username":"Admin", "password":"123456"})
+        data = json.loads(result.data)
+        token = data['token']
+        self.token = token
+
+    def test_emergency_extreme_min(self):
+
+        result = self.app.get('/generate_emergency', headers={"auth-token":self.token, "source-lon":"-8888", "source-lat":"-12000", "dest-lat": "-12000", "dest-lon": "-8888"})
+        self.assertEqual(result.data, "Invalid coordinates")
+        self.assertEqual(result.status_code, 400)
+        #result = self.app.get('/login_api', headers=dict(
+        #source-lon='-8888',
+        #source-lat='-12000',
+        #dest-lat = '-12000',
+        #dest-lon = '-8888'))
+
+    def test_emergency_min_minus_one(self):
+        result = self.app.get('/generate_emergency', headers={"auth-token":self.token, "source-lon":"-181.000", "source-lat":"-91.000", "dest-lat": "91.000", "dest-lon": "-181.000"})
+        #self.assertEqual(json.loads(result.data), {"route":[], "time":0})
+        self.assertEqual(result.data, "Invalid coordinates")
+        self.assertEqual(result.status_code, 400)
+
+    def test_emergency_min(self):
+        result = self.app.get('/generate_emergency', headers={"auth-token":self.token, "source-lon":"-180.000", "source-lat":"-90.000", "dest-lat": "90.000", "dest-lon": "-180.000"})
+        self.assertEqual(json.loads(result.data), {"route":[], "time":0})
+        #self.assertEqual(result.data, "Invalid coordinates")
+        self.assertEqual(result.status_code, 200)
+
+    def test_emergency_min_plus_one(self):
+        #{"source-lon":"-179.000", "source-lat":"-89.000", "dest-lat": "89.000", "dest-lon": "-179.000"}
+        result = self.app.get('/generate_emergency', headers={"auth-token":self.token, "source-lon":"-179.000", "source-lat":"-89.000", "dest-lat": "89.000", "dest-lon": "-179.000"})
+        self.assertEqual(json.loads(result.data), {"route":[], "time":0})
+        #self.assertEqual(result.data, "Invalid coordinates")
+        self.assertEqual(result.status_code, 200)
+
+    def test_emergency_max_minus_one(self):
+        #{"source-lon":"+179.000", "source-lat":"+89.000", "dest-lat": "-89.000", "dest-lon": "+179.000"}
+        result = self.app.get('/generate_emergency', headers={"auth-token":self.token, "source-lon":"+179.000", "source-lat":"+89.000", "dest-lat": "-89.000", "dest-lon": "+179.000"})
+        self.assertEqual(json.loads(result.data), {"route":[], "time":0})
+        #self.assertEqual(result.data, "Invalid coordinates")
+        self.assertEqual(result.status_code, 200)
+
+    def test_emergency_max(self):
+        #{"source-lon":"+179.000", "source-lat":"+89.000", "dest-lat": "-89.000", "dest-lon": "+179.000"}
+        result = self.app.get('/generate_emergency', headers={"auth-token":self.token, "source-lon":"+180.000", "source-lat":"+90.000", "dest-lat": "-90.000", "dest-lon": "+180.000"})
+        self.assertEqual(json.loads(result.data), {"route":[], "time":0})
+        #self.assertEqual(result.data, "Invalid coordinates")
+        self.assertEqual(result.status_code, 200)
+
+    def test_emergency_max_plus_one(self):
+        result = self.app.get('/generate_emergency', headers={"auth-token":self.token, "source-lon":"-181.000", "source-lat":"-91.000", "dest-lat": "91.000", "dest-lon": "-181.000"})
+        #self.assertEqual(json.loads(result.data), {"route":[], "time":0})
+        self.assertEqual(result.data, "Invalid coordinates")
+        self.assertEqual(result.status_code, 400)
+
+    def test_emergency_extreme_max(self):
+        result = self.app.get('/generate_emergency', headers={"auth-token":self.token, "source-lon":" -12161572","source-lat":"5231632930", "dest-lon":" -133137.921","dest-lat":" 5336385.12"})
+        #self.assertEqual(json.loads(result.data), {"route":[], "time":0})
+        self.assertEqual(result.data, "Invalid coordinates")
+        self.assertEqual(result.status_code, 400)
+
+    def test_emergency_invalid_1(self):
+        #{"source-lon":"dkdkdk","source-lat"-"edueih", "dest-lon":"djdjdjd","dest-lat":" deioude"}
+        result = self.app.get('/generate_emergency', headers={"auth-token":self.token, "source-lon":"dkdkdk","source-lat":"edueih", "dest-lon":"djdjdjd","dest-lat":" deioude"})
+        #self.assertEqual(json.loads(result.data), {"route":[], "time":0})
+        self.assertEqual(result.data, "Invalid coordinates")
+        self.assertEqual(result.status_code, 400)
+
+    def test_emergency_invalid_2(self):
+        result = self.app.get('/generate_emergency', headers={"auth-token":self.token, "source-lon":"-229292","source-lat":"+++++2828228", "dest-lon":"--23424","dest-lat":"++2342443"})
+        #self.assertEqual(json.loads(result.data), {"route":[], "time":0})
+        self.assertEqual(result.data, "Invalid coordinates")
+        self.assertEqual(result.status_code, 400)
 
 class test_haversine(unittest.TestCase):
     def test_haversine(self):
@@ -323,104 +407,17 @@ class test_dijkstra(unittest.TestCase):
 	    "C-D": [{
 		    "dest": "D",
 		    "source": "C",
-		    "time": 1
+		    "time": 7
 	    }],	
         "B-D": [{
 		    "dest": "D",
 		    "source": "B",
 		    "time": 3
 	    }]}
-        dijkstra.add_edges(edges)
+        dijkstra.set_edges(edges)
         result = dijkstra.compute_shortest_route("A", "D")
-        edges = {
-	    "A-B": [{
-		    "dest": "B",
-		    "source": "A",
-		    "time": 3.3231189058838946
-	    }],
-	    "A-C": [{
-		    "dest": "C",
-		    "source": "A",
-		    "time": 10
-	    }],
-	    "C-D": [{
-		    "dest": "D",
-		    "source": "C",
-		    "time": 10
-	    }],	
-        "B-D": [{
-		    "dest": "D",
-		    "source": "B",
-		    "time": 3
-	    }]}
-        dijkstra.add_edges(edges)
-        result = dijkstra.compute_shortest_route("A", "D")
-        print result
+        self.assertEqual(result['route'], ["B", "D"])
 
-    def test_dijkstra_general(self):
-        dijkstra = dijkstra_algorithm.Dijkstra()
-        edges = {
-            "1":("A", "B", 7),
-            "2":("A", "D", 5),
-            "3":("B", "C", 8),
-            "4":("B", "D", 9),
-            "5":("B", "E", 7),
-            "6":("C", "E", 5),
-            "7":("D", "E", 15),
-            "8":("D", "F", 6),
-            "9":("E", "F", 8),
-            "10":("E", "G", 9),
-            "11":("F", "G", 11)
-        }
-        dijkstra.add_edges(edges)
-
-        #route = dijkstra.compute_shortest("A", "E")
-        #print route
-
-    def test_dijsktra_output_format(self):
-        dijkstra = dijkstra_algorithm.Dijkstra()
-        edges = {
-            "1":("A", "B", 7),
-            "2":("A", "D", 5),
-            "3":("B", "C", 8),
-            "4":("B", "D", 9),
-            "5":("B", "E", 7),
-            "6":("C", "E", 5),
-            "7":("D", "E", 15),
-            "8":("D", "F", 6),
-            "9":("E", "F", 8),
-            "10":("E", "G", 9),
-            "11":("F", "G", 11)
-        }
-        dijkstra.add_edges(edges)
-
-        #route = dijkstra.compute_shortest("A", "E")
-        #self.assertEqual([14, ['A', 'B', 'E', 'A', 'B', 'E']], route)
-
-    def test_dijkstra_add_edges_invalid(self):
-        dijkstra = dijkstra_algorithm.Dijkstra()
-        edges = []
-        # this test checks that the Exception that is raised
-        # also matches with the error message.
-        self.assertRaisesRegexp(TypeError, "edges variable is not a dictionary.", dijkstra.add_edges, edges)
-
-    def test_dijkstra_add_edges_valid(self):
-        dijkstra = dijkstra_algorithm.Dijkstra()
-        edges = {
-            "1":("A", "B", 7),
-            "2":("A", "D", 5),
-            "3":("B", "C", 8),
-            "4":("B", "D", 9),
-            "5":("B", "E", 7),
-            "6":("C", "E", 5),
-            "7":("D", "E", 15),
-            "8":("D", "F", 6),
-            "9":("E", "F", 8),
-            "10":("E", "G", 9),
-            "11":("F", "G", 11)
-        }
-        # this test checks that the add edges function is ok.
-        self.assertTrue(dijkstra.add_edges(edges))
 
 class test_server(unittest.TestCase):
 

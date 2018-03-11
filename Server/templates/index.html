@@ -58,7 +58,7 @@
                         <div class="row">
                             <div class="twelve columns">
                                 <div class="six columns offset-by-four">
-                                    {% if data %}
+                                    {% if session['logged_in'] %}
                                     <a class="button" id="menuitem" href="/logout">Logout</a>
                                     {% else %}
                                     <a class="button" id="menuitem" href="/login">Login</a>
@@ -66,11 +66,11 @@
                                 </div>
                             </div>
                         </div>
-                        {% if session['logged_in'] %}
+                        {% if session['admin'] %}
                         <div class="row">
                             <div class="twelve columns">
                                 <div class="six columns offset-by-four">
-                                    <a class="button" id="menuitem" href="/config">Update Configuration</a>
+                                    <a class="button" id="menuitem" href="/config">User Management</a>
                                 </div>
                             </div>
                         </div>

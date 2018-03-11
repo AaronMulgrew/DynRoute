@@ -1,5 +1,6 @@
 import json
 from scripts import haversine
+import datetime
 from models import traffic_heuristics
 
 class AllRoutes(object):
@@ -44,6 +45,19 @@ class AllRoutes(object):
 
     def grab_all_routes(self):
         return self.all_routes
+
+    def update_all_routes(self, allroutes):
+        self.all_routes = allroutes
+        self.junc_data = dict()
+        for lat_lon, junction in allroutes['junctions'].iteritems():
+            for route in junction['routes']:
+                if 'traffic_load' in route:
+                    if route['traffic_load'] != 0:
+                        all_coords = lat_lon + "//" + route['lat'] + "//" + route['lon']
+                        for i in xrange(20):
+                            self.add_junction_data(datetime.datetime.now(), route)
+                    print route
+        return True
 
     def refresh_all_routes(self):
         ''' this function reloads the routes file incase of a new update
@@ -93,13 +107,13 @@ class AllRoutes(object):
                 element["time"] = time
         return True
 
-    def add_junction_data(self, datetime, coords):
-        self.junction_data[datetime] = coords
+    def add_junction_data(self, datetime_add, coords):
+        self.junction_data[datetime_add] = coords
         return True
 
-    def pop_route(self, datetime):
+    def pop_route(self, datetime_add):
         try:
-            self.junction_data.pop(datetime)
+            self.junction_data.pop(datetime_add)
             return True
         except KeyError:
             return False

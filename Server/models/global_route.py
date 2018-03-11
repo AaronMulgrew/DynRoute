@@ -3,6 +3,7 @@ allroutes = all_routes.AllRoutes()
 import datetime
 from scripts import haversine
 import traffic_heuristics
+import json
 
 class GlobalRouteHandler(object):
 
@@ -16,7 +17,7 @@ class GlobalRouteHandler(object):
         # interate over all of the junction keys
         for current_datetime in allroutes.junction_data.keys():
             # extract out the current coordinates by accessing the object in the dict
-            if junction_data.get(current_datetime) == coords+routecoords:
+            if junction_data.get(current_datetime) == coords+"//"+routecoords:
                 # make sure the junction is in timerange
                 if current_datetime > datetime.datetime.now()-datetime.timedelta(seconds=8):
                     traffic_load += 4
@@ -34,6 +35,13 @@ class GlobalRouteHandler(object):
         lon = coords[1]
         return lat, lon
 
+    def update_all_routes(self, allroutes):
+        result = self.all_routes.update_all_routes(allroutes)
+        return result
+
+    def return_all_routes_raw(self):
+        all_routes_raw = self.all_routes.grab_all_routes()
+        return all_routes_raw
 
     def calculate_junction_distance_time(self, source_lat, source_lon, speed, newroute, traffic_load):
         try:
@@ -106,8 +114,11 @@ class GlobalRouteHandler(object):
                     lon = route['lon']
                     # do a direct comparison to the next route in the list
                     # as the list will always be sequential
-                    if lat == coords[index+1]['lat'] and lon == coords[index+1]['lon']:
-                        time = time + route['time']
+                    try:
+                        if lat == coords[index+1]['lat'] and lon == coords[index+1]['lon']:
+                            time = time + route['time']
+                    except IndexError:
+                        continue
         return time
 
     def update_traffic_load(self, source_latlon, route_lat, route_lon, traffic_load):

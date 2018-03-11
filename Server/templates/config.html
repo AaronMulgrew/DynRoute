@@ -1,16 +1,17 @@
 ﻿<head>
     <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/skeleton.css">
-    <script>
-        function Help()
-        {
+    <script src="/static/javascript/menu.js"></script>
+    <link rel="stylesheet" href="/static/css/Stylesheet.css" />
+    <script src="/static/javascript/traffic_control.js"></script>
+    <!--<script>
+        function Help() {
             document.getElementById("tooltiptext").style.visibility = "visible";
         }
-    </script>
+    </script>-->
 </head>
-<h2>Config</h2>
-<style>
-    /* Tooltip container */
+<!--<style>
+    /*/*/* Tooltip container */
     .tooltip {
         position: relative;
         display: inline-block;
@@ -40,32 +41,252 @@
     {
         background-color: black;
         visibility: visible;
+    }*/*/
+
+</style>-->
+
+<script>
+
+    {% if session['auth_token'] %}
+        var AuthToken = "{{session['auth_token']}}"
+    {% endif %}
+
+    function GetAllUsers()
+    {
+        httpGetAsync("/get_all_usernames", ShowUsernames)
     }
 
-</style>
+    function ShowUsernames(usernames)
+    {
+        isValid = CheckJson(usernames)
+        if (isValid == true)
+        {
+            usernames = JSON.parse(usernames);
+            var user;
+            for (user of usernames)
+            {
+                var label = document.createElement("H2");
+                var text = document.createTextNode(user);
+                var genNewPassword = document.createElement("button");
+                genNewPassword.innerHTML = "Generate New Password";
+                genNewPassword.setAttribute('onclick', 'GenerateNewPassword("' + user + '");');
+                var deleteButton = document.createElement("button");
+                deleteButton.innerHTML = "Delete User";
+                deleteButton.setAttribute('onclick', 'DeleteUserDB("' + user + '");');
+                label.appendChild(text);
+                document.getElementById('usernames').appendChild(label);
+                document.getElementById('usernames').appendChild(genNewPassword);
+                document.getElementById('usernames').appendChild(deleteButton);
+            }
+        }
+        else
+        {
+            var label = document.createElement("H2");
+            var text = document.createTextNode("Error! " + usernames.toString());
+            label.appendChild(text);
+            document.getElementById('error').appendChild(label);
+            document.getElementById('usernames').style.display = 'none';
+        }
+    }
 
 
-<body>
+    function GenerateNewPassword(user) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/generate_user_password', true);
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                // Request finished and success here
+                console.log(xhr.XMLHttpRequest);
+                response = JSON.parse(xhr.responseText);
+                if (response[0] == true)
+                {
+                    alert("Success - User: " + user + " New Password: "+ response[1].toString());
+                }
+                else {
+                    alert("Error" + response[1].toString())
+                }
+                // make sure we refresh the webpage to see the results.
+                location.reload();
+            }
+            else if (xhr.status != 200) {
+                alert(xhr.responseText.toString())
+            }
+        }
+        xhr.send(JSON.stringify({
+            'auth_token': AuthToken,
+            'username': user
+        }));
+    }
+
+
+
+
+    function DeleteUserDB(user)
+    {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/delete_user', true);
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                // Request finished and success here
+                console.log(xhr.XMLHttpRequest);
+                response = JSON.parse(xhr.responseText);
+                if (response[0] == true)
+                {
+                    alert("Success - User: " + user + "Successfully Deleted.");
+                }
+                else
+                {
+                    alert("Error" + response[1].toString())
+                }
+                // make sure we refresh the webpage to see the results.
+                location.reload();
+            }
+            else if (xhr.status != 200) {
+                alert(xhr.responseText.toString())
+            }
+        }
+        xhr.send(JSON.stringify({
+            'auth_token': AuthToken,
+            'username': user
+        }));
+    }
+
+    function AddUserForm()
+    {
+        var usernameLabel = document.createElement("H2");
+        var text = document.createTextNode("Username");
+        usernameLabel.appendChild(text);
+        var inputUsername = document.createElement('input');
+        inputUsername.setAttribute('id', 'inputUsername');
+        inputUsername.type = "text"; 
+        //var passwordLabel = document.createElement("H2");
+        //var text = document.createTextNode("Password:");
+        //passwordLabel.appendChild(text);
+        //var inputPassword = document.createElement('input');
+        //inputPassword.type = "text"; 
+        var addUserButton = document.createElement("button");
+        addUserButton.setAttribute("onclick", "AddUserToDB();");
+        addUserButton.innerHTML = "Add new user to database";
+
+        document.getElementById('AddNewUserButton').style.display = "none";
+        document.getElementById('AddNewUser').appendChild(usernameLabel);
+        document.getElementById('AddNewUser').appendChild(inputUsername);
+        //document.getElementById('AddNewUser').appendChild(passwordLabel);
+        //document.getElementById('AddNewUser').appendChild(inputPassword);
+        document.getElementById('AddNewUser').appendChild(addUserButton);
+    }
+
+    function AddUserToDB()
+    {
+
+
+        var xhr = new XMLHttpRequest();
+        inputUsername = document.getElementById('inputUsername').value;
+        xhr.open('POST', '/add_new_user', true);
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                // Request finished and success here
+                console.log(xhr.XMLHttpRequest);
+                // Request finished and success here
+                console.log(xhr.XMLHttpRequest);
+                response = JSON.parse(xhr.responseText);
+                if (response[0] == true)
+                {
+                    alert("Success - Password is: " + response[1].toString());
+                }
+                else
+                {
+                    alert("Error: " + response[1].toString())
+                }
+                // make sure we refresh the webpage to see the results.
+                location.reload();
+            }
+            else if (xhr.status != 200) {
+                alert(xhr.responseText.toString())
+            }
+        }
+        xhr.send(JSON.stringify({
+            'auth_token': AuthToken,
+            'username': inputUsername
+        }));
+    }
+
+</script>
+<body onload="GetAllUsers();">
     <div class="container">
-        <form action="/submitConfig/" method="POST">
-            <div class="row">
-                <div class="five columns">
-                    <label class="one-third columns" for="Username">Username</label>
+        <div class="row">
+            {%if error %}
+            <div class="seven columns">
+                {% else %}
+                <div class="eleven columns">
+                    {% endif %}
+                    <h2>Dynamic Routing System - User management</h2>
+                </div>
+                {% if error %}
+                <div class="four columns">
+                    <h4>Error! {{ error }}!</h4>
+                </div>
+                {% endif %}
+                <div class="one column">
+                    <div class="five columns">
+                        <div id="hamburger" class="containerhamburger" onclick="toggleHamburger(this)">
+                            <div class="bar1"></div>
+                            <div class="bar2"></div>
+                            <div class="bar3"></div>
+                        </div>
+                        <div id="menubar">
+                            <div class="menucontainer">
+                                <div class="row">
+                                    <div class="twelve columns">
+                                        <div class="six columns offset-by-four">
+                                            <a class="button" id="menuitem" href="/">Home</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="twelve columns">
+                                        <div class="six columns offset-by-four">
+                                            <a class="button" id="menuitem" href="/logout">Logout</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if session['logged_in'] %}
+                                <div class="row">
+                                    <div class="twelve columns">
+                                        <div class="six columns offset-by-four">
+                                            <a class="button" id="menuitem" href="/config"> User Management</a>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <div class="tooltip">
-                        <input id="usernameID" class="one-third columns" type="text" placeholder="Username" name="username" />
-                        <p class="tooltiptext">This text</p>
+                                <div class="row">
+                                    <div class="twelve columns">
+                                        <div class="six columns offset-by-four">
+                                            <a class="button" id="menuitem" href="/add_junction/">Add Junction</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="five columns">
-                    <label for="Username">Password</label>
-                    <input class="u-full-width" type="password" placeholder="Password" name="password">
-                </div>
-                <div class="two columns">
-                    <label for="exampleEmailInput">&nbsp;</label>
-                    <input type="submit" value="Login">
-                </div>
             </div>
-        </form>
+        </div>
+
+        <div class="row">
+            <div id="usernames">
+                <h2>Users:</h2>
+            </div>
+            <div id="error">
+            </div>
+            <div id="AddNewUser">
+                <button id="AddNewUserButton" onclick="AddUserForm();">Add New User</button>
+            </div>
+        </div>
+
     </div>
 </body>

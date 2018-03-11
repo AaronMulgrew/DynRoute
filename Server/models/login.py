@@ -20,13 +20,17 @@ def check_login(username, password):
         if check:
             # make sure we return the password hash not the 
             # actual password
-            return {'password':data.password}
+            if data.isAdmin:
+                return {'password':data.password, 'IsAdmin':True}
+            else:
+                return {'password':data.password}
     return "Wrong"
 
 
 def check_auth_token(auth_token):
     success = False
     return_value = ""
+    isAdmin = False
     try:
         decoded = API_auth.decode(auth_token)
         username = decoded['username']
@@ -46,10 +50,12 @@ def check_auth_token(auth_token):
             # verify the timestamp for the next 90 minutes
             if timestamp > datetime.datetime.now()-datetime.timedelta(minutes=90):
                 success = True
+                if username == 'Admin':
+                    isAdmin = True
             else:
                 return_value = "Token has expired."
         else:
             return_value = "Wrong token!"
     elif return_value == None:
         return_value = "Wrong token!"
-    return [return_value, success]
+    return {"return_value": return_value, "success":success, "isAdmin":isAdmin}

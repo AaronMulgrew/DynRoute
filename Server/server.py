@@ -5,12 +5,12 @@ import json
 from flask import (current_app, url_for, \
 render_template, redirect, session)
 from flask_api import status
-from __init__ import app, bcrypt, request, junction_handler, global_route, add_junction
+from __init__ import (app, bcrypt, request, junction_handler, \
+   global_route, add_junction, db, exc)
 routehandler = global_route.GlobalRouteHandler()
 from scripts import API_auth
-
 import settings
-
+import uuid
 from models import emergency_route
 from models import login as check_login
 from OpenSSL import SSL
@@ -59,22 +59,41 @@ def calc_time():
 
 @app.route('/config')
 def send_config():
-    if session['logged_in'] == True:
+    if 'logged_in' in session.keys() and 'admin' in session.keys():
     	return render_template('config.html')
     else:
         return render_template('Unauthorized.html')
 
+@app.route('/add_state', methods= ['POST'])
+def add_state():
+    state = request.form['state']
+    request_data = json.loads(state)
+    #state = str(request_data['state'])
+    auth_token = str(request.headers['auth_token'])
+    checklogin = check_login.check_auth_token(auth_token)
+    if checklogin['success']:
+        if checklogin['isAdmin']:
+            result = routehandler.update_all_routes(request_data)
+            return json.dumps(result)
+        else:
+            return "not Admin"
+    return "not Admin"
+
 @app.route("/logout")
 def logout():
-	"""Logout Form"""
-	session['logged_in'] = False
-	return redirect(url_for('send_homepage'))
+    """Logout Form"""
+    session.pop('auth_token', None)
+    session.pop('logged_in', None)
+    session.pop('username', None)
+    session.pop('admin', None)
+
+    return redirect(url_for('send_homepage'))
 
 
 @app.route('/add_junction/', methods=['GET','POST'])
 def add_junc_endpoint():
     if request.method == 'GET':
-        if 'logged_in' in session.keys():
+        if 'logged_in' in session.keys() and 'admin' in session.keys():
             routehandler.refresh_all_routes()
             return render_template('add_junction.html')
         else:
@@ -85,13 +104,13 @@ def add_junc_endpoint():
             # verify that the authorisation token used
             # is valid.
             result = check_login.check_auth_token(auth_token)
-            if result[1]:
+            if 'isAdmin' in result:
                 request_data = request.get_json()
                 add_junc = add_junction.AddJunction()
-                result = add_junc.add_junction(request_data)
-                return json.dumps(result)
+                add_junc_result = add_junc.add_junction(request_data)
+                return json.dumps(add_junc_result)
             else:
-                return json.dumps(result[0])
+                return json.dumps(result['return_value'])
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -107,6 +126,8 @@ def login():
             session['logged_in'] = True
             session['auth_token'] = token
             session['username'] = name
+            if 'IsAdmin' in result:
+                session['admin'] = True
             return redirect(url_for('send_homepage'))
         else:
             return render_template('login.html', error='Wrong username or password')
@@ -132,14 +153,85 @@ def get_all_usernames():
         # verify that the authorisation token used
         # is valid.
         result = check_login.check_auth_token(auth_token)
-        if result[1]:
+        if result['success'] and result['isAdmin']:
             usernames = list()
             users = UserDB.User.query.all()
             for user in users:
-                usernames.append(user.username)
-                return json.dumps(usernames)
+                if user.username == 'Admin':
+                    pass
+                else:
+                    usernames.append(user.username)
+            return json.dumps(usernames)
         else:
-            return json.dumps("Invalid Privileges")
+            session.pop('auth_token', None)
+            session.pop('logged_in', None)
+            session.pop('username', None)
+            return "Session token has expired!"
+    else:
+        return render_template('Unauthorized.html')
+
+
+@app.route('/all_routes_api')
+def return_all_routes_api():
+    all_junctions = routehandler.return_all_routes_raw()
+    return json.dumps(all_junctions)
+
+
+@app.route('/add_new_user', methods=['POST'])
+def add_new_user():
+    request_data = json.loads(request.data)
+    name = str(request_data['username'])
+    auth_token = str(request_data['auth_token'])
+    # check that the auth token is actually valid
+    result = check_login.check_auth_token(auth_token)
+    if result['success'] and result['isAdmin']:
+        password = str(uuid.uuid4())
+        newusername = UserDB.User(False, name, password)
+        db.session.add(newusername)
+        try:
+            db.session.commit()
+            return json.dumps([True, password])
+        except exc.IntegrityError:
+            return json.dumps([False, "Username Already Exists."])
+    else:
+        return json.dumps([False, "Invalid or expired session token."])
+
+
+@app.route('/generate_user_password', methods=['POST'])
+def generate_user_password():
+    request_data = json.loads(request.data)
+    name = str(request_data['username'])
+    auth_token = str(request_data['auth_token'])
+    # check that the auth token is actually valid
+    result = check_login.check_auth_token(auth_token)
+    if result['success'] and result['isAdmin']:
+        newpassword = str(uuid.uuid4())
+        data = UserDB.User.query.filter_by(username=name).first()
+        # this is a threadsafe way of getting the user object
+        local_object = db.session.merge(data)
+        pwhash = bcrypt.generate_password_hash(newpassword)
+        local_object.password = pwhash
+        db.session.commit()
+        return json.dumps([True, newpassword])
+    else:
+        return json.dumps([False, "Invalid or expired session token."])
+
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    request_data = json.loads(request.data)
+    name = str(request_data['username'])
+    auth_token = str(request_data['auth_token'])
+    # check that the auth token is actually valid
+    result = check_login.check_auth_token(auth_token)
+    if result['success'] and result['isAdmin']:
+        data = UserDB.User.query.filter_by(username=name).first()
+        # this is a threadsafe way of getting the user object
+        local_object = db.session.merge(data)
+        db.session.delete(local_object)
+        db.session.commit()
+        return json.dumps([True, ""])
+    else:
+        return json.dumps([False, "Invalid or expired session token."])
 
 
 @app.route('/junc_icon<traffic_load>.png')
@@ -177,15 +269,39 @@ def generate_emergency_route():
     ## simple check to see if the auth token is in the request 
     ## header
     if 'auth-token' in request.headers:
+        ## default back to standard route if not specified in the headers
+        lat_lon_list = ['source-lat', 'source-lon', 'dest-lat', 'dest-lon']
+        if all (k in request.headers for k in lat_lon_list):
+            source_lat = request.headers['source-lat']
+            source_lon = request.headers['source-lon']
+            dest_lat = request.headers['dest-lat']
+            dest_lon = request.headers['dest-lon']
+        else:
+            source_lat = '52.632930'
+            source_lon = '-1.161572'
+            dest_lat = '52.637952'
+            dest_lon = '-1.123362'
         # this is the end point for the generate emergency token
         auth_token = request.headers['auth-token']
-        response_content = emergency_route.emergency_route(auth_token)
-        content = response_content[0]
-        success = response_content[1]
-        if success == True:
-            return content
+        result = check_login.check_auth_token(auth_token)
+        if result['success']:
+            junc = junction_handler.JunctionHandler()
+            coords_valid_source = junc.check_coords_valid(source_lat, source_lon)
+            if coords_valid_source:
+                coords_valid_dest = junc.check_coords_valid(dest_lat, dest_lon)
+                if coords_valid_dest:
+                    Emergency = emergency_route.EmergencyHandler(source_lat, source_lon, dest_lat, dest_lon)
+                    route = Emergency.generate_emergency()
+                    return_value = json.dumps(route)
+                    #response_content = emergency_route.emergency_route(auth_token)
+                    #content = response_content[0]
+                    return return_value
+                else:
+                    return "Invalid coordinates", status.HTTP_400_BAD_REQUEST
+            else:
+                return "Invalid coordinates", status.HTTP_400_BAD_REQUEST
         else:
-            return content, status.HTTP_401_UNAUTHORIZED
+            return result['return_value'], status.HTTP_401_UNAUTHORIZED
     else:
         return "No auth token", status.HTTP_401_UNAUTHORIZED
 

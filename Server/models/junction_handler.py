@@ -25,7 +25,7 @@ class JunctionHandler(object):
             self.current_junc = self.current_route[1]
         else:
             if len(current_route) == 2:
-                self.is_valid_junc = self.check_junction_coords_valid(current_route[0], current_route[1])
+                self.is_valid_junc = self.check_coords_valid(current_route[0], current_route[1])
                 if self.is_valid_junc:
                     self.current_junc = self.globalRoutes.search_route(current_route[0], current_route[1])
                     self.current_coords = current_route[0], current_route[1]
@@ -40,7 +40,7 @@ class JunctionHandler(object):
             self.lon = self.current_coords[1]
             self.route = self.current_junc["routes"]
 
-    def check_junction_coords_valid(self, lat, lon):
+    def check_coords_valid(self, lat, lon):
         try:
             lat = float(lat)
             lon = float(lon)
@@ -126,7 +126,7 @@ class JunctionHandler(object):
         selection_number = self.weighted_junc_search()
         newroute = potential_routes[selection_number]
         traffic_load = self.globalRoutes.get_current_load(self.lat + "//" + self.lon, newroute['lat'] + "//" + newroute['lon'])
-        self.globalRoutes.add_junction_data(str(self.lat + "//" + self.lon + str(newroute['lat']) + "//" + str(newroute['lon'])))
+        self.globalRoutes.add_junction_data(str(self.lat + "//" + self.lon + "//" + str(newroute['lat']) + "//" + str(newroute['lon'])))
         self.globalRoutes.update_traffic_load(self.lat + '//' + self.lon, newroute['lat'], newroute['lon'], traffic_load)
         # this will be the time to reach destination
         time = self.globalRoutes.calculate_junction_distance_time(self.lat, self.lon, self.speed, newroute, traffic_load)

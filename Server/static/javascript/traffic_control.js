@@ -34,23 +34,31 @@ function PrepShowJunction() {
     }, 1000);
 }
 
-// this is a general cleanup function
-// incase a marker timesout
-var interval = window.setInterval(function () {
-    var TwentySecs = 20 * 1000; /* ms */
-    var TimeNow = Date.now();
-    for (var i = 0; i < markers.length; i++) {
-        var MarkerTimestamp = markers[i][1]
-        if (TimeNow - MarkerTimestamp > TwentySecs)
-        {
-            // this removes the marker from the map
-            // if the marker hasn't reached a new junction
-            // within 20 seconds.
-            map.removeLayer(markers[i][0]);
+
+if (typeof markers !== 'undefined') {
+    // markers is defined
+    // this is used as not everything utilises 
+    // the mapping stuff
+
+    // this is a general cleanup function
+    // incase a marker timesout
+    var interval = window.setInterval(function () {
+        var TwentySecs = 20 * 1000; /* ms */
+        var TimeNow = Date.now();
+        for (var i = 0; i < markers.length; i++) {
+            var MarkerTimestamp = markers[i][1]
+            if (TimeNow - MarkerTimestamp > TwentySecs) {
+                // this removes the marker from the map
+                // if the marker hasn't reached a new junction
+                // within 20 seconds.
+                map.removeLayer(markers[i][0]);
+            }
+            //console.log(markers[i]);
         }
-        //console.log(markers[i]);
-    }
-}, 2000);
+    }, 2000);
+}
+
+
 
 function ShowJunction(JunctionMarkerBind=false) {
     if (JunctionMarkerBind == false)
