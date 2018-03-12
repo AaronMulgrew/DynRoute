@@ -111,6 +111,16 @@ class AllRoutes(object):
         self.junction_data[datetime_add] = coords
         return True
 
+    def clear_all_traffic_loads(self):
+        all_junctions_edge = self.all_routes['junctions_edge']
+        all_junctions_nodes = self.all_routes['junctions']
+        for key, junction in all_junctions_edge.iteritems():
+            #junc = junction
+            for route in junction['routes']:
+                route['traffic_load'] = 0
+            print junction
+        return True
+
     def pop_route(self, datetime_add):
         try:
             self.junction_data.pop(datetime_add)

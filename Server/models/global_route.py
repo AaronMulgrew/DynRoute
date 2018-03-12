@@ -14,19 +14,25 @@ class GlobalRouteHandler(object):
         traffic_load = 0
         junction_data = self.all_routes.grab_junction_data()
         routes = self.all_routes.grab_all_routes()
+
+        #### make all traffic loads 0 to clear it ready to be updated
+        self.all_routes.clear_all_traffic_loads()
+
         # interate over all of the junction keys
         for current_datetime in allroutes.junction_data.keys():
-            # extract out the current coordinates by accessing the object in the dict
-            if junction_data.get(current_datetime) == coords+"//"+routecoords:
-                # make sure the junction is in timerange
-                if current_datetime > datetime.datetime.now()-datetime.timedelta(seconds=8):
+            # make sure the junction is in timerange
+            if current_datetime > datetime.datetime.now()-datetime.timedelta(seconds=8):
+                # extract out the current coordinates by accessing the object in the dict
+                if junction_data.get(current_datetime) == coords+"//"+routecoords:
                     traffic_load += 4
-                else:
-                    # pop the current time from the model
-                    self.all_routes.pop_route(current_datetime)
+            else:
+                # pop the current time from the model
+                self.all_routes.pop_route(current_datetime)
+
         if traffic_load > 100:
             # make sure that the traffic load never exceeds 100%
             traffic_load = 99
+
         return traffic_load
 
     def process_lat_lon(self, latlon):
@@ -77,6 +83,7 @@ class GlobalRouteHandler(object):
     def search_route(self, lat, lon):
         _all_routes = self.all_routes.grab_all_routes()
         lat_lon = lat+'//'+lon
+        _all_routes_json = json.dumps(_all_routes)
         if lat_lon in _all_routes['junctions']:
             junc = _all_routes['junctions'][lat+'//'+lon]
         else:

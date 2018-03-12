@@ -257,7 +257,8 @@ def send_junc_icon(traffic_load):
 @app.route('/all_juncts')
 def return_all_junctions():
     all_junctions = routehandler.return_all_junctions()
-    return json.dumps(all_junctions)
+    json_all_junctions = json.dumps(all_junctions)
+    return json_all_junctions
 
 @app.route('/MovingMarker.js')
 def send_javascript():
