@@ -69,10 +69,14 @@
     <Compile Include="settings.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SimulationClient.py" />
     <Compile Include="tests\unit_tests.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tests\__init__.py" />
+    <Compile Include="wsgi.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="__init__.py" />
   </ItemGroup>
   <ItemGroup>
@@ -97,7 +101,6 @@
     <Content Include="templates\config.html" />
     <Content Include="templates\index.html" />
     <Content Include="static\junc_icon.png" />
-    <Content Include="static\MovingMarker.js" />
     <Content Include="templates\login.html" />
     <Content Include="templates\Unauthorized.html" />
   </ItemGroup>

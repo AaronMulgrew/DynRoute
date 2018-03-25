@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="/static/css/skeleton.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
-    <script src="MovingMarker.js"></script>
     <script src="/static/javascript/traffic_control.js"></script>
     <script src="/static/javascript/menu.js"></script>
     <link rel="stylesheet" href="/static/css/Stylesheet.css" />
@@ -88,26 +87,51 @@
             </div>
         </div>
         <div class="row" id="TimeTaken">
-            <div class="four columns">
-                <h3>Time Taken: <h3 id="time_taken"></h3></h3>
+            <div class="six columns">
+                <h4>Time Taken Dynamic:</h4>
+                <div class="three columns">
+                    <h4>Minutes: <h4 id="time_taken_dynamic_minutes"></h4></h4>
+                </div>
+                <div class="three columns">
+                    <h4>Seconds: <h4 id="time_taken_dynamic_seconds"></h4></h4>
+                </div>
             </div>
-            <div class="four columns">
-                <h3>Time Taken (Non dynamic): <h3 id="time_taken_non_dynamic"></h3></h3>
+            <div class="six columns">
+                <h4>Time Taken Non Dynamic:</h4>
+                <div class="three columns">
+                    <h4>Minutes: <h4 id="time_taken_non_dynamic_minutes"></h4></h4>
+                </div>
+                <div class="three columns">
+                    <h4>Seconds: <h4 id="time_taken_non_dynamic_seconds"></h4></h4>
+                </div>
             </div>
         </div>
 
         <div class="container">
             <div id="map"></div>
-            <div id="slidecontainer">
-                <input type="range" min="200" max="3000" value="3000" class="slider" id="myRange">
-                <p>Value: <span id="demo"></span></p>
-            </div>
             <div id="junctionToggle">
                 <button onclick="PrepShowJunction()">Show Junctions</button>
                 <button onclick="HideJunctions()">Hide Junctions</button>
-                {% if session['logged_in'] %}
+                <!--{% if session['logged_in'] %}
                 <button onclick="GenerateEmergency()">Dispatch Emergency Vehicle</button>
+                {% endif %}-->
+                {% if session['logged_in'] %}
+                <button onclick="ShowSimulationForm()">Start Simulation</button>
                 {% endif %}
+            </div>
+
+            <div id="SimulationForm" class="row">
+                <div class="three columns">
+                    <label for="Username">New Vehicles Per Second:</label>
+                    <input class="u-full-width" type="text" placeholder="10" id="new_vehicles">
+                </div>
+                <div class="three columns">
+                    <label for="Username">Amount of total vehicles:</label>
+                    <input class="u-full-width" type="text" placeholder="100" id="total_vehicles">
+                </div>
+                <div class="three columns" id="SubmitButtonWrapper">
+                    <button id="SubmitButton" onclick="StartSimulation()">Submit!</button>
+                </div>
             </div>
         </div>
 
@@ -121,20 +145,6 @@
 
             var slider = document.getElementById("myRange");
             var output = document.getElementById("demo");
-            output.innerHTML = slider.value;
-
-            slider.oninput = function () {
-                getNewCarsInterval = this.value;
-                output.innerHTML = getNewCarsInterval;
-                clearInterval(interval);
-                interval = 0;
-                interval = window.setInterval(function () {
-                    httpGetAsync("/", process_coord);
-                }, getNewCarsInterval);
-            }
-                //var interval = window.setInterval(function () {
-                //    httpGetAsync("/", process_coord);
-                //}, 1000);
         </script>
         </div>
         </div>

@@ -118,7 +118,7 @@ class AllRoutes(object):
             #junc = junction
             for route in junction['routes']:
                 route['traffic_load'] = 0
-            print junction
+            #print junction
         return True
 
     def pop_route(self, datetime_add):

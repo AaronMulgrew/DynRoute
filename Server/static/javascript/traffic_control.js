@@ -6,6 +6,14 @@ var EmergencyInterval;
 // this is the Non dynamic route stored in the browser for the time function
 var OldRoute;
 
+var showJunctions = false;
+
+
+self.addEventListener('Start Emergency', function (e) {
+    // code to be run
+    GenerateEmergency();
+});
+
 function init(authToken)
 {
     token = AuthToken;
@@ -18,21 +26,58 @@ function removeMarker(selectedMarker) {
 }
 
 function HideJunctions() {
-    clearInterval(JuncInterval);
+    //clearInterval(JuncInterval);
     for (var i = 0; i < markers.length; i++) {
         map.removeLayer(markers[i]);
     }
     showJunctions = false;
-    markers = []
+    //markers = []
 }
 
 
 
-function PrepShowJunction() {
-    JuncInterval = window.setInterval(function () {
-        ShowJunction();
-    }, 1000);
+/// this is the prepShowJunction handler 
+// with a parameter for usage by the add_junction page.
+function PrepShowJunction(JunctionMarkerBind = false) {
+    showJunctions = true;
+    if (JunctionMarkerBind == false) {
+        JuncInterval = window.setInterval(function () {
+            ShowJunction();
+        }, 1000);
+    }
+    else {
+        // this runs if the parameter has been added
+        ShowJunction(JunctionMarkerBind);
+    }
 }
+
+var images = new Array()
+/// this is our pre loading function
+/// for all of our junction icons.
+function PreLoad() {
+    function preload() {
+        for (i = 0; i < preload.arguments.length; i++) {
+            // this is so that the image is pre loaded
+            var img = new Image();
+            img.src = preload.arguments[i];
+            var juncIcon = L.icon({
+                iconUrl: preload.arguments[i],
+                iconSize: [32, 32],
+                shadowSize: [0, 0]
+            });
+            images[i] = juncIcon
+        }
+    }
+    preload(
+        "../junc_icon9.png",
+        "../junc_icon35.png",
+        "../junc_icon70.png",
+        "../junc_icon95.png",
+        "../junc_iconundefined.png"
+    )
+}
+
+PreLoad()
 
 
 if (typeof markers !== 'undefined') {
@@ -73,7 +118,7 @@ function ShowJunction(JunctionMarkerBind=false) {
             markers = []
         }
     }
-    showJunctions = true
+    //showJunctions = true
     httpGetAsync("/all_juncts", ProcessJunctions, null, null, null, JunctionMarkerBind)
 }
 
@@ -86,47 +131,66 @@ function ProcessJunctions(JunctionData, JunctionMarkerBind=false) {
         var lat = Number(JunctionData[i].lat);
         var lon = Number(JunctionData[i].lon);
         var pos = markers.indexOf(lat + ":" + lon);
-        if (pos == -1) {
-            // this creates the 'default' junction icon
-            var juncIcon = L.icon({
-                iconUrl: '../junc_icondefault.png',
-                iconSize: [32, 32],
-                shadowSize: [0, 0]
-            });
-            if (JunctionMarkerBind != false)
-            {
-                /// this if statement runs if the user is in ADD JUNCTION mode.
-                var myMarker = new customMarkerRoute([lat, lon], {
-                    icon: juncIcon,
-                    CustomData: JunctionData[i].junction.junction_name,
-                    CustomLatLon: JunctionData[i].lat+'//'+JunctionData[i].lon
-                }).on('click', JunctionMarkerBind).addTo(map);
-                //marker = L.marker([lat, lon], { icon: juncIcon }, { 'title': 'title' }).on('click', JunctionMarkerBind).addTo(map);
-            }
-            else
-            {
-                juncIcon = L.icon({
-                    iconUrl: 'junc_icon' + JunctionData[i].junction.routes[0].traffic_load + '.png',
+        if (showJunctions != false) {
+            if (pos == -1) {
+                // this creates the 'default' junction icon
+                var juncIcon = L.icon({
+                    iconUrl: '../junc_iconundefined.png',
                     iconSize: [32, 32],
                     shadowSize: [0, 0]
                 });
-                marker = L.marker([lat, lon], { icon: juncIcon }).addTo(map);
-                marker.bindPopup("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.routes[0].traffic_load);
-                markers.push(marker, lat + ":" + lon);
+                if (JunctionMarkerBind != false) {
+                    /// this if statement runs if the user is in ADD JUNCTION mode.
+                    var myMarker = new customMarkerRoute([lat, lon], {
+                        icon: juncIcon,
+                        CustomData: JunctionData[i].junction.junction_name,
+                        CustomLatLon: JunctionData[i].lat + '//' + JunctionData[i].lon
+                    }).on('click', JunctionMarkerBind).addTo(map);
+                    //marker = L.marker([lat, lon], { icon: juncIcon }, { 'title': 'title' }).on('click', JunctionMarkerBind).addTo(map);
+                }
+                else {
+                    traffic_load_amount = JunctionData[i].junction.routes[0].traffic_load;
+                    juncIcon = L.icon({
+                        iconUrl: '../junc_icon' + traffic_load_amount + '.png',
+                        iconSize: [32, 32],
+                        shadowSize: [0, 0]
+                    });
+                    marker = L.marker([lat, lon], { icon: juncIcon }).addTo(map);
+                    marker.bindPopup("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.routes[0].traffic_load);
+                    markers.push(marker, lat + ":" + lon);
+                }
+                //var marker = L.marker([40.68510, -73.94136]).addTo(map);
             }
-            //var marker = L.marker([40.68510, -73.94136]).addTo(map);
-        }
-        else
-        {
-            var juncIcon = L.icon({
-                iconUrl: 'junc_icon' + JunctionData[i].junction.routes[0].traffic_load + '.png',
-                iconSize: [32, 32],
-                shadowSize: [0, 0]
-            });
-            // this is minus one because we have added both the marker and the latitude/longitude values
-            marker = markers[pos - 1];
-            marker.setIcon(juncIcon);
-            marker._popup.setContent("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.routes[0].traffic_load);
+            else {
+                traffic_load_amount = JunctionData[i].junction.routes[0].traffic_load;
+                // here we make the loads generic to stop the browser pulling many different
+                // images
+                var juncIcon;
+                if (traffic_load_amount <= 10) {
+                    juncIcon = images[0]
+                }
+                else if (traffic_load_amount <= 40) {
+                    juncIcon = images[1]
+                }
+                else if (traffic_load_amount <= 75) {
+                    juncIcon = images[2]
+                }
+                else if (traffic_load_amount <= 100) {
+                    juncIcon = images[3]
+                }
+                else {
+                    juncIcon = images[4]
+                }
+                //var juncIcon = L.icon({
+                //    iconUrl: IconUrl,
+                //    iconSize: [32, 32],
+                //    shadowSize: [0, 0]
+                //});
+                // this is minus one because we have added both the marker and the latitude/longitude values
+                marker = markers[pos - 1];
+                marker.setIcon(juncIcon);
+                marker._popup.setContent("<b>" + JunctionData[i].junction.junction_name + "</b>" + "<br>" + "traffic load:" + JunctionData[i].junction.routes[0].traffic_load);
+            }
         }
 
     }
@@ -155,6 +219,7 @@ function httpGetAsync(theUrl, callback, marker = null, header = null, value = nu
         else if (xmlHttp.status == 401)
         {
             alert("Token Expired or no token provided!");
+            clearInterval(EmergencyInterval);
         }
         else if (xmlHttp.status != 200)
         {
@@ -169,29 +234,6 @@ function httpGetAsync(theUrl, callback, marker = null, header = null, value = nu
 }
 
 
-function process_coord(data, myMovingMarker = null) {
-    if (data === "false" || !data) {
-        removeMarker(myMovingMarker);
-    }
-    else {
-        if (myMovingMarker) {
-            removeMarker(myMovingMarker);
-        }
-        var obj = JSON.parse(data);
-
-        // convert the time in miliseconds to seconds
-        timeSecs = obj.time * 1000;
-
-        //console.log(obj);
-        if (showJunctions != true) {
-            var myMovingMarker = L.Marker.movingMarker([[obj.lat, obj.lon], [obj.route.lat, obj.route.lon]],
-                [timeSecs]).addTo(map);
-            markers.push([myMovingMarker, Date.now()]);
-            myMovingMarker.start();
-        }
-        setTimeout(NewCoords, timeSecs, [obj.route.lat, obj.route.lon], myMovingMarker);
-    }
-}
 
 function CheckJson(str) {
     try {
@@ -212,8 +254,9 @@ function NewCoords(latlon, marker) {
 
 function ProcessRouteTime(time) {
     time = JSON.parse(time);
-    document.getElementById('time_taken_non_dynamic').innerHTML = time.toString();
-
+    [minutes, seconds] = ProcessTimeTaken(time)
+    document.getElementById('time_taken_non_dynamic_minutes').innerHTML = minutes.toString();
+    document.getElementById('time_taken_non_dynamic_seconds').innerHTML = seconds.toString();
 }
 
 function GenerateEmergency() {
@@ -231,10 +274,39 @@ function GenerateEmergency() {
     {
         EmergencyInterval = window.setInterval(function () {
             GenerateEmergency();
-        }, 4000);
+        }, 2000);
     }
 }
 
+///
+/// this code is for the data analytics of the results
+/// 
+///
+
+//var dynamic = [];
+//var non_dynamic = [];
+//interval = window.setInterval(function ()
+//{
+//    var temp = "time_taken";
+//    var obj = document.getElementById(temp).innerHTML;
+//    console.log(obj);
+//    dynamic.push(obj);
+//    var temp = "time_taken_non_dynamic";
+//    var obj = document.getElementById(temp).innerHTML;
+//    console.log(obj);
+//    non_dynamic.push(obj);
+//    console.log(JSON.stringify(dynamic));
+//    console.log(JSON.stringify(non_dynamic));
+//    //console.log(document.getElementById("time_taken_non_dynamic").value)
+//}, 3000)
+
+function ProcessTimeTaken(time_taken)
+{
+    var minutes = Math.floor(time_taken / 60);
+    // keep the integer at an acceptable two decimal places.
+    var seconds = (time_taken - minutes * 60).toFixed(2);
+    return [minutes, seconds]
+}
 function ProcessEmergency(message)
 {
     if (CheckJson(message))
@@ -243,18 +315,32 @@ function ProcessEmergency(message)
         route = message.route;
         time_taken = message.time;
         document.getElementById('TimeTaken').style.display = "block";
+
         if (EmergencyLine)
         {
             map.removeLayer(EmergencyLine);
             EmergencyLine = L.polyline(route, { color: 'green' }).addTo(map);
-            document.getElementById('time_taken').innerHTML = time_taken.toString();
+            [minutes, seconds] = ProcessTimeTaken(time_taken);
+            //alert("minutes"+minutes.toString()+"seconds:"+seconds.toString())
+            document.getElementById('time_taken_dynamic_minutes').innerHTML = minutes.toString();
+            document.getElementById('time_taken_dynamic_seconds').innerHTML = seconds.toString();
         }
         else
         {
             OldRoute = route;
             var oldemergency = L.polyline(route, { color: 'red' }).addTo(map);
             EmergencyLine = L.polyline(route, { color: 'green' }).addTo(map);
-            document.getElementById('time_taken_non_dynamic').innerHTML = time_taken.toString();
+            [minutes, seconds] = ProcessTimeTaken(time_taken);
+            document.getElementById('time_taken_non_dynamic_minutes').innerHTML = minutes.toString();
+            //alert("minutes"+minutes.toString()+"seconds:"+seconds.toString())
+            //document.getElementById('time_taken_non_dynamic_minutes').innerHTML = minutes.toString();
+            //document.getElementById('time_taken_non_dynamic_seconds').innerHTML = seconds.toString();
+
+            document.getElementById('time_taken_non_dynamic_seconds').innerHTML = seconds.toString();
+            /// this needs to be repeated as it is the first time of running.
+            document.getElementById('time_taken_dynamic_minutes').innerHTML = minutes.toString();
+            document.getElementById('time_taken_dynamic_seconds').innerHTML = seconds.toString();
+
         }
     }
     else
@@ -263,3 +349,62 @@ function ProcessEmergency(message)
     }
 }
 
+
+
+
+function StartSimulation()
+{
+    // make sure we start the generate emergency simulation aspect.
+    setTimeout(GenerateEmergency, 0);
+    //GenerateEmergency();
+    var xhr = new XMLHttpRequest();
+
+    new_vehicles = document.getElementById('new_vehicles').value;
+
+    total_vehicles = document.getElementById('total_vehicles').value;
+
+    if (!new_vehicles) {
+        new_vehicles = 10
+        total_vehicles = 100
+    }
+
+    xhr.open('GET', '/start_simulation', true);
+
+    xhr.setRequestHeader('Auth-Token', AuthToken);
+    xhr.setRequestHeader('New-Vehicles', new_vehicles);
+    xhr.setRequestHeader('Total-Vehicles', total_vehicles);
+
+    xhr.onreadystatechange = function ()
+    {
+        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+            // Request finished and success here
+            //console.log(xhr.XMLHttpRequest);
+            response = JSON.parse(xhr.responseText);
+            if (response[0] == true)
+            {
+                console.log("Simulation Server Started");
+                document.getElementById('new_vehicles').value = "";
+
+                document.getElementById('total_vehicles').value = "";
+                document.getElementById('SimulationForm').style.display = "none";
+            }
+            else
+            {
+                alert("Error" + response[1].toString())
+                clearInterval(EmergencyInterval);
+            }
+        }
+        else if (xhr.status != 200) {
+            alert(xhr.responseText.toString())
+        }
+    }
+    xhr.send(null);
+}
+
+function ShowSimulationForm() {
+
+    document.getElementById('SimulationForm').style.display = "block";
+    // make sure we scroll to the bottom of the page to show
+    // new elements
+    window.scrollTo(0, document.body.scrollHeight);
+}

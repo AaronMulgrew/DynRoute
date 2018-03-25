@@ -11,11 +11,16 @@ routehandler = global_route.GlobalRouteHandler()
 from scripts import API_auth
 import settings
 import uuid
+import subprocess, os
+from subprocess import PIPE
 from models import emergency_route
 from models import login as check_login
 from OpenSSL import SSL
 from scripts import UserDB
 import ssl
+DETACHED_PROCESS = 0x00000008
+CREATE_NO_WINDOW = 0x08000000
+app.secret_key = settings.SECRET_KEY
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 context.load_cert_chain('certs/domain.crt', 'certs/domain.key')
 
@@ -260,10 +265,6 @@ def return_all_junctions():
     json_all_junctions = json.dumps(all_junctions)
     return json_all_junctions
 
-@app.route('/MovingMarker.js')
-def send_javascript():
-    return current_app.send_static_file('MovingMarker.js')
-
 
 @app.route('/generate_emergency')
 def generate_emergency_route():
@@ -307,6 +308,44 @@ def generate_emergency_route():
         return "No auth token", status.HTTP_401_UNAUTHORIZED
 
 
+@app.route('/start_simulation')
+def start_simulation():
+
+    if 'auth-token' in request.headers:
+        # this is the end point for the generate emergency token
+        auth_token = request.headers['auth-token']
+        new_vehicles = request.headers['New-Vehicles']
+        total_vehicles = request.headers['Total-Vehicles']
+        result = check_login.check_auth_token(auth_token)
+        if result['success']:
+            #print "good"
+            # this spawns a new process in the background to 
+            # generate the simulation traffic
+            startupinfo = None
+            ## parameters dictionary for ease of use
+            params = dict()
+            FNULL = open(os.devnull, 'w')
+            params['stdout'] = FNULL
+            params['stderr'] = FNULL
+            if os.name == 'nt':
+                ## these flags are needed for subprocess to hide the output.
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = subprocess.SW_HIDE
+                ## parameters dictionary for ease of use
+                params['startupinfo'] = startupinfo
+                subprocess.Popen('locust -f SimulationClient.py --host="https://localhost" --no-web -c ' + total_vehicles + ' -r ' + new_vehicles, **params)
+            else:
+                params['shell'] = True
+                subprocess.Popen('./locust -f SimulationClient.py --host="https://localhost" --no-web -c ' + total_vehicles + ' -r ' + new_vehicles, **params)
+                #params['stderr'] = subprocess.PIPE
+            #os.system('locust -f SimulationClient.py --host="https://localhost:5000" --no-web -c 100 -r 5 &')
+            return json.dumps([True, "success"])
+        else:
+            return result['return_value'], status.HTTP_401_UNAUTHORIZED
+    else:
+        return "No auth token", status.HTTP_401_UNAUTHORIZED
+
 @app.route('/gen_route')
 def generate_edge_coords():
     junc = junction_handler.JunctionHandler()
@@ -316,5 +355,4 @@ def generate_edge_coords():
     return json.dumps(route)
 
 if __name__ == "__main__":
-    app.secret_key = settings.SECRET_KEY
-    app.run(debug=False, ssl_context=context)
+    app.run(debug=False, ssl_context=context, host="0.0.0.0", port=443)

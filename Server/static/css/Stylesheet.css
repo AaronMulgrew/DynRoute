@@ -104,6 +104,10 @@ html, body {
     opacity: 0.9;
 }
 
+#junctionToggle {
+    margin-top: 3vh;
+}
+
 #menuitem {
     width: 70%;
     height: 15vh;
@@ -125,4 +129,16 @@ html, body {
 
 #welcomeheading {
     text-align: right;
+}
+
+#SimulationForm {
+    display: none;
+}
+
+#SimulationForm > div {
+    min-height: 10vh;
+}
+
+#SubmitButtonWrapper {
+    margin-top: 3vh;
 }
