@@ -15,4 +15,3 @@ pyOpenSSL==17.5.0
 PyYAML==3.10
 SQLAlchemy==1.2.5
 Werkzeug==0.14.1
-yum-metadata-parser==1.1.4
