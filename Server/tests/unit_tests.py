@@ -2,9 +2,10 @@ import unittest
 import sys, os
 import json
 import datetime
+import mock
 import all_routes
 from scripts import haversine
-from models import junction_handler, emergency_route, global_route, dijkstra_algorithm
+from models import junction_handler, emergency_route, global_route, dijkstra_algorithm, add_junction
 from scripts import API_auth
 try:
     import server as server
@@ -232,6 +233,33 @@ class test_flask_endpoints(unittest.TestCase):
         # on the specified path
         result = self.app.get('/generate_emergency')
         self.assertEqual(result.data, "No auth token")
+
+class test_add_junction(unittest.TestCase):
+
+    def test_process_lat_lon_float(self):
+        addJunction = add_junction.AddJunction()
+        result = addJunction.process_lat_lon_float('123123.12331324242424')
+        print result
+        self.assertEqual(result, '123123.123313')
+
+    def test_add_junction(self):
+        addJunction = add_junction.AddJunction()
+        addJunction.add_to_json = mock.Mock(return_value=True)
+        request = {'JuncName': 'ABC', 'NewLatLon': '52.63733423683968//42.476863538', 'OldLatLon': '52.634169//-1.149998', 'RoadType': '2', 'SelectedJunction': 'A47 - Glenfield Road East', 'Speed': '20'}
+        result = addJunction.add_junction(request)
+        self.assertEqual(result, True)
+        print result
+
+    def test_search_by_route_name(self):
+        addJunction = add_junction.AddJunction()
+        addJunction.write_to_file = mock.Mock(return_value=True)
+        request = {'JuncName': 'ABC', 'NewLatLon': '52.63733423683968//42.476863538', 'OldLatLon': '52.634169//-1.149998', 'RoadType': '2', 'SelectedJunction': 'A47 - Glenfield Road East', 'Speed': '20'}
+        result = addJunction.add_junction(request)
+        self.assertEqual(result, True)
+        if (result):
+            result = addJunction.search_by_route_name()
+            self.assertEqual(result, True)
+
 
 class test_all_routes(unittest.TestCase):
     def setUp(self):
