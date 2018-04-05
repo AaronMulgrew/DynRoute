@@ -15,6 +15,7 @@ import subprocess, os
 from subprocess import PIPE
 from models import emergency_route
 from models import login as check_login
+from models import validate
 from OpenSSL import SSL
 from scripts import UserDB
 import ssl
@@ -318,29 +319,33 @@ def start_simulation():
         total_vehicles = request.headers['Total-Vehicles']
         result = check_login.check_auth_token(auth_token)
         if result['success']:
-            #print "good"
-            # this spawns a new process in the background to 
-            # generate the simulation traffic
-            startupinfo = None
-            ## parameters dictionary for ease of use
-            params = dict()
-            FNULL = open(os.devnull, 'w')
-            params['stdout'] = FNULL
-            params['stderr'] = FNULL
-            if os.name == 'nt':
-                ## these flags are needed for subprocess to hide the output.
-                startupinfo = subprocess.STARTUPINFO()
-                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-                startupinfo.wShowWindow = subprocess.SW_HIDE
+            validation = validate.validate_numbers([new_vehicles, total_vehicles])
+            if validation:
+                #print "good"
+                # this spawns a new process in the background to 
+                # generate the simulation traffic
+                startupinfo = None
                 ## parameters dictionary for ease of use
-                params['startupinfo'] = startupinfo
-                subprocess.Popen('locust -f SimulationClient.py --host="https://localhost" --no-web -c ' + total_vehicles + ' -r ' + new_vehicles, **params)
+                params = dict()
+                FNULL = open(os.devnull, 'w')
+                params['stdout'] = FNULL
+                params['stderr'] = FNULL
+                if os.name == 'nt':
+                    ## these flags are needed for subprocess to hide the output.
+                    startupinfo = subprocess.STARTUPINFO()
+                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                    startupinfo.wShowWindow = subprocess.SW_HIDE
+                    ## parameters dictionary for ease of use
+                    params['startupinfo'] = startupinfo
+                    subprocess.Popen('locust -f SimulationClient.py --host="https://localhost" --no-web -c ' + total_vehicles + ' -r ' + new_vehicles, **params)
+                else:
+                    params['shell'] = True
+                    subprocess.Popen('./locust -f SimulationClient.py --host="https://localhost" --no-web -c ' + total_vehicles + ' -r ' + new_vehicles, **params)
+                    #params['stderr'] = subprocess.PIPE
+                #os.system('locust -f SimulationClient.py --host="https://localhost:5000" --no-web -c 100 -r 5 &')
+                return json.dumps([True, "success"])
             else:
-                params['shell'] = True
-                subprocess.Popen('./locust -f SimulationClient.py --host="https://localhost" --no-web -c ' + total_vehicles + ' -r ' + new_vehicles, **params)
-                #params['stderr'] = subprocess.PIPE
-            #os.system('locust -f SimulationClient.py --host="https://localhost:5000" --no-web -c 100 -r 5 &')
-            return json.dumps([True, "success"])
+                return "Invalid numbers", status.HTTP_400_BAD_REQUEST
         else:
             return result['return_value'], status.HTTP_401_UNAUTHORIZED
     else:

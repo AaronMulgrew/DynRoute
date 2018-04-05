@@ -354,8 +354,7 @@ function ProcessEmergency(message)
 
 function StartSimulation()
 {
-    // make sure we start the generate emergency simulation aspect.
-    setTimeout(GenerateEmergency, 0);
+
     //GenerateEmergency();
     var xhr = new XMLHttpRequest();
 
@@ -382,6 +381,9 @@ function StartSimulation()
             response = JSON.parse(xhr.responseText);
             if (response[0] == true)
             {
+                // make sure we start the generate emergency simulation aspect.
+                // this starts it asynchronously.
+                setTimeout(GenerateEmergency, 0);
                 console.log("Simulation Server Started");
                 document.getElementById('new_vehicles').value = "";
 
@@ -390,8 +392,7 @@ function StartSimulation()
             }
             else
             {
-                alert("Error" + response[1].toString())
-                clearInterval(EmergencyInterval);
+                alert("Error" + response[1].toString());
             }
         }
         else if (xhr.status != 200) {

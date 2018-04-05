@@ -32,6 +32,9 @@
     <Compile Include="models\login.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="models\validate.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="models\__init__.py">
       <SubType>Code</SubType>
     </Compile>
