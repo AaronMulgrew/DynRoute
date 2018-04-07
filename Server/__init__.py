@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
 from sqlalchemy import exc
 from models import junction_handler, global_route, add_junction
+import settings
 app = Flask(__name__, static_url_path='/static')
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///prod.db'

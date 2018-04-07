@@ -364,4 +364,5 @@ def generate_edge_coords():
     return json.dumps(route)
 
 if __name__ == "__main__":
+    UserDB.setup()
     app.run(debug=False, ssl_context=context, host="0.0.0.0", port=443)
