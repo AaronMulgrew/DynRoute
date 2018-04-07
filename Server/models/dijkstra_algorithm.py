@@ -110,11 +110,7 @@ class Dijkstra():
                             heapq.heappush(heap, self.edges[next])
                         except KeyError:
                             break
-                    #else:
-                        #pass
-                        #print "not needed" + str(vtime) + ' ' + str(timenext)
-                #else:
-                    #print 'not in key'
+
 
         route = list()
         nextitem = dest

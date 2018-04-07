@@ -3,6 +3,7 @@ import sys, os
 # server.__init__.py
 sys.path.insert(0, os.path.abspath(".."))
 from Server.__init__ import db, bcrypt
+import Server.settings as settings
 from flask import Flask
 import __init__
 from flask_sqlalchemy import SQLAlchemy
@@ -23,6 +24,19 @@ class User(db.Model):
         #self.password = password
         pw_hash = bcrypt.generate_password_hash(password)
         self.password = pw_hash
+def setup():
+    admin_user = User.query.filter_by(username="Admin").first()
+    passw = settings.admin_password
+    pwhash = bcrypt.generate_password_hash(passw)
+    check_passw_hash = bcrypt.check_password_hash(admin_user.password, passw)
+    if not check_passw_hash:
+        # this is a threadsafe way of getting the user object
+        local_object = db.session.merge(admin_user)
+        local_object.password = pwhash
+        db.session.commit()
+        print (' Warning! '.center(80, '*'))
+        print (' Admin password changed in configuration. '.center(80, '*'))
+setup()
 
 #admin = User(True, 'Admin','123456')
 #db.session.add(admin)

@@ -3,6 +3,7 @@ import sys,os
 # server.__init__.py
 sys.path.insert(0, os.path.abspath(".."))
 from Server.__init__ import bcrypt
+import Server.settings as settings
 from scripts import UserDB
 from scripts import API_auth
 import datetime
@@ -48,7 +49,7 @@ def check_auth_token(auth_token):
         # is the same as the password hash for the login
         if data.password == password_hash:
             # verify the timestamp for the next 90 minutes
-            if timestamp > datetime.datetime.now()-datetime.timedelta(minutes=90):
+            if timestamp > datetime.datetime.now()-datetime.timedelta(minutes=settings.session_timeout):
                 success = True
                 if username == 'Admin':
                     isAdmin = True

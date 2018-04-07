@@ -17,8 +17,8 @@ except ImportError:
 
 
 class test_flask_endpoints(unittest.TestCase): 
+    
     def setUp(self):
-
         server.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///unit_test.db'
         # creates a test client
         self.app = server.app.test_client()
@@ -243,12 +243,16 @@ class test_add_junction(unittest.TestCase):
         self.assertEqual(result, '123123.123313')
 
     def test_add_junction(self):
+        # this function mocks the add junction function
+        # to ensure that the data isn't added to the routes.json file.
         addJunction = add_junction.AddJunction()
         addJunction.add_to_json = mock.Mock(return_value=True)
-        request = {'JuncName': 'ABC', 'NewLatLon': '52.63733423683968//42.476863538', 'OldLatLon': '52.634169//-1.149998', 'RoadType': '2', 'SelectedJunction': 'A47 - Glenfield Road East', 'Speed': '20'}
+        request = {'JuncName': 'ABC', 'NewLatLon': '52.63733423683968//42.476863538',\
+           'OldLatLon': '52.634169//-1.149998', 'RoadType': '2',\
+          'SelectedJunction': 'A47 - Glenfield Road East', 'Speed': '20'}
         result = addJunction.add_junction(request)
         self.assertEqual(result, True)
-        print result
+
 
     def test_search_by_route_name(self):
         addJunction = add_junction.AddJunction()

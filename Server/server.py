@@ -5,6 +5,7 @@ import json
 from flask import (current_app, url_for, \
 render_template, redirect, session)
 from flask_api import status
+import datetime
 from __init__ import (app, bcrypt, request, junction_handler, \
    global_route, add_junction, db, exc)
 routehandler = global_route.GlobalRouteHandler()
@@ -22,8 +23,9 @@ import ssl
 DETACHED_PROCESS = 0x00000008
 CREATE_NO_WINDOW = 0x08000000
 app.secret_key = settings.SECRET_KEY
+app.permanent_session_lifetime = datetime.timedelta(minutes=settings.session_timeout)
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-context.load_cert_chain('certs/domain.crt', 'certs/domain.key')
+context.load_cert_chain('certs/cert.crt', 'certs/cert.key')
 
 
 
@@ -274,6 +276,8 @@ def generate_emergency_route():
     if 'auth-token' in request.headers:
         ## default back to standard route if not specified in the headers
         lat_lon_list = ['source-lat', 'source-lon', 'dest-lat', 'dest-lon']
+        # cthis checks to see all sources have been provided
+        # if not then it defaults back to default values.
         if all (k in request.headers for k in lat_lon_list):
             source_lat = request.headers['source-lat']
             source_lon = request.headers['source-lon']
