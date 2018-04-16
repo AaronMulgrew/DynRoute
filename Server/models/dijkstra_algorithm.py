@@ -63,12 +63,8 @@ class Dijkstra():
             for oneroute in onejunc:
                 destination = oneroute['dest']
                 onedict = {'dest': oneroute['dest'], 'source': oneroute['source'], 'time': float("inf")}
-                #dest_source = oneroute['dest'] + '--' + oneroute['source']
+                
                 time[destination] = onedict
-            #heapq.heappush(heap, onejunc)
-
-        #print q.queue
-        #print time
 
         if self.start_node:
             source_node = self.edges[self.start_node]
@@ -76,10 +72,7 @@ class Dijkstra():
             time[self.start_node] = onedict
             heapq.heappush(heap, self.edges[self.start_node])
 
-        #qt = q.get()
-        #print qt
-        #qt = heapq.heappop(heap)
-        #print qt
+
         while heap:
             # this is our vertex
             v = heapq.heappop(heap)

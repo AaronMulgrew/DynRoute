@@ -53,7 +53,7 @@ class GlobalRouteHandler(object):
         try:
             distanceM = haversine.get_distance_haversine([float(source_lat), float(source_lon), float(newroute['lat']), float(newroute['lon'])])
         except KeyError:
-            # sometimes throws exception due to unicode error
+            # A unicode error sometimes forces this code to run
             distanceM = haversine.get_distance_haversine([float(source_lat), float(source_lon), float(newroute[u'lat']), float(newroute[u'lon'])])
         # calculate the time needed to get to the junction 
         # by Distance over speed

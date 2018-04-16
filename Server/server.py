@@ -84,8 +84,8 @@ def add_state():
             result = routehandler.update_all_routes(request_data)
             return json.dumps(result)
         else:
-            return "not Admin"
-    return "not Admin"
+            return "User Does Not have privileges to perform this action.", status.HTTP_401_UNAUTHORIZED
+    return "User Does Not have privileges to perform this action.", status.HTTP_401_UNAUTHORIZED
 
 @app.route("/logout")
 def logout():
@@ -118,7 +118,7 @@ def add_junc_endpoint():
                 add_junc_result = add_junc.add_junction(request_data)
                 return json.dumps(add_junc_result)
             else:
-                return json.dumps(result['return_value'])
+                return json.dumps(result['return_value']), status.HTTP_401_UNAUTHORIZED
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
