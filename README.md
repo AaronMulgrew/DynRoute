@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/AaronMulgrew/DynamicRoutingSystemEV.svg?token=T3QXcSpDWyZChXS4v2ux&branch=master)](https://travis-ci.com/AaronMulgrew/DynamicRoutingSystemEV)
+[![Build Status](https://travis-ci.com/AaronMulgrew/DynRoute.svg?branch=master)](https://travis-ci.com/AaronMulgrew/DynRoute)
 
-# DynamicRoutingSystemEV
-A Dynamic routing system for Emergency Vehicles written in Python and JavaScript/HTML
+# DynRoute
+DynRoute is an API-based AWS-hosted routing system predominantly used by emergency vehicles but can be expanded out to regular car vehicles too. 
