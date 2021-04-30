@@ -9,7 +9,7 @@ Flask-API==1.0
 Flask-Bcrypt==0.7.1
 Flask-Cors==3.0.3
 Flask-SQLAlchemy==2.3.2
-Jinja2==2.7.2
+Jinja2==2.11.3
 PyJWT==1.6.1
 pyOpenSSL==17.5.0
 PyYAML==5.1
